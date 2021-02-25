@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ChessClock</string>
+    
+    <string-array name="languages">
+        <item>Español</item>
+        <item>English</item>
+        <item>Deutsche</item>
+    </string-array>
+</resources>
