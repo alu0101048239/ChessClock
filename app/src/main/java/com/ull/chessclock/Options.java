@@ -26,6 +26,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     Bundle state = getIntent().getExtras();
     voz.SetLanguage(state.getString("lenguaje_actual"));
     voz.SetSpeed(state.getFloat("velocidad_actual"));
+    voz.SetPitch(state.getFloat("tono_actual"));
 
     /* Seleccionar idioma */
     language = (Spinner) findViewById(R.id.languageSpinner);
@@ -46,6 +47,12 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     modo_juego.setText(traduction.GetEtiquetaJuego());
   }
 
+  public void onInit(int status) {
+    Bundle state = getIntent().getExtras();
+    voz.SetVoice(state.getString("voz_actual"));
+  }
+
+
   public void ReturnData() {
     Intent returnIntent = new Intent();
     returnIntent.putExtra("Velocidad", voz.GetSpeed());
@@ -57,11 +64,13 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
 
   public void VoiceSettings(View view) {
     traduction.SetTraduction(voz.GetLanguage());
-    voz.SetVoice(voz.GetVoice());
+    //voz.SetVoice(voz.GetVoice());
     voz.Speak(traduction.GetEtiquetaVoz());
     Intent intent = new Intent(this, VoiceSettings.class);
     intent.putExtra("lenguaje_actual", voz.GetLanguage());
     intent.putExtra("velocidad_actual", voz.GetSpeed());
+    intent.putExtra("voz_actual", voz.GetVoice());
+    intent.putExtra("tono_actual", voz.GetPitch());
     startActivityForResult(intent, 0);
   }
 

@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   TextToSpeech textToSpeech;
   Voice voz;
   Traduction traduction;
+  static MediaPlayer mp;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     b2 = (Button)findViewById(R.id.blancas);
     textToSpeech = new TextToSpeech(this, this, "com.google.android.tts");
     voz = new Voice(textToSpeech);
+    mp = MediaPlayer.create(this, R.raw.button_sound);
   }
 
   public void onInit(int status) {}
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     t2 = new Timer();
     firstPlayer.Pause(t1);
     b2.setBackgroundResource(R.color.material_on_background_emphasis_medium);
-    b1.setBackgroundResource(R.color.black);
+    b1.setBackgroundColor(Color.BLACK);
     TimerTask tarea = new TimerTask() {
       @Override
       public void run() {
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
       }
     };
     t2.scheduleAtFixedRate(tarea, 0, 10);
+    mp.start();
   }
 
   public void PlayerTwo(View view) {
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
       }
     };
     t1.scheduleAtFixedRate(tarea2, 0, 10);
+    mp.start();
   }
 
   public void SpeakWhiteTime(View view) {
@@ -96,7 +101,27 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     Intent intent = new Intent(this, Options.class);
     intent.putExtra("lenguaje_actual", voz.GetLanguage());
     intent.putExtra("velocidad_actual", voz.GetSpeed());
+    intent.putExtra("voz_actual", voz.GetVoice());
+    intent.putExtra("tono_actual", voz.GetPitch());
     startActivityForResult(intent, 0);
+  }
+
+  public void Pause(View view) {
+    traduction = new Traduction(voz.GetLanguage());
+    firstPlayer.Pause(t1);
+    secondPlayer.Pause(t2);
+    voz.Speak(traduction.GetPausarJuego());
+  }
+
+  public void Reset(View view) {
+    traduction = new Traduction(voz.GetLanguage());
+    firstPlayer.Pause(t1);
+    firstPlayer.Reset();
+    secondPlayer.Pause(t2);
+    secondPlayer.Reset();
+    b1.setText(firstPlayer.SetTime());
+    b2.setText(secondPlayer.SetTime());
+    voz.Speak(traduction.GetResetear());
   }
 
   @Override
@@ -113,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         voz.SetVoice(voice);
         voz.SetPitch(pitch);
         textToSpeech = voz.GetTextToSpeech();
+        System.out.println("Voz en escena 1: " + voz.GetVoice());
       }
     }
   }

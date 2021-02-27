@@ -55,6 +55,12 @@ public class Clock extends MainActivity {
     timer.cancel();
   }
 
+  public void Reset() {
+    minutos = 30;
+    segundos = 0;
+    centesimas = 0;
+  }
+
   public String SetTime() {
     String textMinutos = "";
     String textSegundos = "";

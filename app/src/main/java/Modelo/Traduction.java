@@ -13,6 +13,8 @@ public class Traduction {
   String[] etiqueta_cambiar_voz;
   String[] etiqueta_tono;
   String[][] cambiar_tono;
+  String[] pausar_juego;
+  String[] resetear;
 
   public Traduction(String idioma_) {
     etiqueta_ajustes = new String[] {"AJUSTES", "SETTINGS", "EINSTELLUNGEN"};
@@ -26,6 +28,8 @@ public class Traduction {
     cambiar_voz = new String[] {"Cambiando voz", "Changing voice", "Ändern Stimme"};
     etiqueta_tono = new String[] {"Cambiar tono", "Change pitch", "Ton wechseln"};
     cambiar_tono = new String[][] { {"Más agudo", "más grave"}, {"Higher", "Deeper"}, {"akuter", "tiefer"} };
+    pausar_juego = new String[] {"Juego pausado", "Game paused", "Spiel gestoppt"};
+    resetear = new String[] {"Resetear", "Reset", "zurücksetzen"};
     SetTraduction(idioma_);
   }
 
@@ -84,6 +88,14 @@ public class Traduction {
 
   public String[] GetCambiarTono() {
     return cambiar_tono[iterator];
+  }
+
+  public String GetPausarJuego() {
+    return pausar_juego[iterator];
+  }
+
+  public String GetResetear() {
+    return resetear[iterator];
   }
 
   public int GetIterator() {

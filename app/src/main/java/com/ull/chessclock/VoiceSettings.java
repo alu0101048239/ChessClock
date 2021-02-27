@@ -22,6 +22,9 @@ public class VoiceSettings extends Options {
     Bundle state = getIntent().getExtras();
     voz.SetLanguage(state.getString("lenguaje_actual"));
     voz.SetSpeed(state.getFloat("velocidad_actual"));
+    voz.SetVoice(state.getString("voz_actual"));
+    voz.SetPitch(state.getFloat("tono_actual"));
+
     velocidad = (TextView) findViewById(R.id.title);
     velocidad.setText(traduction.GetEtiquetaVoz());
     cambio_velocidad = (TextView) findViewById(R.id.velocidad);
