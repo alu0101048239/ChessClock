@@ -2,16 +2,28 @@ package com.ull.chessclock;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Clock;
@@ -29,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   Voice voz;
   Traduction traduction;
   static MediaPlayer mp;
+  private ConstraintLayout parentConstraintLayout;
+  private SpeechRecognizer speechRecognizer;
+  private Intent speechRecognizerIntent;
+  private String keeper = "";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +57,99 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     textToSpeech = new TextToSpeech(this, this, "com.google.android.tts");
     voz = new Voice(textToSpeech);
     mp = MediaPlayer.create(this, R.raw.button_sound);
+
+    checkVoiceCommandPermission();
+    parentConstraintLayout = findViewById(R.id.parentConstraintLayout);
+    speechRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
+    speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+    speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+    speechRecognizer.setRecognitionListener(new RecognitionListener() {
+      @Override
+      public void onReadyForSpeech(Bundle params) {}
+
+      @Override
+      public void onBeginningOfSpeech() {}
+
+      @Override
+      public void onRmsChanged(float rmsdB) {}
+
+      @Override
+      public void onBufferReceived(byte[] buffer) {}
+
+      @Override
+      public void onEndOfSpeech() {}
+
+      @Override
+      public void onError(int error) {}
+
+      @Override
+      public void onResults(Bundle results) {
+        ArrayList<String> matchesFound = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        if (matchesFound != null) {
+          keeper = matchesFound.get(0);
+          Toast.makeText(MainActivity.this, "Result = " + keeper, Toast.LENGTH_LONG).show();
+          switch (keeper) {
+            case "ajustes":
+              Opciones();
+              break;
+            case "parar":
+            case "pausa":
+              Pausar();
+              break;
+            case "fin":
+            case "final":
+              Resetear();
+              break;
+            default:
+              voz.Speak("Repita, por favor");
+          }
+        }
+      }
+
+      @Override
+      public void onPartialResults(Bundle partialResults) {}
+
+      @Override
+      public void onEvent(int eventType, Bundle params) {}
+    });
+
+    parentConstraintLayout.setOnTouchListener(new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        if (action == event.ACTION_DOWN) {
+          speechRecognizer.startListening(speechRecognizerIntent);
+          keeper = "";
+        } else if (action == event.ACTION_UP) {
+          speechRecognizer.stopListening();
+        }
+        return false;
+      }
+    });
   }
 
-  public void onInit(int status) {}
+  private void checkVoiceCommandPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if ((!(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) == (PackageManager.PERMISSION_GRANTED)))) {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
+        finish();
+      }
+    }
+  }
+
+  public void onInit(int status) {
+    /*Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak");
+    try {
+      startActivityForResult(intent, 1);
+    } catch (ActivityNotFoundException a) {
+      Toast.makeText(getApplicationContext(), "Dispositivo no compatible", Toast.LENGTH_SHORT).show();
+    }*/
+  }
 
   public void PlayerOne(View view) {
     findViewById(R.id.negras).setEnabled(false);
@@ -96,6 +202,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   public void Options(View view) {
+    Opciones();
+  }
+
+  public void Opciones() {
+    speechRecognizer.stopListening();
     traduction = new Traduction(voz.GetLanguage());
     voz.Speak(traduction.GetEtiquetaAjustes());
     Intent intent = new Intent(this, Options.class);
@@ -106,14 +217,22 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     startActivityForResult(intent, 0);
   }
 
-  public void Pause(View view) {
+  public void Pausar() {
     traduction = new Traduction(voz.GetLanguage());
     firstPlayer.Pause(t1);
     secondPlayer.Pause(t2);
     voz.Speak(traduction.GetPausarJuego());
   }
 
+  public void Pause(View view) {
+    Pausar();
+  }
+
   public void Reset(View view) {
+    Resetear();
+  }
+
+  public void Resetear() {
     traduction = new Traduction(voz.GetLanguage());
     firstPlayer.Pause(t1);
     firstPlayer.Reset();
@@ -138,7 +257,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         voz.SetVoice(voice);
         voz.SetPitch(pitch);
         textToSpeech = voz.GetTextToSpeech();
-        System.out.println("Voz en escena 1: " + voz.GetVoice());
+        speechRecognizer.startListening(speechRecognizerIntent);
+        keeper = "";
       }
     }
   }
