@@ -23,13 +23,14 @@ public class Traduction {
     etiqueta_velocidad = new String[] {"Velocidad", "Speed", "Geschwindigkeit"};
     etiqueta_voz = new String[] {"Ajustes de voz", "Voice settings", "Spracheinstellungen"};
     etiqueta_cambiar_voz = new String[] {"Cambiar voz", "Change voice", "Stimme ändern"};
+    etiqueta_tono = new String[] {"Cambiar tono", "Change pitch", "Ton wechseln"};
+
     cambiar_velocidad = new String[][] { {"más rápido", "más lento"} , {"faster", "slower"} , {"schneller", "langsamer"} };
     nombre_idioma = new String[] {"Español", "English", "Deutsche"};
     cambiar_voz = new String[] {"Cambiando voz", "Changing voice", "Ändern Stimme"};
-    etiqueta_tono = new String[] {"Cambiar tono", "Change pitch", "Ton wechseln"};
     cambiar_tono = new String[][] { {"Más agudo", "más grave"}, {"Higher", "Deeper"}, {"akuter", "tiefer"} };
     pausar_juego = new String[] {"Juego pausado", "Game paused", "Spiel gestoppt"};
-    resetear = new String[] {"Resetear", "Reset", "zurücksetzen"};
+    resetear = new String[] {"Juego finalizado", "Game over", "Spiel ist aus"};
     SetTraduction(idioma_);
   }
 
