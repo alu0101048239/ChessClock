@@ -37,7 +37,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
       case "es_ES":
         language.setSelection(0);
         break;
-      case "en_EN":
+      case "en_GB":
         language.setSelection(1);
         break;
       default:

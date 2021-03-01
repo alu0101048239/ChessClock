@@ -18,7 +18,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
-import android.view.MotionEvent;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -109,20 +109,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
       @Override
       public void onEvent(int eventType, Bundle params) {}
-    });
-
-    parentConstraintLayout.setOnTouchListener(new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        int action = event.getAction();
-        if (action == event.ACTION_DOWN) {
-          speechRecognizer.startListening(speechRecognizerIntent);
-          keeper = "";
-        } else if (action == event.ACTION_UP) {
-          speechRecognizer.stopListening();
-        }
-        return false;
-      }
     });
   }
 
@@ -241,9 +227,20 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         voz.SetVoice(voice);
         voz.SetPitch(pitch);
         textToSpeech = voz.GetTextToSpeech();
+      }
+    }
+  }
+
+  @Override
+  public boolean dispatchKeyEvent(KeyEvent event) {
+    int keyCode = event.getKeyCode();
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_VOLUME_UP:
         speechRecognizer.startListening(speechRecognizerIntent);
         keeper = "";
-      }
+        return true;
+      default:
+        return super.dispatchKeyEvent(event);
     }
   }
 }
