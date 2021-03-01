@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import Modelo.Traduction;
 
 public class Options extends MainActivity implements AdapterView.OnItemSelectedListener {
   Spinner language;
@@ -34,17 +33,24 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     language.setAdapter(adapter);
     language.setOnItemSelectedListener(this);
-    traduction = new Traduction(voz.GetLanguage());
-    language.setSelection(traduction.GetIterator());
-
+    switch (voz.GetLanguage().GetLanguage()) {
+      case "es_ES":
+        language.setSelection(0);
+        break;
+      case "en_EN":
+        language.setSelection(1);
+        break;
+      default:
+        language.setSelection(2);
+    }
     ajustes = (TextView) findViewById(R.id.settings);
     lenguaje = (TextView) findViewById(R.id.language);
     ajustesVoz = (Button) findViewById(R.id.ajustesVoz);
     modo_juego = (TextView) findViewById(R.id.juego);
-    ajustes.setText(traduction.GetEtiquetaAjustes());
-    lenguaje.setText(traduction.GetEtiquetaIdioma());
-    ajustesVoz.setText(traduction.GetEtiquetaVoz());
-    modo_juego.setText(traduction.GetEtiquetaJuego());
+    ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
+    ajustes.setText(voz.GetLanguage().GetTagById("idioma"));
+    ajustes.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
+    ajustes.setText(voz.GetLanguage().GetTagById("juego"));
   }
 
   public void onInit(int status) {
@@ -56,18 +62,16 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
   public void ReturnData() {
     Intent returnIntent = new Intent();
     returnIntent.putExtra("Velocidad", voz.GetSpeed());
-    returnIntent.putExtra("Idioma", voz.GetLanguage());
+    returnIntent.putExtra("Idioma", voz.GetLanguage().GetLanguage());
     returnIntent.putExtra("Voz", voz.GetVoice());
     returnIntent.putExtra("Tono", voz.GetPitch());
     setResult(Activity.RESULT_OK, returnIntent);
   }
 
   public void VoiceSettings(View view) {
-    traduction.SetTraduction(voz.GetLanguage());
-    //voz.SetVoice(voz.GetVoice());
-    voz.Speak(traduction.GetEtiquetaVoz());
+    voz.Speak(voz.GetLanguage().GetTagById("ajustes_voz"));
     Intent intent = new Intent(this, VoiceSettings.class);
-    intent.putExtra("lenguaje_actual", voz.GetLanguage());
+    intent.putExtra("lenguaje_actual", voz.GetLanguage().GetLanguage());
     intent.putExtra("velocidad_actual", voz.GetSpeed());
     intent.putExtra("voz_actual", voz.GetVoice());
     intent.putExtra("tono_actual", voz.GetPitch());
@@ -103,13 +107,12 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     } else {
       voz.SetLanguage("es_ES");
     }
-    traduction.SetTraduction(voz.GetLanguage());
-    ajustes.setText(traduction.GetEtiquetaAjustes());
-    lenguaje.setText(traduction.GetEtiquetaIdioma());
-    ajustesVoz.setText(traduction.GetEtiquetaVoz());
-    modo_juego.setText(traduction.GetEtiquetaJuego());
+    ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
+    ajustes.setText(voz.GetLanguage().GetTagById("idioma"));
+    ajustes.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
+    ajustes.setText(voz.GetLanguage().GetTagById("juego"));
     textToSpeech = voz.GetTextToSpeech();
-    voz.Speak(traduction.GetNombreIdioma());
+    voz.Speak(voz.GetLanguage().GetDictadoById("idioma"));
     ReturnData();
   }
 

@@ -26,26 +26,25 @@ public class VoiceSettings extends Options {
     voz.SetPitch(state.getFloat("tono_actual"));
 
     velocidad = (TextView) findViewById(R.id.title);
-    velocidad.setText(traduction.GetEtiquetaVoz());
+    velocidad.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
     cambio_velocidad = (TextView) findViewById(R.id.velocidad);
-    cambio_velocidad.setText(traduction.GetEtiquetaVelocidad());
+    cambio_velocidad.setText(voz.GetLanguage().GetTagById("velocidad"));
     cambio_voz = (TextView) findViewById(R.id.cambiarVoz);
-    cambio_voz.setText(traduction.GetEtiquetaCambiarVoz());
+    cambio_voz.setText(voz.GetLanguage().GetTagById("cambiar_voz"));
     agudo = (Button) findViewById(R.id.masAgudo);
     grave = (Button) findViewById(R.id.masGrave);
     tono = (TextView) findViewById(R.id.cambiarTono);
-    tono.setText(traduction.GetEtiquetaTono());
-    agudo.setText(traduction.GetCambiarTono()[0]);
-    grave.setText(traduction.GetCambiarTono()[1]);
+    tono.setText(voz.GetLanguage().GetTagById("cambiar_tono"));
+    agudo.setText(voz.GetLanguage().GetTagById("agudo"));
+    grave.setText(voz.GetLanguage().GetTagById("grave"));
   }
 
   public void increaseSpeed(View view) {
     voz.SetSpeed(voz.GetSpeed() * 2);
     textToSpeech = voz.GetTextToSpeech();
     velocidad.setText(String.valueOf(voz.GetSpeed()));
-    traduction.SetTraduction(voz.GetLanguage());
-    voz.SetLanguage(voz.GetLanguage());
-    voz.Speak(traduction.GetCambiarVelocidad()[0]);
+    voz.SetLanguage(voz.GetLanguage().GetLanguage());
+    voz.Speak(voz.GetLanguage().GetDictadoById("subir_velocidad"));
     ReturnData();
   }
 
@@ -53,16 +52,15 @@ public class VoiceSettings extends Options {
     voz.SetSpeed(voz.GetSpeed() / 2);
     textToSpeech = voz.GetTextToSpeech();
     velocidad.setText(String.valueOf(voz.GetSpeed()));
-    traduction.SetTraduction(voz.GetLanguage());
-    voz.SetLanguage(voz.GetLanguage());
-    voz.Speak(traduction.GetCambiarVelocidad()[1]);
+    voz.SetLanguage(voz.GetLanguage().GetLanguage());
+    voz.Speak(voz.GetLanguage().GetDictadoById("bajar_velocidad"));
     ReturnData();
   }
 
   public void ReturnData() {
     Intent returnIntent = new Intent();
     returnIntent.putExtra("Velocidad", voz.GetSpeed());
-    returnIntent.putExtra("Idioma", voz.GetLanguage());
+    returnIntent.putExtra("Idioma", voz.GetLanguage().GetLanguage());
     returnIntent.putExtra("Voz", voz.GetVoice());
     returnIntent.putExtra("Tono", voz.GetPitch());
     setResult(Activity.RESULT_OK, returnIntent);
@@ -70,19 +68,19 @@ public class VoiceSettings extends Options {
 
   public void ChangeVoice(View view) {
     voz.SetVoice(voz.ChangeVoice());
-    voz.Speak(traduction.GetCambiarVoz());
+    voz.Speak(voz.GetLanguage().GetDictadoById("cambiar_voz"));
     ReturnData();
   }
 
   public void Grave(View view) {
     voz.ChangePitch((float) -0.25);
-    voz.Speak(traduction.GetCambiarTono()[1]);
+    voz.Speak(voz.GetLanguage().GetDictadoById("grave"));
     ReturnData();
   }
 
   public void Aguda(View view) {
     voz.ChangePitch((float) 0.25);
-    voz.Speak(traduction.GetCambiarTono()[0]);
+    voz.Speak(voz.GetLanguage().GetDictadoById("agudo"));
     ReturnData();
   }
 }

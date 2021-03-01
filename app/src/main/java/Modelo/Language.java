@@ -17,11 +17,19 @@ public class Language {
     language = idioma;
   }
 
+  public String GetLanguage() {
+    return language;
+  }
+
   public String GetTagById(String id) {
     return etiquetas.get(id);
   }
 
   public String GetDictadoById(String id) {
     return dictado.get(id);
+  }
+
+  public String[] GetVoces() {
+    return voces;
   }
 }

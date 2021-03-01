@@ -38,5 +38,7 @@ public class English extends Language {
     dictado.put("pausar", "Game paused");
     dictado.put("resetear", "Game over");
     dictado.put("atras", "Back");
+    dictado.put("minutos", "Minutes");
+    dictado.put("segundos", "Seconds");
   }
 }

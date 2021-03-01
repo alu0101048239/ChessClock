@@ -36,5 +36,7 @@ public class German extends Language {
     dictado.put("pausar", "Spiel gestoppt");
     dictado.put("resetear", "Spiel ist aus");
     dictado.put("atras", "Rückkehr");
+    dictado.put("minutos", "Minuten");
+    dictado.put("segundos", "Sekunden");
   }
 }

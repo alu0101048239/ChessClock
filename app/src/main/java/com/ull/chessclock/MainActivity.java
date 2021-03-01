@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Clock;
-import Modelo.Traduction;
 import Modelo.Voice;
 
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
@@ -39,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   Timer t2 = new Timer();
   TextToSpeech textToSpeech;
   Voice voz;
-  Traduction traduction;
   static MediaPlayer mp;
   private ConstraintLayout parentConstraintLayout;
   private SpeechRecognizer speechRecognizer;
@@ -57,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     textToSpeech = new TextToSpeech(this, this, "com.google.android.tts");
     voz = new Voice(textToSpeech);
     mp = MediaPlayer.create(this, R.raw.button_sound);
-
     checkVoiceCommandPermission();
     parentConstraintLayout = findViewById(R.id.parentConstraintLayout);
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
@@ -139,17 +136,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     }
   }
 
-  public void onInit(int status) {
-    /*Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak");
-    try {
-      startActivityForResult(intent, 1);
-    } catch (ActivityNotFoundException a) {
-      Toast.makeText(getApplicationContext(), "Dispositivo no compatible", Toast.LENGTH_SHORT).show();
-    }*/
-  }
+  public void onInit(int status) {}
 
   public void PlayerOne(View view) {
     findViewById(R.id.negras).setEnabled(false);
@@ -207,10 +194,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
   public void Opciones() {
     speechRecognizer.stopListening();
-    traduction = new Traduction(voz.GetLanguage());
-    voz.Speak(traduction.GetEtiquetaAjustes());
+    voz.Speak(voz.GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
-    intent.putExtra("lenguaje_actual", voz.GetLanguage());
+    intent.putExtra("lenguaje_actual", voz.GetLanguage().GetLanguage());
     intent.putExtra("velocidad_actual", voz.GetSpeed());
     intent.putExtra("voz_actual", voz.GetVoice());
     intent.putExtra("tono_actual", voz.GetPitch());
@@ -218,10 +204,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   public void Pausar() {
-    traduction = new Traduction(voz.GetLanguage());
     firstPlayer.Pause(t1);
     secondPlayer.Pause(t2);
-    voz.Speak(traduction.GetPausarJuego());
+    voz.Speak(voz.GetLanguage().GetDictadoById("pausar"));
   }
 
   public void Pause(View view) {
@@ -233,14 +218,13 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   public void Resetear() {
-    traduction = new Traduction(voz.GetLanguage());
     firstPlayer.Pause(t1);
     firstPlayer.Reset();
     secondPlayer.Pause(t2);
     secondPlayer.Reset();
     b1.setText(firstPlayer.SetTime());
     b2.setText(secondPlayer.SetTime());
-    voz.Speak(traduction.GetResetear());
+    voz.Speak(voz.GetLanguage().GetDictadoById("resetear"));
   }
 
   @Override
