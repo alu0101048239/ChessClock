@@ -38,5 +38,6 @@ public class Spanish extends Language {
     dictado.put("atras", "Atrás");  //comprobar
     dictado.put("minutos", "Minutos");
     dictado.put("segundos", "Segundos");
+    dictado.put("repita", "Repita, por favor");
   }
 }

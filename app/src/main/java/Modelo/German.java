@@ -38,5 +38,6 @@ public class German extends Language {
     dictado.put("atras", "Rückkehr");
     dictado.put("minutos", "Minuten");
     dictado.put("segundos", "Sekunden");
+    dictado.put("repita", "Bitte wiederholen");
   }
 }

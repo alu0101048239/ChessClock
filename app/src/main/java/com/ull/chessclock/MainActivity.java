@@ -86,20 +86,14 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (matchesFound != null) {
           keeper = matchesFound.get(0);
           Toast.makeText(MainActivity.this, "Result = " + keeper, Toast.LENGTH_LONG).show();
-          switch (keeper) {
-            case "ajustes":
-              Opciones();
-              break;
-            case "parar":
-            case "pausa":
-              Pausar();
-              break;
-            case "fin":
-            case "final":
-              Resetear();
-              break;
-            default:
-              voz.Speak("Repita, por favor");
+          if (keeper.toUpperCase().equals(voz.GetLanguage().GetTagById("ajustes"))) {
+            Opciones();
+          } else if (keeper.equals("pausa") || keeper.equals("pause")){
+            Pausar();
+          } else if (keeper.equals("parar") || keeper.equals("stop")) {
+            Resetear();
+          } else {
+            voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
           }
         }
       }
@@ -234,13 +228,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   @Override
   public boolean dispatchKeyEvent(KeyEvent event) {
     int keyCode = event.getKeyCode();
-    switch (keyCode) {
-      case KeyEvent.KEYCODE_VOLUME_UP:
-        speechRecognizer.startListening(speechRecognizerIntent);
-        keeper = "";
-        return true;
-      default:
-        return super.dispatchKeyEvent(event);
+    if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+      speechRecognizer.startListening(speechRecognizerIntent);
+      keeper = "";
+      return true;
     }
+    return super.dispatchKeyEvent(event);
   }
 }

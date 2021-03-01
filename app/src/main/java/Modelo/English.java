@@ -40,5 +40,6 @@ public class English extends Language {
     dictado.put("atras", "Back");
     dictado.put("minutos", "Minutes");
     dictado.put("segundos", "Seconds");
+    dictado.put("repita", "Repeat, please");
   }
 }
