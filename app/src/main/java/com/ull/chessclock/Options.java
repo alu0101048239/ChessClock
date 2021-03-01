@@ -48,9 +48,9 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     ajustesVoz = (Button) findViewById(R.id.ajustesVoz);
     modo_juego = (TextView) findViewById(R.id.juego);
     ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
-    ajustes.setText(voz.GetLanguage().GetTagById("idioma"));
-    ajustes.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
-    ajustes.setText(voz.GetLanguage().GetTagById("juego"));
+    lenguaje.setText(voz.GetLanguage().GetTagById("idioma"));
+    ajustesVoz.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
+    modo_juego.setText(voz.GetLanguage().GetTagById("juego"));
   }
 
   public void onInit(int status) {
@@ -108,9 +108,9 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
       voz.SetLanguage("es_ES");
     }
     ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
-    ajustes.setText(voz.GetLanguage().GetTagById("idioma"));
-    ajustes.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
-    ajustes.setText(voz.GetLanguage().GetTagById("juego"));
+    lenguaje.setText(voz.GetLanguage().GetTagById("idioma"));
+    ajustesVoz.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
+    modo_juego.setText(voz.GetLanguage().GetTagById("juego"));
     textToSpeech = voz.GetTextToSpeech();
     voz.Speak(voz.GetLanguage().GetDictadoById("idioma"));
     ReturnData();
