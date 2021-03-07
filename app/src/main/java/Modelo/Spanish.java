@@ -23,6 +23,7 @@ public class Spanish extends Language {
     etiquetas.put("ajustes_voz", "Ajustes de voz");
     etiquetas.put("cambiar_voz", "Cambiar voz");
     etiquetas.put("cambiar_tono", "Cambiar tono");
+    etiquetas.put("tono", "tono");
   }
 
   private void SetDictado() {
@@ -39,5 +40,10 @@ public class Spanish extends Language {
     dictado.put("minutos", "Minutos");
     dictado.put("segundos", "Segundos");
     dictado.put("repita", "Repita, por favor");
+    dictado.put("blancas", "blancas");
+    dictado.put("negras", "negras");
+    dictado.put("tono_actual", "tono actual");
+    dictado.put("velocidad_actual", "velocidad actual");
+    dictado.put("atras", "atrás");
   }
 }

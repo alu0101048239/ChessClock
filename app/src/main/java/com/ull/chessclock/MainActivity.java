@@ -40,9 +40,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   Voice voz;
   static MediaPlayer mp;
   private ConstraintLayout parentConstraintLayout;
-  private SpeechRecognizer speechRecognizer;
-  private Intent speechRecognizerIntent;
-  private String keeper = "";
+  SpeechRecognizer speechRecognizer;
+  Intent speechRecognizerIntent;
+  String keeper = "";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +86,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (matchesFound != null) {
           keeper = matchesFound.get(0);
           Toast.makeText(MainActivity.this, "Result = " + keeper, Toast.LENGTH_LONG).show();
-          if (keeper.toUpperCase().equals(voz.GetLanguage().GetTagById("ajustes"))) {
-            Opciones();
-          } else if (keeper.equals("pausa") || keeper.equals("pause")){
-            Pausar();
-          } else if (keeper.equals("parar") || keeper.equals("stop")) {
-            Resetear();
-          } else {
-            voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
-          }
+          VoiceManagement(keeper);
         }
       }
 
@@ -113,6 +105,22 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         startActivity(intent);
         finish();
       }
+    }
+  }
+
+  private void VoiceManagement(String keeper) {
+    if (keeper.toUpperCase().equals(voz.GetLanguage().GetTagById("ajustes"))) {
+      Opciones();
+    } else if (keeper.equals("pausa") || keeper.equals("pause")) {
+      Pausar();
+    } else if (keeper.equals("parar") || keeper.equals("stop")) {
+      Resetear();
+    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("blancas"))) {
+      WhiteTime();
+    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("negras"))) {
+      BlackTime();
+    } else {
+      voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
     }
   }
 
@@ -152,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     mp.start();
   }
 
-  public void SpeakWhiteTime(View view) {
+  public void WhiteTime() {
     int minutos = secondPlayer.GetMinutos();
     int segundos = secondPlayer.GetSegundos();
     String time = voz.SetTime(minutos, segundos);
@@ -160,7 +168,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     voz.Speak(time);
   }
 
-  public void SpeakBlackTime(View view) {
+  public void SpeakWhiteTime(View view) {
+    WhiteTime();
+  }
+
+  public void BlackTime() {
     int minutos = firstPlayer.GetMinutos();
     int segundos = firstPlayer.GetSegundos();
     String time = voz.SetTime(minutos, segundos);
@@ -168,12 +180,15 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     voz.Speak(time);
   }
 
+  public void SpeakBlackTime(View view) {
+    BlackTime();
+  }
+
   public void Options(View view) {
     Opciones();
   }
 
   public void Opciones() {
-    speechRecognizer.stopListening();
     voz.Speak(voz.GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
     intent.putExtra("lenguaje_actual", voz.GetLanguage().GetLanguage());
@@ -212,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == 0) {
       if (resultCode == Activity.RESULT_OK) {
+        assert data != null;
         float newSpeed = (float)data.getExtras().getSerializable("Velocidad");
         String newLanguage = (String)data.getExtras().getSerializable("Idioma");
         String voice = (String) data.getExtras().getSerializable("Voz");

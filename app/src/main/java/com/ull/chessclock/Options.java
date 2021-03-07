@@ -3,13 +3,22 @@ package com.ull.chessclock;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Objects;
 
 public class Options extends MainActivity implements AdapterView.OnItemSelectedListener {
   Spinner language;
@@ -17,13 +26,14 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
   TextView lenguaje;
   Button ajustesVoz;
   TextView modo_juego;
+  String keeper = "";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_options);
     Bundle state = getIntent().getExtras();
-    voz.SetLanguage(state.getString("lenguaje_actual"));
+    voz.SetLanguage(Objects.requireNonNull(state.getString("lenguaje_actual")));
     voz.SetSpeed(state.getFloat("velocidad_actual"));
     voz.SetPitch(state.getFloat("tono_actual"));
 
@@ -51,6 +61,45 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     lenguaje.setText(voz.GetLanguage().GetTagById("idioma"));
     ajustesVoz.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
     modo_juego.setText(voz.GetLanguage().GetTagById("juego"));
+    speechRecognizer = SpeechRecognizer.createSpeechRecognizer(Options.this);
+    speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+    speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+    speechRecognizer.setRecognitionListener(new RecognitionListener() {
+      @Override
+      public void onReadyForSpeech(Bundle params) {}
+
+      @Override
+      public void onBeginningOfSpeech() {}
+
+      @Override
+      public void onRmsChanged(float rmsdB) {}
+
+      @Override
+      public void onBufferReceived(byte[] buffer) {}
+
+      @Override
+      public void onEndOfSpeech() {}
+
+      @Override
+      public void onError(int error) {}
+
+      @Override
+      public void onResults(Bundle results) {
+        ArrayList<String> matchesFound = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        if (matchesFound != null) {
+          keeper = matchesFound.get(0);
+          Toast.makeText(Options.this, "Result = " + keeper, Toast.LENGTH_LONG).show();
+          VoiceManagement(keeper);
+        }
+      }
+
+      @Override
+      public void onPartialResults(Bundle partialResults) {}
+
+      @Override
+      public void onEvent(int eventType, Bundle params) {}
+    });
   }
 
   public void onInit(int status) {
@@ -69,6 +118,10 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
   }
 
   public void VoiceSettings(View view) {
+    VoiceMenu();
+  }
+
+  public void VoiceMenu() {
     voz.Speak(voz.GetLanguage().GetTagById("ajustes_voz"));
     Intent intent = new Intent(this, VoiceSettings.class);
     intent.putExtra("lenguaje_actual", voz.GetLanguage().GetLanguage());
@@ -76,6 +129,27 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     intent.putExtra("voz_actual", voz.GetVoice());
     intent.putExtra("tono_actual", voz.GetPitch());
     startActivityForResult(intent, 0);
+  }
+
+  private void VoiceManagement(String keeper) {
+    if (keeper.equals(voz.GetLanguage().GetTagById("ajustes_voz").toLowerCase())) {
+      VoiceMenu();
+    } else if (keeper.equals("idioma") || keeper.equals("language") || keeper.equals("sprache")) {
+      voz.Speak(voz.GetLanguage().GetDictadoById("idioma"));
+    } else if (keeper.equals("español")) {
+      language.setSelection(0);
+    } else if (keeper.equals("english")) {
+      language.setSelection(1);
+    } else if (keeper.equals("deutsche")) {
+      language.setSelection(2);
+    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("atras"))) {
+      voz.Speak(voz.GetLanguage().GetDictadoById("atras"));
+      super.onBackPressed();
+    }
+
+    else {
+      voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
+    }
   }
 
   @Override
@@ -88,6 +162,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
         String voice = (String)data.getExtras().getSerializable("Voz");
         float pitch = (Float)data.getExtras().getSerializable("Tono");
         voz.SetSpeed(newSpeed);
+        assert newLanguage != null;
         voz.SetLanguage(newLanguage);
         voz.SetVoice(voice);
         voz.SetPitch(pitch);
@@ -114,6 +189,12 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     textToSpeech = voz.GetTextToSpeech();
     voz.Speak(voz.GetLanguage().GetDictadoById("idioma"));
     ReturnData();
+  }
+
+  @Override
+  public void onBackPressed() {
+    voz.Speak(voz.GetLanguage().GetDictadoById("atras"));
+    super.onBackPressed();
   }
 
   @Override

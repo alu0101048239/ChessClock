@@ -25,6 +25,7 @@ public class English extends Language {
     etiquetas.put("ajustes_voz", "Voice settings");
     etiquetas.put("cambiar_voz", "Change voice");
     etiquetas.put("cambiar_tono", "Change pitch");
+    etiquetas.put("tono", "pitch");
   }
 
   private void SetDictado() {
@@ -41,5 +42,10 @@ public class English extends Language {
     dictado.put("minutos", "Minutes");
     dictado.put("segundos", "Seconds");
     dictado.put("repita", "Repeat, please");
+    dictado.put("blancas", "white");
+    dictado.put("negras", "black");
+    dictado.put("tono_actual", "current pitch");
+    dictado.put("velocidad_actual", "current speed");
+    dictado.put("atras", "back");
   }
 }

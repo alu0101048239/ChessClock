@@ -23,6 +23,8 @@ public class German extends Language {
     etiquetas.put("ajustes_voz", "Spracheinstellungen");
     etiquetas.put("cambiar_voz", "Stimme ändern");
     etiquetas.put("cambiar_tono", "Ton wechseln");
+    etiquetas.put("tono", "ton");
+
   }
 
   private void SetDictado() {
@@ -39,5 +41,9 @@ public class German extends Language {
     dictado.put("minutos", "Minuten");
     dictado.put("segundos", "Sekunden");
     dictado.put("repita", "Bitte wiederholen");
+    dictado.put("blancas", "Weiß");
+    dictado.put("negras", "schwarz");
+    dictado.put("tono_actual", "aktueller geschwindigkeit");
+    dictado.put("atras", "zurück");
   }
 }
