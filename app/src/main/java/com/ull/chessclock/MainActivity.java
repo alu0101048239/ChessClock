@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     setContentView(R.layout.activity_main);
     firstPlayer = new Clock("1");
     secondPlayer = new Clock("2");
-    b1 = (Button)findViewById(R.id.negras);
-    b2 = (Button)findViewById(R.id.blancas);
+    b1 = findViewById(R.id.negras);
+    b2 = findViewById(R.id.blancas);
+    b2.setEnabled(false);
     textToSpeech = new TextToSpeech(this, this, "com.google.android.tts");
     voz = new Voice(textToSpeech);
     mp = MediaPlayer.create(this, R.raw.button_sound);
@@ -119,6 +120,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
       WhiteTime();
     } else if (keeper.equals(voz.GetLanguage().GetDictadoById("negras"))) {
       BlackTime();
+    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("mover"))) {
+      if (b2.isEnabled()) {
+        MovePlayer2();
+      } else {
+        MovePlayer1();
+      }
     } else {
       voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
     }
@@ -127,8 +134,16 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   public void onInit(int status) {}
 
   public void PlayerOne(View view) {
-    findViewById(R.id.negras).setEnabled(false);
-    findViewById(R.id.blancas).setEnabled(true);
+    MovePlayer1();
+  }
+
+  public void PlayerTwo(View view) {
+    MovePlayer2();
+  }
+
+  public void MovePlayer1() {
+    b1.setEnabled(false);
+    b2.setEnabled(true);
     t2 = new Timer();
     firstPlayer.Pause(t1);
     b2.setBackgroundResource(R.color.material_on_background_emphasis_medium);
@@ -143,9 +158,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     mp.start();
   }
 
-  public void PlayerTwo(View view) {
-    findViewById(R.id.blancas).setEnabled(false);
-    findViewById(R.id.negras).setEnabled(true);
+  public void MovePlayer2() {
+    b2.setEnabled(false);
+    b1.setEnabled(true);
     t1 = new Timer();
     secondPlayer.Pause(t2);
     b1.setBackgroundResource(R.color.material_on_background_emphasis_medium);

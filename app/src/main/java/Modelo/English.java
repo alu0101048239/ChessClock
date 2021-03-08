@@ -47,5 +47,6 @@ public class English extends Language {
     dictado.put("tono_actual", "current pitch");
     dictado.put("velocidad_actual", "current speed");
     dictado.put("atras", "back");
+    dictado.put("mover", "go");
   }
 }

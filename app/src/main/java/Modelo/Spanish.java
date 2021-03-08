@@ -45,5 +45,6 @@ public class Spanish extends Language {
     dictado.put("tono_actual", "tono actual");
     dictado.put("velocidad_actual", "velocidad actual");
     dictado.put("atras", "atrás");
+    dictado.put("mover", "ya");
   }
 }

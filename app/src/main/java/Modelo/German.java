@@ -45,5 +45,6 @@ public class German extends Language {
     dictado.put("negras", "schwarz");
     dictado.put("tono_actual", "aktueller geschwindigkeit");
     dictado.put("atras", "zurück");
+    dictado.put("mover", "gleich");
   }
 }

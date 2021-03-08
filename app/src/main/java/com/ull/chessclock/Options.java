@@ -13,9 +13,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
