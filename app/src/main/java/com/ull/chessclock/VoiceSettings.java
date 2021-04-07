@@ -48,7 +48,7 @@ public class VoiceSettings extends Options {
     agudo.setText(voz.GetLanguage().GetTagById("agudo"));
     grave.setText(voz.GetLanguage().GetTagById("grave"));
     set_assistant.setText(voz.GetLanguage().GetTagById("asistente"));
-    set_assistant.setChecked(true);
+    set_assistant.setChecked(state.getBoolean("asistente_actual"));
 
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(VoiceSettings.this);
     speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -166,8 +166,8 @@ public class VoiceSettings extends Options {
       set_assistant.setChecked(true);
       voz.Assistant(true);
       voz.Speak(voz.GetLanguage().GetDictadoById("asistente_on"));
-      ReturnData();
     }
+    ReturnData();
   }
 
   private void VoiceManagement(String keeper) {
