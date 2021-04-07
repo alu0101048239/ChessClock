@@ -8,6 +8,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class VoiceSettings extends Options {
   Button agudo;
   Button grave;
   TextView tono;
+  CheckBox set_assistant;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +32,14 @@ public class VoiceSettings extends Options {
     voz.SetSpeed(state.getFloat("velocidad_actual"));
     voz.SetVoice(state.getString("voz_actual"));
     voz.SetPitch(state.getFloat("tono_actual"));
+    voz.Assistant(state.getBoolean("asistente_actual"));
 
     velocidad = (TextView) findViewById(R.id.title);
     velocidad.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
     cambio_velocidad = (TextView) findViewById(R.id.velocidad);
     cambio_velocidad.setText(voz.GetLanguage().GetTagById("velocidad"));
     cambio_voz = (TextView) findViewById(R.id.cambiarVoz);
+    set_assistant = (CheckBox) findViewById(R.id.asistente);
     cambio_voz.setText(voz.GetLanguage().GetTagById("cambiar_voz"));
     agudo = (Button) findViewById(R.id.masAgudo);
     grave = (Button) findViewById(R.id.masGrave);
@@ -43,6 +47,8 @@ public class VoiceSettings extends Options {
     tono.setText(voz.GetLanguage().GetTagById("cambiar_tono"));
     agudo.setText(voz.GetLanguage().GetTagById("agudo"));
     grave.setText(voz.GetLanguage().GetTagById("grave"));
+    set_assistant.setText(voz.GetLanguage().GetTagById("asistente"));
+    set_assistant.setChecked(true);
 
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(VoiceSettings.this);
     speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -117,6 +123,7 @@ public class VoiceSettings extends Options {
     returnIntent.putExtra("Idioma", voz.GetLanguage().GetLanguage());
     returnIntent.putExtra("Voz", voz.GetVoice());
     returnIntent.putExtra("Tono", voz.GetPitch());
+    returnIntent.putExtra("Asistente", voz.GetAssistant());
     setResult(Activity.RESULT_OK, returnIntent);
   }
 
@@ -148,6 +155,19 @@ public class VoiceSettings extends Options {
     voz.ChangePitch((float) -0.25);
     voz.Speak(voz.GetLanguage().GetDictadoById("grave"));
     ReturnData();
+  }
+
+  public void Assistant(View view) {
+    if (!set_assistant.isChecked()) {
+      set_assistant.setChecked(false);
+      voz.Speak(voz.GetLanguage().GetDictadoById("asistente_off"));
+      voz.Assistant(false);
+    } else {
+      set_assistant.setChecked(true);
+      voz.Assistant(true);
+      voz.Speak(voz.GetLanguage().GetDictadoById("asistente_on"));
+      ReturnData();
+    }
   }
 
   private void VoiceManagement(String keeper) {

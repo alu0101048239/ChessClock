@@ -25,7 +25,8 @@ public class English extends Language {
     etiquetas.put("ajustes_voz", "Voice settings");
     etiquetas.put("cambiar_voz", "Change voice");
     etiquetas.put("cambiar_tono", "Change pitch");
-    etiquetas.put("tono", "pitch");
+    etiquetas.put("tono", "Pitch");
+    etiquetas.put("asistente", "Voice assistant");
   }
 
   private void SetDictado() {
@@ -48,5 +49,7 @@ public class English extends Language {
     dictado.put("velocidad_actual", "current speed");
     dictado.put("atras", "back");
     dictado.put("mover", "go");
+    dictado.put("asistente_on", "voice assistant enabled");
+    dictado.put("asistente_off", "voice assistant disabled");
   }
 }

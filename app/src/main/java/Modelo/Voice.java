@@ -13,6 +13,7 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
   String voice; // timbre
   float pitch; // tono
   int iterator;
+  boolean asistente;
 
   @Override
   public void onInit(int status) {}
@@ -24,6 +25,7 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
     SetLanguage("es_ES"); // idioma por defecto (español)
     SetVoice(languagee.GetVoces()[0]); // voz por defecto
     iterator = 1;
+    asistente = true;
   }
 
   public TextToSpeech GetTextToSpeech() {
@@ -117,7 +119,17 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
     return voice;
   }
 
+  public void Assistant(boolean state) {
+    asistente = state;
+  }
+
+  public boolean GetAssistant() {
+    return asistente;
+  }
+
   public void Speak(String words) {
-    textToSpeech.speak(words, TextToSpeech.QUEUE_FLUSH, null, null);
+    if (asistente) {
+      textToSpeech.speak(words, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
   }
 }

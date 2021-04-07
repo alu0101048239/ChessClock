@@ -34,6 +34,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     voz.SetLanguage(Objects.requireNonNull(state.getString("lenguaje_actual")));
     voz.SetSpeed(state.getFloat("velocidad_actual"));
     voz.SetPitch(state.getFloat("tono_actual"));
+    voz.Assistant(state.getBoolean("asistente_actual"));
 
     /* Seleccionar idioma */
     language = (Spinner) findViewById(R.id.languageSpinner);
@@ -112,6 +113,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     returnIntent.putExtra("Idioma", voz.GetLanguage().GetLanguage());
     returnIntent.putExtra("Voz", voz.GetVoice());
     returnIntent.putExtra("Tono", voz.GetPitch());
+    returnIntent.putExtra("Asistente", voz.GetAssistant());
     setResult(Activity.RESULT_OK, returnIntent);
   }
 
@@ -126,6 +128,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     intent.putExtra("velocidad_actual", voz.GetSpeed());
     intent.putExtra("voz_actual", voz.GetVoice());
     intent.putExtra("tono_actual", voz.GetPitch());
+    intent.putExtra("asistente_actual", voz.GetAssistant());
     startActivityForResult(intent, 0);
   }
 
@@ -159,11 +162,13 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
         String newLanguage = (String)data.getExtras().getSerializable("Idioma");
         String voice = (String)data.getExtras().getSerializable("Voz");
         float pitch = (Float)data.getExtras().getSerializable("Tono");
+        boolean asistente = (Boolean)data.getExtras().getSerializable("Asistente");
         voz.SetSpeed(newSpeed);
         assert newLanguage != null;
         voz.SetLanguage(newLanguage);
         voz.SetVoice(voice);
         voz.SetPitch(pitch);
+        voz.Assistant(asistente);
         textToSpeech = voz.GetTextToSpeech();
         ReturnData();
       }

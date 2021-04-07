@@ -146,8 +146,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     b2.setEnabled(true);
     t2 = new Timer();
     firstPlayer.Pause(t1);
-    b2.setBackgroundResource(R.color.material_on_background_emphasis_medium);
-    b1.setBackgroundColor(Color.BLACK);
     TimerTask tarea = new TimerTask() {
       @Override
       public void run() {
@@ -163,8 +161,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     b1.setEnabled(true);
     t1 = new Timer();
     secondPlayer.Pause(t2);
-    b1.setBackgroundResource(R.color.material_on_background_emphasis_medium);
-    b2.setBackgroundResource(R.color.white);
     TimerTask tarea2 = new TimerTask() {
       @Override
       public void run() {
@@ -210,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     intent.putExtra("velocidad_actual", voz.GetSpeed());
     intent.putExtra("voz_actual", voz.GetVoice());
     intent.putExtra("tono_actual", voz.GetPitch());
+    intent.putExtra("asistente_actual", voz.GetAssistant());
     startActivityForResult(intent, 0);
   }
 
@@ -247,10 +244,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         String newLanguage = (String)data.getExtras().getSerializable("Idioma");
         String voice = (String) data.getExtras().getSerializable("Voz");
         float pitch = (Float)data.getExtras().getSerializable("Tono");
+        boolean asistente = (Boolean)data.getExtras().getSerializable("Asistente");
         voz.SetSpeed(newSpeed);
         voz.SetLanguage(newLanguage);
         voz.SetVoice(voice);
         voz.SetPitch(pitch);
+        voz.Assistant(asistente);
         textToSpeech = voz.GetTextToSpeech();
       }
     }
