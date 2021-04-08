@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   public void Opciones() {
+    firstPlayer.Pause(t1);
+    secondPlayer.Pause(t2);
     voz.Speak(voz.GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
     intent.putExtra("lenguaje_actual", voz.GetLanguage().GetLanguage());
