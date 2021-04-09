@@ -3,8 +3,14 @@ package Modelo;
 public class GameMode {
   int time;
   int increment;
+  int MIN;
+  int MAX;
 
   public GameMode () {
+    time = 0;
+    increment = 0;
+    MIN = 0;
+    MAX = 0;
   }
 
   public void SetIncrement(int increment_) {
@@ -13,6 +19,12 @@ public class GameMode {
 
   public int GetIncrement() {
     return increment;
+  }
+
+  public void SetTime(int time_) {
+    if (time_ >= MIN && time_ <= MAX) {
+      time = time_;
+    }
   }
 
   public int GetTime() {
