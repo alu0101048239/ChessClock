@@ -25,19 +25,20 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
   Button ajustesVoz;
   TextView modo_juego;
   String keeper = "";
+  Spinner game;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_options);
     Bundle state = getIntent().getExtras();
-    voz.SetLanguage(Objects.requireNonNull(state.getString("lenguaje_actual")));
+    voz.SetLanguage(state.getString("lenguaje_actual"));
     voz.SetSpeed(state.getFloat("velocidad_actual"));
     voz.SetPitch(state.getFloat("tono_actual"));
     voz.Assistant(state.getBoolean("asistente_actual"));
 
     /* Seleccionar idioma */
-    language = (Spinner) findViewById(R.id.languageSpinner);
+    language = findViewById(R.id.languageSpinner);
     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, android.R.layout.simple_spinner_item);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     language.setAdapter(adapter);
@@ -52,10 +53,27 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
       default:
         language.setSelection(2);
     }
-    ajustes = (TextView) findViewById(R.id.settings);
-    lenguaje = (TextView) findViewById(R.id.language);
-    ajustesVoz = (Button) findViewById(R.id.ajustesVoz);
-    modo_juego = (TextView) findViewById(R.id.juego);
+
+    game = findViewById(R.id.gameSpinner);
+    ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.game, android.R.layout.simple_spinner_item);
+    adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    game.setAdapter(adapter2);
+    game.setOnItemSelectedListener(this);
+    switch (voz.GetLanguage().GetLanguage()) {
+      case "Rápido":
+        game.setSelection(1);
+        break;
+      case "Blitz":
+        game.setSelection(2);
+        break;
+      default:
+        game.setSelection(0);
+    }
+
+    ajustes = findViewById(R.id.settings);
+    lenguaje = findViewById(R.id.language);
+    ajustesVoz = findViewById(R.id.ajustesVoz);
+    modo_juego = findViewById(R.id.juego);
     ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
     lenguaje.setText(voz.GetLanguage().GetTagById("idioma"));
     ajustesVoz.setText(voz.GetLanguage().GetTagById("ajustes_voz"));

@@ -6,4 +6,10 @@
         <item>English</item>
         <item>Deutsche</item>
     </string-array>
+
+    <string-array name="game">
+        <item>Clásico</item>
+        <item>Rápido</item>
+        <item>Blitz</item>
+    </string-array>
 </resources>

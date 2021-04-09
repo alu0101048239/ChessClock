@@ -70,8 +70,8 @@
 
     <TextView
         android:id="@+id/juego"
-        android:layout_width="163dp"
-        android:layout_height="55dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
         android:text=""
         android:textColor="#1E1111"
         android:textSize="30sp"
@@ -86,7 +86,7 @@
         android:id="@+id/languageSpinner"
         android:layout_width="131dp"
         android:layout_height="43dp"
-        android:spinnerMode="dropdown"
+        android:spinnerMode="dialog"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.771"
@@ -106,6 +106,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.285" />
+
+    <Spinner
+        android:id="@+id/gameSpinner"
+        android:layout_width="131dp"
+        android:layout_height="43dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.771"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.619" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
