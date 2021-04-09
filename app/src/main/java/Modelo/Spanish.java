@@ -25,6 +25,8 @@ public class Spanish extends Language {
     etiquetas.put("cambiar_tono", "Cambiar tono");
     etiquetas.put("tono", "tono");
     etiquetas.put("asistente", "Asistente de voz");
+    etiquetas.put("tiempo_blancas", "BLANCAS");
+    etiquetas.put("tiempo_negras", "NEGRAS");
   }
 
   private void SetDictado() {

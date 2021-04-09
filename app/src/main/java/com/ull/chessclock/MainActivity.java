@@ -21,6 +21,7 @@ import android.speech.tts.TextToSpeech;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -34,6 +35,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   Clock secondPlayer;
   Button b1;
   Button b2;
+  Button black_time1;
+  Button black_time2;
+  Button white_time1;
+  Button white_time2;
   Timer t1 = new Timer();
   Timer t2 = new Timer();
   TextToSpeech textToSpeech;
@@ -53,8 +58,16 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     b1 = findViewById(R.id.negras);
     b2 = findViewById(R.id.blancas);
     b2.setEnabled(false);
+    black_time1 = findViewById(R.id.blackTime);
+    black_time2 = findViewById(R.id.blackTime2);
+    white_time1 = findViewById(R.id.whiteTime);
+    white_time2 = findViewById(R.id.whiteTime2);
     textToSpeech = new TextToSpeech(this, this, "com.google.android.tts");
     voz = new Voice(textToSpeech);
+    black_time1.setText(voz.GetLanguage().GetTagById("tiempo_negras"));
+    black_time2.setText(voz.GetLanguage().GetTagById("tiempo_negras"));
+    white_time1.setText(voz.GetLanguage().GetTagById("tiempo_blancas"));
+    white_time2.setText(voz.GetLanguage().GetTagById("tiempo_blancas"));
     mp = MediaPlayer.create(this, R.raw.button_sound);
     checkVoiceCommandPermission();
     parentConstraintLayout = findViewById(R.id.parentConstraintLayout);
@@ -245,12 +258,18 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         String voice = (String) data.getExtras().getSerializable("Voz");
         float pitch = (Float)data.getExtras().getSerializable("Tono");
         boolean asistente = (Boolean)data.getExtras().getSerializable("Asistente");
+        String negras = (String) data.getExtras().getSerializable("Negras");
+        String blancas = (String) data.getExtras().getSerializable("Blancas");
         voz.SetSpeed(newSpeed);
         voz.SetLanguage(newLanguage);
         voz.SetVoice(voice);
         voz.SetPitch(pitch);
         voz.Assistant(asistente);
         textToSpeech = voz.GetTextToSpeech();
+        black_time1.setText(negras);
+        black_time2.setText(negras);
+        white_time1.setText(blancas);
+        white_time2.setText(blancas);
       }
     }
   }

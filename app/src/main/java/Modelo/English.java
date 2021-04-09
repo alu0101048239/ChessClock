@@ -27,6 +27,8 @@ public class English extends Language {
     etiquetas.put("cambiar_tono", "Change pitch");
     etiquetas.put("tono", "Pitch");
     etiquetas.put("asistente", "Voice assistant");
+    etiquetas.put("tiempo_blancas", "WHITE");
+    etiquetas.put("tiempo_negras", "BLACK");
   }
 
   private void SetDictado() {

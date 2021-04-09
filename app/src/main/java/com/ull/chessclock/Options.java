@@ -114,6 +114,8 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     returnIntent.putExtra("Voz", voz.GetVoice());
     returnIntent.putExtra("Tono", voz.GetPitch());
     returnIntent.putExtra("Asistente", voz.GetAssistant());
+    returnIntent.putExtra("Negras", voz.GetLanguage().GetTagById("tiempo_negras"));
+    returnIntent.putExtra("Blancas", voz.GetLanguage().GetTagById("tiempo_blancas"));
     setResult(Activity.RESULT_OK, returnIntent);
   }
 

@@ -25,6 +25,8 @@ public class German extends Language {
     etiquetas.put("cambiar_tono", "Ton wechseln");
     etiquetas.put("tono", "Ton");
     etiquetas.put("asistente", "Sprachassistent");
+    etiquetas.put("tiempo_blancas", "ANZIEHENDER");
+    etiquetas.put("tiempo_negras", "SCHWARZ");
   }
 
   private void SetDictado() {
