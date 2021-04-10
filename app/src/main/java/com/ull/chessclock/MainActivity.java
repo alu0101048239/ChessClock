@@ -58,11 +58,13 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     b1 = findViewById(R.id.negras);
     b2 = findViewById(R.id.blancas);
     b2.setEnabled(false);
+    b1.setText(firstPlayer.StartTime());
+    b2.setText(secondPlayer.StartTime());
     black_time1 = findViewById(R.id.blackTime);
     black_time2 = findViewById(R.id.blackTime2);
     white_time1 = findViewById(R.id.whiteTime);
     white_time2 = findViewById(R.id.whiteTime2);
-    textToSpeech = new TextToSpeech(this, this, "com.google.android.tts");
+    textToSpeech = new TextToSpeech(this,this,"com.google.android.tts");
     voz = new Voice(textToSpeech);
     black_time1.setText(voz.GetLanguage().GetTagById("tiempo_negras"));
     black_time2.setText(voz.GetLanguage().GetTagById("tiempo_negras"));
@@ -155,10 +157,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   public void MovePlayer1() {
+
     b1.setEnabled(false);
     b2.setEnabled(true);
     t2 = new Timer();
     firstPlayer.Pause(t1);
+    b1.setText(firstPlayer.AddIncrement());
     TimerTask tarea = new TimerTask() {
       @Override
       public void run() {
@@ -174,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     b1.setEnabled(true);
     t1 = new Timer();
     secondPlayer.Pause(t2);
+    b2.setText(secondPlayer.AddIncrement());
     TimerTask tarea2 = new TimerTask() {
       @Override
       public void run() {
@@ -260,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         boolean asistente = (Boolean)data.getExtras().getSerializable("Asistente");
         String negras = (String) data.getExtras().getSerializable("Negras");
         String blancas = (String) data.getExtras().getSerializable("Blancas");
+        String mode = (String) data.getExtras().getSerializable("Modo");
         voz.SetSpeed(newSpeed);
         voz.SetLanguage(newLanguage);
         voz.SetVoice(voice);
@@ -270,9 +276,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         black_time2.setText(negras);
         white_time1.setText(blancas);
         white_time2.setText(blancas);
+        firstPlayer.SetMode(mode);
+        secondPlayer.SetMode(mode);
       }
     }
   }
+
 
   @Override
   public boolean dispatchKeyEvent(KeyEvent event) {

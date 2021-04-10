@@ -26,6 +26,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
   TextView modo_juego;
   String keeper = "";
   Spinner game;
+  String game_mode = "Clásico";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +135,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     returnIntent.putExtra("Asistente", voz.GetAssistant());
     returnIntent.putExtra("Negras", voz.GetLanguage().GetTagById("tiempo_negras"));
     returnIntent.putExtra("Blancas", voz.GetLanguage().GetTagById("tiempo_blancas"));
+    returnIntent.putExtra("Modo", game_mode);
     setResult(Activity.RESULT_OK, returnIntent);
   }
 
@@ -197,21 +199,40 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
 
   @Override
   public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-    String idioma = parent.getItemAtPosition(position).toString();
-    if (idioma.equals("English")) {
-      voz.SetLanguage("en_GB");
-    } else if (idioma.equals("Deutsche")) {
-      voz.SetLanguage("de_DE");
-    } else {
-      voz.SetLanguage("es_ES");
+    String spinner = parent.getItemAtPosition(position).toString();
+    switch (spinner) {
+      case "English":
+        voz.SetLanguage("en_GB");
+        ChangeLanguage();
+        break;
+      case "Deutsche":
+        voz.SetLanguage("de_DE");
+        ChangeLanguage();
+        break;
+      case "Español":
+        voz.SetLanguage("es_ES");
+        ChangeLanguage();
+        break;
+      case "Clásico":
+        game_mode = "Clásico";
+        break;
+      case "Rápido":
+        game_mode = "Rápido";
+        break;
+      case "Blitz":
+        game_mode = "Blitz";
+        break;
     }
+    ReturnData();
+  }
+
+  private void ChangeLanguage() {
     ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
     lenguaje.setText(voz.GetLanguage().GetTagById("idioma"));
     ajustesVoz.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
     modo_juego.setText(voz.GetLanguage().GetTagById("juego"));
     textToSpeech = voz.GetTextToSpeech();
     voz.Speak(voz.GetLanguage().GetDictadoById("idioma"));
-    ReturnData();
   }
 
   @Override

@@ -30,4 +30,12 @@ public class GameMode {
   public int GetTime() {
     return time;
   }
+
+  public int GetMin() {
+    return MIN;
+  }
+
+  public int GetMax() {
+    return MAX;
+  }
 }

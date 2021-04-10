@@ -10,13 +10,15 @@ public class Clock extends MainActivity {
   int modalidad;
   String playerId;
   String current_time;
+  GameMode mode;
+  boolean started;
 
   public Clock(String id) {
-    minutos = 30;
-    segundos = 0;
+    SetMode("Blitz"); // modo clásico por defecto
     centesimas = 0;
     playerId = id;
     modalidad = 0;
+    started = false;
   }
 
   public Clock() {
@@ -25,9 +27,19 @@ public class Clock extends MainActivity {
     centesimas = 0;
     playerId = "";
     modalidad = 0;
+    started = false;
+  }
+
+  public String AddIncrement() {
+    if (started) {
+      segundos += mode.GetIncrement();
+      return Start();
+    }
+    return StartTime();
   }
 
   public String Start() {
+    started = true;
     if (centesimas == 0) {
       centesimas = 99;
       if (segundos == 0) {
@@ -39,6 +51,12 @@ public class Clock extends MainActivity {
     } else {
       centesimas--;
     }
+
+    if (segundos > 59) {
+      minutos++;
+      segundos = segundos - 60;
+    }
+
     current_time = SetTime();
     return current_time;
   }
@@ -56,9 +74,10 @@ public class Clock extends MainActivity {
   }
 
   public void Reset() {
-    minutos = 30;
-    segundos = 0;
+    minutos = mode.GetTime();
+    segundos = mode.GetIncrement();
     centesimas = 0;
+    started = false;
   }
 
   public String SetTime() {
@@ -66,23 +85,54 @@ public class Clock extends MainActivity {
     String textSegundos = "";
     String textCentesimas = "";
     if (minutos <= 9) {
-      textMinutos = "0" + String.valueOf(minutos);
+      textMinutos = "0" + minutos;
     } else {
       textMinutos = String.valueOf(minutos);
     }
 
     if (segundos <= 9) {
-      textSegundos = "0" + String.valueOf(segundos);
+      textSegundos = "0" + segundos;
     } else {
       textSegundos = String.valueOf(segundos);
     }
 
     if (centesimas <= 9) {
-      textCentesimas = "0" + String.valueOf(centesimas);
+      textCentesimas = "0" + centesimas;
     } else {
       textCentesimas = String.valueOf(centesimas);
     }
     String time = textMinutos + ":" + textSegundos + ":" + textCentesimas;
+    return time;
+  }
+
+  public void SetMode (String mode_) {
+    switch (mode_) {
+      case "Clásico":
+        mode = new Classic();
+        break;
+      case "Rápido":
+        mode = new Rapid();
+        break;
+      case "Blitz":
+        mode = new Blitz();
+        break;
+    }
+    minutos = mode.GetTime();
+    segundos = mode.GetIncrement();
+  }
+
+  public String StartTime() {
+    String time;
+    if (minutos > 9) {
+      time = "" + minutos + ":";
+    } else {
+      time = "0" + minutos + ":";
+    }
+    if (segundos > 9) {
+      time += segundos + ":00";
+    } else {
+      time += "0" + segundos + ":00";
+    }
     return time;
   }
 }
