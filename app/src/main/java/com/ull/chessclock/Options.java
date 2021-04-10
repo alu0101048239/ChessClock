@@ -215,12 +215,15 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
         break;
       case "Clásico":
         game_mode = "Clásico";
+        voz.Speak(voz.GetLanguage().GetDictadoById("clasico"));
         break;
       case "Rápido":
         game_mode = "Rápido";
+        voz.Speak(voz.GetLanguage().GetDictadoById("rapido"));
         break;
       case "Blitz":
         game_mode = "Blitz";
+        voz.Speak(voz.GetLanguage().GetDictadoById("blitz"));
         break;
     }
     ReturnData();

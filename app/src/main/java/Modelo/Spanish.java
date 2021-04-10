@@ -51,5 +51,8 @@ public class Spanish extends Language {
     dictado.put("mover", "ya");
     dictado.put("asistente_on", "asistente de voz activado");
     dictado.put("asistente_off", "asistente de voz desactivado");
+    dictado.put("clasico", "Ajedrez clásico");
+    dictado.put("rapido", "Ajedrez rápido");
+    dictado.put("blitz", "Ajedrez blitz");
   }
 }

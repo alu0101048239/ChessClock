@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   public void MovePlayer1() {
-
     b1.setEnabled(false);
     b2.setEnabled(true);
     t2 = new Timer();
@@ -278,6 +277,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         white_time2.setText(blancas);
         firstPlayer.SetMode(mode);
         secondPlayer.SetMode(mode);
+        b1.setText(firstPlayer.StartTime());
+        b2.setText(secondPlayer.StartTime());
       }
     }
   }

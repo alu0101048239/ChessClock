@@ -53,5 +53,8 @@ public class English extends Language {
     dictado.put("mover", "go");
     dictado.put("asistente_on", "voice assistant enabled");
     dictado.put("asistente_off", "voice assistant disabled");
+    dictado.put("clasico", "Classical chess");
+    dictado.put("rapido", "Rapid chess");
+    dictado.put("blitz", "Blitz chess");
   }
 }

@@ -14,7 +14,7 @@ public class Clock extends MainActivity {
   boolean started;
 
   public Clock(String id) {
-    SetMode("Blitz"); // modo clásico por defecto
+    SetMode("Clásico"); // modo clásico por defecto
     centesimas = 0;
     playerId = id;
     modalidad = 0;

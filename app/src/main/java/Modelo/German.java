@@ -50,5 +50,8 @@ public class German extends Language {
     dictado.put("mover", "gleich");
     dictado.put("asistente_on", "Sprachassistent aktiviert");
     dictado.put("asistente_off", "Sprachassistent deaktiviert");
+    dictado.put("clasico", "Klassisches Schach");
+    dictado.put("rapido", "Schnellschach");
+    dictado.put("blitz", "Blitzschach");
   }
 }
