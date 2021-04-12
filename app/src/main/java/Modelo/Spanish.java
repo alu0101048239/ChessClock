@@ -1,8 +1,9 @@
 package Modelo;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 
-public class Spanish extends Language {
+public class Spanish extends Language implements Serializable {
   public Spanish() {
 
   }
@@ -54,5 +55,6 @@ public class Spanish extends Language {
     dictado.put("clasico", "Ajedrez clásico");
     dictado.put("rapido", "Ajedrez rápido");
     dictado.put("blitz", "Ajedrez blitz");
+    dictado.put("personalizar", "Personalizar");
   }
 }

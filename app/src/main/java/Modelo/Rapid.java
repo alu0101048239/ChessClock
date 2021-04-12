@@ -1,6 +1,8 @@
 package Modelo;
 
-public class Rapid extends GameMode {
+import java.io.Serializable;
+
+public class Rapid extends GameMode implements Serializable {
 
   public Rapid() {
     MIN = 10;

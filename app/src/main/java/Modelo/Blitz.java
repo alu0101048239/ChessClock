@@ -1,6 +1,8 @@
 package Modelo;
 
-public class Blitz extends GameMode {
+import java.io.Serializable;
+
+public class Blitz extends GameMode implements Serializable {
 
   public Blitz() {
     MIN = 1;

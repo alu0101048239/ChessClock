@@ -1,10 +1,11 @@
 package Modelo;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 
-public class German extends Language {
+public class German extends Language implements Serializable {
   public German() {
-
+    language = "de_DE";
   }
 
   public German(String idioma) {
@@ -53,5 +54,6 @@ public class German extends Language {
     dictado.put("clasico", "Klassisches Schach");
     dictado.put("rapido", "Schnellschach");
     dictado.put("blitz", "Blitzschach");
+    dictado.put("personalizar", "Personifizieren");
   }
 }

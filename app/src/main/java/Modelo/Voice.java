@@ -1,15 +1,12 @@
 package Modelo;
 
-import android.speech.tts.TextToSpeech;
 import com.ull.chessclock.MainActivity;
-import java.util.HashSet;
+import java.io.Serializable;
 import java.util.Locale;
-import java.util.Set;
 
-public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
-  TextToSpeech textToSpeech;
+public class Voice extends MainActivity implements Serializable {
   float speed; // velocidad
-  Language languagee;  // idioma
+  Language language;  // idioma
   String voice; // timbre
   float pitch; // tono
   int iterator;
@@ -18,56 +15,51 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
   @Override
   public void onInit(int status) {}
 
-  public Voice(TextToSpeech textToSpeech_) {
-    textToSpeech = textToSpeech_;
+  public Voice() {
     SetSpeed(1);  // velocidad por defecto
     SetPitch(1); // tono por defecto
     SetLanguage("es_ES"); // idioma por defecto (español)
-    SetVoice(languagee.GetVoces()[0]); // voz por defecto
+    SetVoice(language.GetVoces()[0]); // voz por defecto
     iterator = 1;
     asistente = true;
   }
 
-  public TextToSpeech GetTextToSpeech() {
-    return textToSpeech;
-  }
-
-  public void SetSpeed(float newSpeed) {
+  public float SetSpeed(float newSpeed) {
     speed = newSpeed;
-    textToSpeech.setSpeechRate(newSpeed);
+    return speed;
   }
 
   public float GetSpeed() {
     return speed;
   }
 
-  public void ChangePitch(float pitch_) {
+  public float ChangePitch(float pitch_) {
     pitch += pitch_;
-    SetPitch(pitch);
+    return SetPitch(pitch);
   }
 
-  public void SetPitch(float pitch_) {
+  public float SetPitch(float pitch_) {
     pitch = pitch_;
-    textToSpeech.setPitch(pitch);
+    return pitch;
   }
 
   public float GetPitch() {
     return pitch;
   }
 
-  public void SetLanguage(String newLanguage) {
+  public String SetLanguage(String newLanguage) {
     if (newLanguage.equals("es_ES")) {
-      languagee = new Spanish(newLanguage);
+      language = new Spanish(newLanguage);
     } else if (newLanguage.equals("en_GB")) {
-      languagee = new English(newLanguage);
+      language = new English(newLanguage);
     } else {
-      languagee = new German(newLanguage);
+      language = new German(newLanguage);
     }
-    textToSpeech.setLanguage(new Locale(languagee.GetLanguage()));
+    return language.GetLanguage();
   }
 
   public Language GetLanguage() {
-    return languagee;
+    return language;
   }
 
   public String SetTime(int minutos, int segundos) {
@@ -76,13 +68,13 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
       if (segundos == 0) {
         texto = "Fin del juego";
       } else {
-        texto = String.valueOf(segundos) + languagee.GetDictadoById("segundos");
+        texto = segundos + language.GetDictadoById("segundos");
       }
     } else {
       if (segundos == 0) {
-        texto = String.valueOf(minutos) + languagee.GetDictadoById("minutos");
+        texto = minutos + language.GetDictadoById("minutos");
       } else {
-        texto = String.valueOf(minutos) + " " + String.valueOf(segundos);
+        texto = minutos + " " + segundos;
       }
     }
     return texto;
@@ -90,8 +82,8 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
 
   public String ChangeVoice() {
     String newVoice;
-    newVoice = languagee.GetVoces()[iterator];
-    if (iterator + 1 < languagee.GetVoces().length) {
+    newVoice = language.GetVoces()[iterator];
+    if (iterator + 1 < language.GetVoces().length) {
       iterator++;
     } else {
       iterator = 0;
@@ -99,20 +91,21 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
     return newVoice;
   }
 
-  public void SetVoice(String newVoice) {
+  public Locale SetVoice(String newVoice) {
     voice = newVoice;
-    android.speech.tts.Voice voice_ = null;
-    Set<String> set = new HashSet<>();
     Locale pais = null;
-    if (languagee instanceof English) {
+    if (language instanceof English) {
       pais = new Locale("en", "GB");
-    } else if (languagee instanceof Spanish) {
+    } else if (language instanceof Spanish) {
       pais = new Locale("es", "ES");
     } else {
       pais = new Locale("de", "DE");
     }
-    voice_ = new android.speech.tts.Voice(newVoice, pais, 400, 200, true, set);
-    textToSpeech.setVoice(voice_);
+    return pais;
+  }
+
+  public void SetVoz(String voz) {
+    voice = voz;
   }
 
   public String GetVoice() {
@@ -125,11 +118,5 @@ public class Voice extends MainActivity implements TextToSpeech.OnInitListener {
 
   public boolean GetAssistant() {
     return asistente;
-  }
-
-  public void Speak(String words) {
-    if (asistente) {
-      textToSpeech.speak(words, TextToSpeech.QUEUE_FLUSH, null, null);
-    }
   }
 }

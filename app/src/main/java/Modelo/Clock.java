@@ -1,9 +1,10 @@
 package Modelo;
 
 import com.ull.chessclock.MainActivity;
+import java.io.Serializable;
 import java.util.Timer;
 
-public class Clock extends MainActivity {
+public class Clock extends MainActivity implements Serializable {
   int minutos;
   int segundos;
   int centesimas;
@@ -11,10 +12,11 @@ public class Clock extends MainActivity {
   String playerId;
   String current_time;
   GameMode mode;
+  String mode_string;
   boolean started;
 
   public Clock(String id) {
-    SetMode("Clásico"); // modo clásico por defecto
+    SetMode("Blitz"); // modo clásico por defecto
     centesimas = 0;
     playerId = id;
     modalidad = 0;
@@ -106,6 +108,7 @@ public class Clock extends MainActivity {
   }
 
   public void SetMode (String mode_) {
+    mode_string = mode_;
     switch (mode_) {
       case "Clásico":
         mode = new Classic();
@@ -116,9 +119,16 @@ public class Clock extends MainActivity {
       case "Blitz":
         mode = new Blitz();
         break;
+      case "Personalizar":
+        //
+        break;
     }
     minutos = mode.GetTime();
     segundos = mode.GetIncrement();
+  }
+
+  public String GetMode() {
+    return mode_string;
   }
 
   public String StartTime() {

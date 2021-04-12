@@ -1,6 +1,8 @@
 package Modelo;
 
-public class Classic extends GameMode {
+import java.io.Serializable;
+
+public class Classic extends GameMode implements Serializable {
 
   public Classic() {
     MIN = 60;

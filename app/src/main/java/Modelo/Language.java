@@ -1,8 +1,9 @@
 package Modelo;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 
-public class Language {
+public class Language implements Serializable {
   String language; // nombre del idioma
   String[] voces; // voces disponibles en ese idioma
   Hashtable<String, String> etiquetas; //textview en diferentes idiomas

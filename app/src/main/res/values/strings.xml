@@ -11,5 +11,6 @@
         <item>Clásico</item>
         <item>Rápido</item>
         <item>Blitz</item>
+        <item>Personalizar</item>
     </string-array>
 </resources>

@@ -1,11 +1,18 @@
 package com.ull.chessclock;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,12 +20,20 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Timer;
 
-public class Options extends MainActivity implements AdapterView.OnItemSelectedListener {
+import Modelo.Modelo;
+import Modelo.TTS;
+
+public class Options extends AppCompatActivity implements AdapterView.OnItemSelectedListener, TextToSpeech.OnInitListener {
   Spinner language;
   TextView ajustes;
   TextView lenguaje;
@@ -26,25 +41,26 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
   TextView modo_juego;
   String keeper = "";
   Spinner game;
-  String game_mode = "Clásico";
+  Modelo modelo;
+  TTS tts;
+  SpeechRecognizer speechRecognizer;
+  Intent speechRecognizerIntent;
+  String x;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_options);
-    Bundle state = getIntent().getExtras();
-    voz.SetLanguage(state.getString("lenguaje_actual"));
-    voz.SetSpeed(state.getFloat("velocidad_actual"));
-    voz.SetPitch(state.getFloat("tono_actual"));
-    voz.Assistant(state.getBoolean("asistente_actual"));
-
-    /* Seleccionar idioma */
+    x = "en-gb-x-gbd-local";
+    tts = new TTS(new TextToSpeech(this,this,"com.google.android.tts"));
+    modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
+    //EstablecerValores();
     language = findViewById(R.id.languageSpinner);
     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, android.R.layout.simple_spinner_item);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     language.setAdapter(adapter);
     language.setOnItemSelectedListener(this);
-    switch (voz.GetLanguage().GetLanguage()) {
+    switch (modelo.GetVoz().GetLanguage().GetLanguage()) {
       case "es_ES":
         language.setSelection(0);
         break;
@@ -60,7 +76,7 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     game.setAdapter(adapter2);
     game.setOnItemSelectedListener(this);
-    switch (voz.GetLanguage().GetLanguage()) {
+    switch (modelo.GetVoz().GetLanguage().GetLanguage()) {
       case "Rápido":
         game.setSelection(1);
         break;
@@ -75,10 +91,13 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     lenguaje = findViewById(R.id.language);
     ajustesVoz = findViewById(R.id.ajustesVoz);
     modo_juego = findViewById(R.id.juego);
-    ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
-    lenguaje.setText(voz.GetLanguage().GetTagById("idioma"));
-    ajustesVoz.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
-    modo_juego.setText(voz.GetLanguage().GetTagById("juego"));
+
+    ajustes.setText(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
+    lenguaje.setText(modelo.GetVoz().GetLanguage().GetTagById("idioma"));
+    ajustesVoz.setText(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz"));
+    modo_juego.setText(modelo.GetVoz().GetLanguage().GetTagById("juego"));
+
+    checkVoiceCommandPermission();
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(Options.this);
     speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -120,22 +139,28 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     });
   }
 
-  public void onInit(int status) {
-    Bundle state = getIntent().getExtras();
-    voz.SetVoice(state.getString("voz_actual"));
+  private void checkVoiceCommandPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if ((!(ContextCompat.checkSelfPermission(Options.this, Manifest.permission.RECORD_AUDIO) == (PackageManager.PERMISSION_GRANTED)))) {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
+        finish();
+      }
+    }
   }
 
+  public void onInit(int status) {
+    /*Bundle state = getIntent().getExtras();
+    //modelo.GetVoz().SetVoice(state.getString("voz_actual"));
+    Modelo aux = (Modelo) (state.getSerializable("Modelo"));
+    modelo.GetVoz().SetVoice(aux.GetVoz().GetVoice());*/
+    tts.SetVoice(x, new Locale("en", "GB"));
+
+  }
 
   public void ReturnData() {
     Intent returnIntent = new Intent();
-    returnIntent.putExtra("Velocidad", voz.GetSpeed());
-    returnIntent.putExtra("Idioma", voz.GetLanguage().GetLanguage());
-    returnIntent.putExtra("Voz", voz.GetVoice());
-    returnIntent.putExtra("Tono", voz.GetPitch());
-    returnIntent.putExtra("Asistente", voz.GetAssistant());
-    returnIntent.putExtra("Negras", voz.GetLanguage().GetTagById("tiempo_negras"));
-    returnIntent.putExtra("Blancas", voz.GetLanguage().GetTagById("tiempo_blancas"));
-    returnIntent.putExtra("Modo", game_mode);
+    returnIntent.putExtra("Modelo",  modelo);
     setResult(Activity.RESULT_OK, returnIntent);
   }
 
@@ -144,34 +169,28 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
   }
 
   public void VoiceMenu() {
-    voz.Speak(voz.GetLanguage().GetTagById("ajustes_voz"));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz"));
     Intent intent = new Intent(this, VoiceSettings.class);
-    intent.putExtra("lenguaje_actual", voz.GetLanguage().GetLanguage());
-    intent.putExtra("velocidad_actual", voz.GetSpeed());
-    intent.putExtra("voz_actual", voz.GetVoice());
-    intent.putExtra("tono_actual", voz.GetPitch());
-    intent.putExtra("asistente_actual", voz.GetAssistant());
+    intent.putExtra("Modelo", modelo);
     startActivityForResult(intent, 0);
   }
 
   private void VoiceManagement(String keeper) {
-    if (keeper.equals(voz.GetLanguage().GetTagById("ajustes_voz").toLowerCase())) {
+    if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz").toLowerCase())) {
       VoiceMenu();
     } else if (keeper.equals("idioma") || keeper.equals("language") || keeper.equals("sprache")) {
-      voz.Speak(voz.GetLanguage().GetDictadoById("idioma"));
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("idioma"));
     } else if (keeper.equals("español")) {
       language.setSelection(0);
     } else if (keeper.equals("english")) {
       language.setSelection(1);
     } else if (keeper.equals("deutsche")) {
       language.setSelection(2);
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("atras"))) {
-      voz.Speak(voz.GetLanguage().GetDictadoById("atras"));
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras"))) {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       super.onBackPressed();
-    }
-
-    else {
-      voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
+    } else {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
   }
 
@@ -180,18 +199,8 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == 0) {
       if (resultCode == Activity.RESULT_OK) {
-        float newSpeed = (float)data.getExtras().getSerializable("Velocidad");
-        String newLanguage = (String)data.getExtras().getSerializable("Idioma");
-        String voice = (String)data.getExtras().getSerializable("Voz");
-        float pitch = (Float)data.getExtras().getSerializable("Tono");
-        boolean asistente = (Boolean)data.getExtras().getSerializable("Asistente");
-        voz.SetSpeed(newSpeed);
-        assert newLanguage != null;
-        voz.SetLanguage(newLanguage);
-        voz.SetVoice(voice);
-        voz.SetPitch(pitch);
-        voz.Assistant(asistente);
-        textToSpeech = voz.GetTextToSpeech();
+        modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+        EstablecerValores();
         ReturnData();
       }
     }
@@ -202,45 +211,70 @@ public class Options extends MainActivity implements AdapterView.OnItemSelectedL
     String spinner = parent.getItemAtPosition(position).toString();
     switch (spinner) {
       case "English":
-        voz.SetLanguage("en_GB");
-        ChangeLanguage();
+        ChangeLanguage("en_GB");
         break;
       case "Deutsche":
-        voz.SetLanguage("de_DE");
-        ChangeLanguage();
+        ChangeLanguage("de_DE");
         break;
       case "Español":
-        voz.SetLanguage("es_ES");
-        ChangeLanguage();
+        ChangeLanguage("es_ES");
         break;
       case "Clásico":
-        game_mode = "Clásico";
-        voz.Speak(voz.GetLanguage().GetDictadoById("clasico"));
+        ChangeMode("Clásico");
         break;
       case "Rápido":
-        game_mode = "Rápido";
-        voz.Speak(voz.GetLanguage().GetDictadoById("rapido"));
+        ChangeMode("Rápido");
         break;
       case "Blitz":
-        game_mode = "Blitz";
-        voz.Speak(voz.GetLanguage().GetDictadoById("blitz"));
+        ChangeMode("Blitz");
+        break;
+      case "Personalizar":
+        ChangeMode("Personalizar");
         break;
     }
     ReturnData();
   }
 
-  private void ChangeLanguage() {
-    ajustes.setText(voz.GetLanguage().GetTagById("ajustes"));
-    lenguaje.setText(voz.GetLanguage().GetTagById("idioma"));
-    ajustesVoz.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
-    modo_juego.setText(voz.GetLanguage().GetTagById("juego"));
-    textToSpeech = voz.GetTextToSpeech();
-    voz.Speak(voz.GetLanguage().GetDictadoById("idioma"));
+  @Override
+  public boolean dispatchKeyEvent(KeyEvent event) {
+    int keyCode = event.getKeyCode();
+    if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+      speechRecognizer.startListening(speechRecognizerIntent);
+      keeper = "";
+      return true;
+    }
+    return super.dispatchKeyEvent(event);
+  }
+
+  public void EstablecerValores() {
+    tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
+    tts.SetSpeed(modelo.GetVoz().GetSpeed());
+    tts.SetPitch(modelo.GetVoz().GetPitch());
+    //System.out.println("aqui");
+    tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
+    tts.SetAssistant(modelo.GetVoz().GetAssistant());
+  }
+
+  private void ChangeLanguage(String newLanguage) {
+    modelo.GetVoz().SetLanguage(newLanguage);
+    //System.out.println("alla");
+    tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
+    ajustes.setText(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
+    lenguaje.setText(modelo.GetVoz().GetLanguage().GetTagById("idioma"));
+    ajustesVoz.setText(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz"));
+    modo_juego.setText(modelo.GetVoz().GetLanguage().GetTagById("juego"));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("idioma"));
+  }
+
+  private void ChangeMode(String mode) {
+    modelo.GetFirstPlayer().SetMode(mode);
+    modelo.GetSecondPlayer().SetMode(mode);
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById(mode.toLowerCase()));
   }
 
   @Override
   public void onBackPressed() {
-    voz.Speak(voz.GetLanguage().GetDictadoById("atras"));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
     super.onBackPressed();
   }
 

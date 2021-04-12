@@ -8,7 +8,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -21,58 +20,44 @@ import android.speech.tts.TextToSpeech;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import Modelo.Clock;
-import Modelo.Voice;
+import Modelo.Modelo;
+import Modelo.TTS;
 
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
-  Clock firstPlayer;
-  Clock secondPlayer;
   Button b1;
   Button b2;
   Button black_time1;
   Button black_time2;
   Button white_time1;
   Button white_time2;
-  Timer t1 = new Timer();
-  Timer t2 = new Timer();
-  TextToSpeech textToSpeech;
-  Voice voz;
   static MediaPlayer mp;
-  private ConstraintLayout parentConstraintLayout;
   SpeechRecognizer speechRecognizer;
   Intent speechRecognizerIntent;
   String keeper = "";
+  Modelo modelo;
+  TTS tts;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    firstPlayer = new Clock("1");
-    secondPlayer = new Clock("2");
+    tts = new TTS(new TextToSpeech(this,this,"com.google.android.tts"));
+    modelo = new Modelo();
     b1 = findViewById(R.id.negras);
     b2 = findViewById(R.id.blancas);
     b2.setEnabled(false);
-    b1.setText(firstPlayer.StartTime());
-    b2.setText(secondPlayer.StartTime());
     black_time1 = findViewById(R.id.blackTime);
     black_time2 = findViewById(R.id.blackTime2);
     white_time1 = findViewById(R.id.whiteTime);
     white_time2 = findViewById(R.id.whiteTime2);
-    textToSpeech = new TextToSpeech(this,this,"com.google.android.tts");
-    voz = new Voice(textToSpeech);
-    black_time1.setText(voz.GetLanguage().GetTagById("tiempo_negras"));
-    black_time2.setText(voz.GetLanguage().GetTagById("tiempo_negras"));
-    white_time1.setText(voz.GetLanguage().GetTagById("tiempo_blancas"));
-    white_time2.setText(voz.GetLanguage().GetTagById("tiempo_blancas"));
+    SetButtonsTexts();
     mp = MediaPlayer.create(this, R.raw.button_sound);
     checkVoiceCommandPermission();
-    parentConstraintLayout = findViewById(R.id.parentConstraintLayout);
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
     speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -125,91 +110,83 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   private void VoiceManagement(String keeper) {
-    if (keeper.toUpperCase().equals(voz.GetLanguage().GetTagById("ajustes"))) {
+    if (keeper.toUpperCase().equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes"))) {
       Opciones();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
-      Pausar();
+      modelo.Pausar();
     } else if (keeper.equals("parar") || keeper.equals("stop")) {
-      Resetear();
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("blancas"))) {
-      WhiteTime();
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("negras"))) {
-      BlackTime();
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("mover"))) {
+      modelo.Resetear();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("blancas"))) {
+      modelo.WhiteTime();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("negras"))) {
+      modelo.BlackTime();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("mover"))) {
       if (b2.isEnabled()) {
-        MovePlayer2();
+        MovePlayerTwo();
       } else {
-        MovePlayer1();
+        MovePlayerOne();
       }
     } else {
-      voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
   }
 
   public void onInit(int status) {}
 
+  public TimerTask CreateTask(String player) {
+    TimerTask tarea;
+    if (player == "1") {
+      tarea = new TimerTask() {
+        @Override
+        public void run() {
+          b2.setText(modelo.GetSecondPlayer().Start());
+        }
+      };
+    } else {
+      tarea = new TimerTask() {
+        @Override
+        public void run() {
+          b1.setText(modelo.GetFirstPlayer().Start());
+        }
+      };
+    }
+    return tarea;
+  }
+
+  public void MovePlayerOne() {
+    b1.setEnabled(false);
+    b2.setEnabled(true);
+    b1.setText(modelo.GetFirstPlayer().AddIncrement());
+    TimerTask tarea = CreateTask("1");
+    modelo.MovePlayer1(tarea);
+    mp.start();
+  }
+
+  public void MovePlayerTwo() {
+    b2.setEnabled(false);
+    b1.setEnabled(true);
+    b2.setText(modelo.GetSecondPlayer().AddIncrement());
+    TimerTask tarea = CreateTask("2");
+    modelo.MovePlayer2(tarea);
+    mp.start();
+  }
+
   public void PlayerOne(View view) {
-    MovePlayer1();
+    MovePlayerOne();
   }
 
   public void PlayerTwo(View view) {
-    MovePlayer2();
-  }
-
-  public void MovePlayer1() {
-    b1.setEnabled(false);
-    b2.setEnabled(true);
-    t2 = new Timer();
-    firstPlayer.Pause(t1);
-    b1.setText(firstPlayer.AddIncrement());
-    TimerTask tarea = new TimerTask() {
-      @Override
-      public void run() {
-        b2.setText(secondPlayer.Start());
-      }
-    };
-    t2.scheduleAtFixedRate(tarea, 0, 10);
-    mp.start();
-  }
-
-  public void MovePlayer2() {
-    b2.setEnabled(false);
-    b1.setEnabled(true);
-    t1 = new Timer();
-    secondPlayer.Pause(t2);
-    b2.setText(secondPlayer.AddIncrement());
-    TimerTask tarea2 = new TimerTask() {
-      @Override
-      public void run() {
-        b1.setText(firstPlayer.Start());
-      }
-    };
-    t1.scheduleAtFixedRate(tarea2, 0, 10);
-    mp.start();
-  }
-
-  public void WhiteTime() {
-    int minutos = secondPlayer.GetMinutos();
-    int segundos = secondPlayer.GetSegundos();
-    String time = voz.SetTime(minutos, segundos);
-    textToSpeech = voz.GetTextToSpeech();
-    voz.Speak(time);
+    MovePlayerTwo();
   }
 
   public void SpeakWhiteTime(View view) {
-    WhiteTime();
-  }
-
-  public void BlackTime() {
-    int minutos = firstPlayer.GetMinutos();
-    int segundos = firstPlayer.GetSegundos();
-    String time = voz.SetTime(minutos, segundos);
-    textToSpeech = voz.GetTextToSpeech();
-    voz.Speak(time);
+    String time = modelo.WhiteTime();
+    tts.Speak(time);
   }
 
   public void SpeakBlackTime(View view) {
-    BlackTime();
+    String time = modelo.BlackTime();
+    tts.Speak(time);
   }
 
   public void Options(View view) {
@@ -217,38 +194,22 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
   }
 
   public void Opciones() {
-    voz.Speak(voz.GetLanguage().GetTagById("ajustes"));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
-    intent.putExtra("lenguaje_actual", voz.GetLanguage().GetLanguage());
-    intent.putExtra("velocidad_actual", voz.GetSpeed());
-    intent.putExtra("voz_actual", voz.GetVoice());
-    intent.putExtra("tono_actual", voz.GetPitch());
-    intent.putExtra("asistente_actual", voz.GetAssistant());
+    intent.putExtra("Modelo", modelo);
     startActivityForResult(intent, 0);
   }
 
-  public void Pausar() {
-    firstPlayer.Pause(t1);
-    secondPlayer.Pause(t2);
-    voz.Speak(voz.GetLanguage().GetDictadoById("pausar"));
-  }
-
   public void Pause(View view) {
-    Pausar();
+    modelo.Pausar();
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
   }
 
   public void Reset(View view) {
-    Resetear();
-  }
-
-  public void Resetear() {
-    firstPlayer.Pause(t1);
-    firstPlayer.Reset();
-    secondPlayer.Pause(t2);
-    secondPlayer.Reset();
-    b1.setText(firstPlayer.SetTime());
-    b2.setText(secondPlayer.SetTime());
-    voz.Speak(voz.GetLanguage().GetDictadoById("resetear"));
+    modelo.Resetear();
+    b1.setText(modelo.GetFirstPlayer().SetTime());
+    b2.setText(modelo.GetSecondPlayer().SetTime());
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
   }
 
   @Override
@@ -256,31 +217,21 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == 0) {
       if (resultCode == Activity.RESULT_OK) {
-        assert data != null;
-        float newSpeed = (float)data.getExtras().getSerializable("Velocidad");
-        String newLanguage = (String)data.getExtras().getSerializable("Idioma");
-        String voice = (String) data.getExtras().getSerializable("Voz");
-        float pitch = (Float)data.getExtras().getSerializable("Tono");
-        boolean asistente = (Boolean)data.getExtras().getSerializable("Asistente");
-        String negras = (String) data.getExtras().getSerializable("Negras");
-        String blancas = (String) data.getExtras().getSerializable("Blancas");
-        String mode = (String) data.getExtras().getSerializable("Modo");
-        voz.SetSpeed(newSpeed);
-        voz.SetLanguage(newLanguage);
-        voz.SetVoice(voice);
-        voz.SetPitch(pitch);
-        voz.Assistant(asistente);
-        textToSpeech = voz.GetTextToSpeech();
-        black_time1.setText(negras);
-        black_time2.setText(negras);
-        white_time1.setText(blancas);
-        white_time2.setText(blancas);
-        firstPlayer.SetMode(mode);
-        secondPlayer.SetMode(mode);
-        b1.setText(firstPlayer.StartTime());
-        b2.setText(secondPlayer.StartTime());
+        modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+        EstablecerValores();
       }
     }
+  }
+
+  public void EstablecerValores() {
+    System.out.println("Back: " + modelo.GetVoz().GetVoice());
+    modelo.SetTimers(new Timer(), new Timer());
+    tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
+    tts.SetPitch(modelo.GetVoz().GetPitch());
+    tts.SetSpeed(modelo.GetVoz().GetSpeed());
+    tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
+    tts.SetAssistant(modelo.GetVoz().GetAssistant());
+    SetButtonsTexts();
   }
 
 
@@ -295,10 +246,18 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     return super.dispatchKeyEvent(event);
   }
 
-  @Override
+ @Override
   protected void onPause() {
     super.onPause();
-    firstPlayer.Pause(t1);
-    secondPlayer.Pause(t2);
+    modelo.Pausar();
+  }
+
+  public void SetButtonsTexts() {
+    black_time1.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_negras"));
+    black_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_negras"));
+    white_time1.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
+    white_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
+    b1.setText(modelo.GetFirstPlayer().StartTime());
+    b2.setText(modelo.GetSecondPlayer().StartTime());
   }
 }

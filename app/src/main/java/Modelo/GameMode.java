@@ -1,6 +1,8 @@
 package Modelo;
 
-public class GameMode {
+import java.io.Serializable;
+
+public class GameMode implements Serializable {
   int time;
   int increment;
   int MIN;

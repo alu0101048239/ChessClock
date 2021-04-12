@@ -1,20 +1,31 @@
 package com.ull.chessclock;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.Locale;
+import Modelo.TTS;
+import Modelo.Modelo;
 
-public class VoiceSettings extends Options {
+public class VoiceSettings extends AppCompatActivity implements TextToSpeech.OnInitListener{
   TextView velocidad;
   TextView cambio_velocidad;
   TextView cambio_voz;
@@ -22,35 +33,36 @@ public class VoiceSettings extends Options {
   Button grave;
   TextView tono;
   CheckBox set_assistant;
+  Modelo modelo;
+  SpeechRecognizer speechRecognizer;
+  Intent speechRecognizerIntent;
+  String keeper = "";
+  TTS tts;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_voice);
-    Bundle state = getIntent().getExtras();
-    assert state != null;
-    voz.SetLanguage(state.getString("lenguaje_actual"));
-    voz.SetSpeed(state.getFloat("velocidad_actual"));
-    voz.SetVoice(state.getString("voz_actual"));
-    voz.SetPitch(state.getFloat("tono_actual"));
-    voz.Assistant(state.getBoolean("asistente_actual"));
-
+    tts = new TTS(new TextToSpeech(this,this,"com.google.android.tts"));
+    modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
+    EstablecerValores();
     velocidad = findViewById(R.id.title);
-    velocidad.setText(voz.GetLanguage().GetTagById("ajustes_voz"));
+    velocidad.setText(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz"));
     cambio_velocidad = findViewById(R.id.velocidad);
-    cambio_velocidad.setText(voz.GetLanguage().GetTagById("velocidad"));
+    cambio_velocidad.setText(modelo.GetVoz().GetLanguage().GetTagById("velocidad"));
     cambio_voz = findViewById(R.id.cambiarVoz);
     set_assistant = findViewById(R.id.asistente);
-    cambio_voz.setText(voz.GetLanguage().GetTagById("cambiar_voz"));
+    cambio_voz.setText(modelo.GetVoz().GetLanguage().GetTagById("cambiar_voz"));
     agudo = findViewById(R.id.masAgudo);
     grave = findViewById(R.id.masGrave);
     tono = findViewById(R.id.cambiarTono);
-    tono.setText(voz.GetLanguage().GetTagById("cambiar_tono"));
-    agudo.setText(voz.GetLanguage().GetTagById("agudo"));
-    grave.setText(voz.GetLanguage().GetTagById("grave"));
-    set_assistant.setText(voz.GetLanguage().GetTagById("asistente"));
-    set_assistant.setChecked(state.getBoolean("asistente_actual"));
+    tono.setText(modelo.GetVoz().GetLanguage().GetTagById("cambiar_tono"));
+    agudo.setText(modelo.GetVoz().GetLanguage().GetTagById("agudo"));
+    grave.setText(modelo.GetVoz().GetLanguage().GetTagById("grave"));
+    set_assistant.setText(modelo.GetVoz().GetLanguage().GetTagById("asistente"));
+    set_assistant.setChecked(modelo.GetVoz().GetAssistant());
 
+    checkVoiceCommandPermission();
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(VoiceSettings.this);
     speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -92,12 +104,31 @@ public class VoiceSettings extends Options {
     });
   }
 
+  private void checkVoiceCommandPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if ((!(ContextCompat.checkSelfPermission(VoiceSettings.this, Manifest.permission.RECORD_AUDIO) == (PackageManager.PERMISSION_GRANTED)))) {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
+        finish();
+      }
+    }
+  }
+
+  @Override
+  public boolean dispatchKeyEvent(KeyEvent event) {
+    int keyCode = event.getKeyCode();
+    if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+      speechRecognizer.startListening(speechRecognizerIntent);
+      keeper = "";
+      return true;
+    }
+    return super.dispatchKeyEvent(event);
+  }
+
   public void SubirVelocidad() {
-    voz.SetSpeed(voz.GetSpeed() * 2);
-    textToSpeech = voz.GetTextToSpeech();
-    velocidad.setText(String.valueOf(voz.GetSpeed()));
-    voz.SetLanguage(voz.GetLanguage().GetLanguage());
-    voz.Speak(voz.GetLanguage().GetDictadoById("subir_velocidad"));
+    tts.SetSpeed(modelo.GetVoz().SetSpeed(modelo.GetVoz().GetSpeed() * 2));
+    velocidad.setText(String.valueOf(modelo.GetVoz().GetSpeed()));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("subir_velocidad"));
     ReturnData();
   }
 
@@ -106,11 +137,9 @@ public class VoiceSettings extends Options {
   }
 
   public void BajarVelocidad() {
-    voz.SetSpeed(voz.GetSpeed() / 2);
-    textToSpeech = voz.GetTextToSpeech();
-    velocidad.setText(String.valueOf(voz.GetSpeed()));
-    voz.SetLanguage(voz.GetLanguage().GetLanguage());
-    voz.Speak(voz.GetLanguage().GetDictadoById("bajar_velocidad"));
+    tts.SetSpeed(modelo.GetVoz().SetSpeed(modelo.GetVoz().GetSpeed() / 2));
+    velocidad.setText(String.valueOf(modelo.GetVoz().GetSpeed()));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("bajar_velocidad"));
     ReturnData();
   }
 
@@ -120,11 +149,7 @@ public class VoiceSettings extends Options {
 
   public void ReturnData() {
     Intent returnIntent = new Intent();
-    returnIntent.putExtra("Velocidad", voz.GetSpeed());
-    returnIntent.putExtra("Idioma", voz.GetLanguage().GetLanguage());
-    returnIntent.putExtra("Voz", voz.GetVoice());
-    returnIntent.putExtra("Tono", voz.GetPitch());
-    returnIntent.putExtra("Asistente", voz.GetAssistant());
+    returnIntent.putExtra("Modelo", modelo);
     setResult(Activity.RESULT_OK, returnIntent);
   }
 
@@ -133,8 +158,9 @@ public class VoiceSettings extends Options {
   }
 
   public void ChangingVoice() {
-    voz.SetVoice(voz.ChangeVoice());
-    voz.Speak(voz.GetLanguage().GetDictadoById("cambiar_voz"));
+    String newVoice = modelo.GetVoz().ChangeVoice();
+    tts.SetVoice(newVoice, modelo.GetVoz().SetVoice(newVoice));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("cambiar_voz"));
     ReturnData();
   }
 
@@ -147,50 +173,71 @@ public class VoiceSettings extends Options {
   }
 
   public void MasAgudo() {
-    voz.ChangePitch((float) 0.25);
-    voz.Speak(voz.GetLanguage().GetDictadoById("agudo"));
+    tts.SetPitch(modelo.GetVoz().ChangePitch((float) 0.25));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("agudo"));
     ReturnData();
   }
 
   public void MasGrave() {
-    voz.ChangePitch((float) -0.25);
-    voz.Speak(voz.GetLanguage().GetDictadoById("grave"));
+    tts.SetPitch(modelo.GetVoz().ChangePitch((float) -0.25));
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("grave"));
     ReturnData();
   }
 
   public void Assistant(View view) {
     if (!set_assistant.isChecked()) {
       set_assistant.setChecked(false);
-      voz.Speak(voz.GetLanguage().GetDictadoById("asistente_off"));
-      voz.Assistant(false);
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("asistente_off"));
+      modelo.GetVoz().Assistant(false);
+      tts.SetAssistant(false);
     } else {
       set_assistant.setChecked(true);
-      voz.Assistant(true);
-      voz.Speak(voz.GetLanguage().GetDictadoById("asistente_on"));
+      modelo.GetVoz().Assistant(true);
+      tts.SetAssistant(true);
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("asistente_on"));
     }
     ReturnData();
   }
 
   private void VoiceManagement(String keeper) {
-    if (keeper.equals(voz.GetLanguage().GetTagById("cambiar_voz").toLowerCase())) {
+    if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("cambiar_voz").toLowerCase())) {
       ChangingVoice();
-    } else if (keeper.equals(voz.GetLanguage().GetTagById("tono")) || keeper.equals(voz.GetLanguage().GetTagById("cambiar_tono").toLowerCase())) {
-      voz.Speak(voz.GetLanguage().GetDictadoById("tono_actual"));
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("grave").toLowerCase())) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("tono")) || keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("cambiar_tono").toLowerCase())) {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("tono_actual"));
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("grave").toLowerCase())) {
       MasGrave();
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("agudo").toLowerCase())) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("agudo").toLowerCase())) {
       MasAgudo();
-    } else if (keeper.equals(voz.GetLanguage().GetTagById("velocidad").toLowerCase())) {
-      voz.Speak(voz.GetLanguage().GetDictadoById("velocidad_actual"));
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("subir_velocidad").toLowerCase())) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("velocidad").toLowerCase())) {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("velocidad_actual"));
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("subir_velocidad").toLowerCase())) {
       SubirVelocidad();
-    } else if (keeper.equals(voz.GetLanguage().GetDictadoById("bajar_velocidad").toLowerCase())) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("bajar_velocidad").toLowerCase())) {
       BajarVelocidad();
-    }  else if (keeper.equals(voz.GetLanguage().GetDictadoById("atras"))) {
-      voz.Speak(voz.GetLanguage().GetDictadoById("atras"));
+    }  else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras"))) {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       super.onBackPressed();
     } else {
-      voz.Speak(voz.GetLanguage().GetDictadoById("repita"));
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
+  }
+
+  @Override
+  public void onInit(int status) {
+  }
+
+  public void EstablecerValores() {
+    tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
+    tts.SetSpeed(modelo.GetVoz().GetSpeed());
+    tts.SetPitch(modelo.GetVoz().GetPitch());
+    //System.out.println("aqui");
+    tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
+    tts.SetAssistant(modelo.GetVoz().GetAssistant());
+  }
+
+  @Override
+  public void onBackPressed() {
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
+    super.onBackPressed();
   }
 }
