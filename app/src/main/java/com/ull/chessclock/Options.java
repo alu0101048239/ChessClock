@@ -51,10 +51,10 @@ public class Options extends AppCompatActivity implements AdapterView.OnItemSele
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_options);
-    x = "en-gb-x-gbd-local";
+    x = "en-gb-x-gbg-local";
     tts = new TTS(new TextToSpeech(this,this,"com.google.android.tts"));
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
-    //EstablecerValores();
+    EstablecerValores();
     language = findViewById(R.id.languageSpinner);
     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, android.R.layout.simple_spinner_item);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -150,12 +150,7 @@ public class Options extends AppCompatActivity implements AdapterView.OnItemSele
   }
 
   public void onInit(int status) {
-    /*Bundle state = getIntent().getExtras();
-    //modelo.GetVoz().SetVoice(state.getString("voz_actual"));
-    Modelo aux = (Modelo) (state.getSerializable("Modelo"));
-    modelo.GetVoz().SetVoice(aux.GetVoz().GetVoice());*/
-    tts.SetVoice(x, new Locale("en", "GB"));
-
+    tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
   }
 
   public void ReturnData() {
