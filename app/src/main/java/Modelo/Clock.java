@@ -4,7 +4,7 @@ import com.ull.chessclock.MainActivity;
 import java.io.Serializable;
 import java.util.Timer;
 
-public class Clock extends MainActivity implements Serializable {
+public class Clock implements Serializable {
   int minutos;
   int segundos;
   int centesimas;
@@ -16,7 +16,7 @@ public class Clock extends MainActivity implements Serializable {
   boolean started;
 
   public Clock(String id) {
-    SetMode("Blitz"); // modo clásico por defecto
+    SetMode("Clásico"); // modo clásico por defecto
     centesimas = 0;
     playerId = id;
     modalidad = 0;

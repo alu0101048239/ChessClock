@@ -150,7 +150,7 @@ public class Options extends AppCompatActivity implements AdapterView.OnItemSele
   }
 
   public void onInit(int status) {
-    tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
+    tts.SetVoice(modelo.GetVoz().GetVoice(), new Locale (modelo.GetVoz().GetLanguage().GetLanguage()));
   }
 
   public void ReturnData() {
@@ -245,14 +245,12 @@ public class Options extends AppCompatActivity implements AdapterView.OnItemSele
     tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
     tts.SetSpeed(modelo.GetVoz().GetSpeed());
     tts.SetPitch(modelo.GetVoz().GetPitch());
-    //System.out.println("aqui");
     tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
     tts.SetAssistant(modelo.GetVoz().GetAssistant());
   }
 
   private void ChangeLanguage(String newLanguage) {
     modelo.GetVoz().SetLanguage(newLanguage);
-    //System.out.println("alla");
     tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
     ajustes.setText(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
     lenguaje.setText(modelo.GetVoz().GetLanguage().GetTagById("idioma"));

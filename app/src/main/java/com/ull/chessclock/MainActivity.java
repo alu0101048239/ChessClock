@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     tts = new TTS(new TextToSpeech(this,this,"com.google.android.tts"));
+
     modelo = new Modelo();
     b1 = findViewById(R.id.negras);
     b2 = findViewById(R.id.blancas);
@@ -131,7 +132,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     }
   }
 
-  public void onInit(int status) {}
+  public void onInit(int status) {
+    tts.SetVoice(modelo.GetVoz().GetVoice(),  new Locale (modelo.GetVoz().GetLanguage().GetLanguage()));
+  }
 
   public TimerTask CreateTask(String player) {
     TimerTask tarea;

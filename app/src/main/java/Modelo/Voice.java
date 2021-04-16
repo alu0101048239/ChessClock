@@ -4,16 +4,13 @@ import com.ull.chessclock.MainActivity;
 import java.io.Serializable;
 import java.util.Locale;
 
-public class Voice extends MainActivity implements Serializable {
+public class Voice implements Serializable {
   float speed; // velocidad
   Language language;  // idioma
   String voice; // timbre
   float pitch; // tono
   int iterator;
   boolean asistente;
-
-  @Override
-  public void onInit(int status) {}
 
   public Voice() {
     SetSpeed(1);  // velocidad por defecto
@@ -88,6 +85,7 @@ public class Voice extends MainActivity implements Serializable {
     } else {
       iterator = 0;
     }
+    System.out.println("Nueva voz: " + newVoice);
     return newVoice;
   }
 

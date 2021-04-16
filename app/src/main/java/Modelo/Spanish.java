@@ -52,8 +52,8 @@ public class Spanish extends Language implements Serializable {
     dictado.put("mover", "ya");
     dictado.put("asistente_on", "asistente de voz activado");
     dictado.put("asistente_off", "asistente de voz desactivado");
-    dictado.put("clasico", "Ajedrez clásico");
-    dictado.put("rapido", "Ajedrez rápido");
+    dictado.put("clásico", "Ajedrez clásico");
+    dictado.put("rápido", "Ajedrez rápido");
     dictado.put("blitz", "Ajedrez blitz");
     dictado.put("personalizar", "Personalizar");
   }

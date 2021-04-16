@@ -224,14 +224,13 @@ public class VoiceSettings extends AppCompatActivity implements TextToSpeech.OnI
 
   @Override
   public void onInit(int status) {
-    tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
+    tts.SetVoice(modelo.GetVoz().GetVoice(), new Locale (modelo.GetVoz().GetLanguage().GetLanguage()));
   }
 
   public void EstablecerValores() {
     tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
     tts.SetSpeed(modelo.GetVoz().GetSpeed());
     tts.SetPitch(modelo.GetVoz().GetPitch());
-    //System.out.println("aqui");
     tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
     tts.SetAssistant(modelo.GetVoz().GetAssistant());
   }
