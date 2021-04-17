@@ -106,6 +106,7 @@ public class Clock implements Serializable {
     return final_time;
   }
 
+
   public void SetMode (String mode_) {
     mode_string = mode_;
     switch (mode_) {
