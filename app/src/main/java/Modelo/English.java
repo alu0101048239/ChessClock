@@ -18,7 +18,7 @@ public class English extends Language implements Serializable {
   }
 
   private void SetTags() {
-    etiquetas = new Hashtable<String, String>();
+    etiquetas = new Hashtable<>();
     etiquetas.put("ajustes", "SETTINGS");
     etiquetas.put("idioma", "Language");
     etiquetas.put("juego", "Game modes");

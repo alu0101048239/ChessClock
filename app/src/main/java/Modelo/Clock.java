@@ -1,6 +1,5 @@
 package Modelo;
 
-import com.ull.chessclock.MainActivity;
 import java.io.Serializable;
 import java.util.Timer;
 
@@ -83,9 +82,9 @@ public class Clock implements Serializable {
   }
 
   public String SetTime() {
-    String textMinutos = "";
-    String textSegundos = "";
-    String textCentesimas = "";
+    String textMinutos;
+    String textSegundos;
+    String textCentesimas;
     if (minutos <= 9) {
       textMinutos = "0" + minutos;
     } else {
@@ -103,8 +102,8 @@ public class Clock implements Serializable {
     } else {
       textCentesimas = String.valueOf(centesimas);
     }
-    String time = textMinutos + ":" + textSegundos + ":" + textCentesimas;
-    return time;
+    String final_time = textMinutos + ":" + textSegundos + ":" + textCentesimas;
+    return final_time;
   }
 
   public void SetMode (String mode_) {

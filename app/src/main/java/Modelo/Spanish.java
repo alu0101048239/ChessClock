@@ -40,7 +40,7 @@ public class Spanish extends Language implements Serializable {
     dictado.put("grave", "Más grave");
     dictado.put("pausar", "Juego pausado");
     dictado.put("resetear", "Juego finalizado");
-    dictado.put("atras", "Atrás");  //comprobar
+    dictado.put("atras", "Atrás");
     dictado.put("minutos", "Minutos");
     dictado.put("segundos", "Segundos");
     dictado.put("repita", "Repita, por favor");

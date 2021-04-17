@@ -1,6 +1,5 @@
 package Modelo;
 
-import com.ull.chessclock.MainActivity;
 import java.io.Serializable;
 import java.util.Locale;
 
