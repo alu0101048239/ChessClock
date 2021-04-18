@@ -8,8 +8,6 @@ public class Modelo implements Serializable {
   Clock firstPlayer;
   Clock secondPlayer;
   Voice voz;
-  transient Timer t1 = new Timer();
-  transient Timer t2 = new Timer();
 
   public Modelo() {
     firstPlayer = new Clock("1");
@@ -29,33 +27,16 @@ public class Modelo implements Serializable {
     return voz;
   }
 
-  public void SetTimers(Timer timer1, Timer timer2) {
-    t1 = timer1;
-    t2 = timer2;
-  }
-
-  public void Resetear() {
+  public void Resetear(Timer t1, Timer t2) {
     firstPlayer.Pause(t1);
     firstPlayer.Reset();
     secondPlayer.Pause(t2);
     secondPlayer.Reset();
   }
 
-  public void Pausar() {
+  public void Pausar(Timer t1, Timer t2) {
     firstPlayer.Pause(t1);
     secondPlayer.Pause(t2);
-  }
-
-  public void MovePlayer1(TimerTask tarea) {
-    t2 = new Timer();
-    firstPlayer.Pause(t1);
-    t2.scheduleAtFixedRate(tarea, 0, 10);
-  }
-
-  public void MovePlayer2(TimerTask tarea) {
-    t1 = new Timer();
-    secondPlayer.Pause(t2);
-    t1.scheduleAtFixedRate(tarea, 0, 10);
   }
 
   public String BlackTime() {

@@ -12,7 +12,7 @@ public class GameMode implements Serializable {
     time = 0;
     increment = 0;
     MIN = 0;
-    MAX = 0;
+    MAX = 300;
   }
 
   public void SetIncrement(int increment_) {
@@ -40,4 +40,17 @@ public class GameMode implements Serializable {
   public int GetMax() {
     return MAX;
   }
+
+  public void SetHours(int hours) {}
+
+  public void SetSeconds(int seconds) {}
+
+  public int GetHours() {
+    return 0;
+  }
+
+  public int GetSeconds() {
+    return 0;
+  }
+
 }

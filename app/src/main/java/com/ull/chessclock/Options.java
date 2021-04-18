@@ -105,9 +105,10 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == 0) {
+    if (requestCode == 0 || requestCode == 1) {
       if (resultCode == Activity.RESULT_OK) {
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+        System.out.println("Tiempo: " + modelo.GetFirstPlayer().GetMinutos());
         SetValues();
         ReturnData();
       }
@@ -138,6 +139,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
         break;
       case "Personalizar":
         ChangeMode("Personalizar");
+        Customize();
         break;
     }
     ReturnData();
@@ -161,6 +163,12 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     modelo.GetFirstPlayer().SetMode(mode);
     modelo.GetSecondPlayer().SetMode(mode);
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById(mode.toLowerCase()));
+  }
+
+  public void Customize() {
+    Intent intent = new Intent(this, CustomGame.class);
+    intent.putExtra("Modelo", modelo);
+    startActivityForResult(intent, 1);
   }
 
   @Override

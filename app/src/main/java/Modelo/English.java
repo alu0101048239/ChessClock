@@ -30,6 +30,8 @@ public class English extends Language implements Serializable {
     etiquetas.put("asistente", "Voice assistant");
     etiquetas.put("tiempo_blancas", "WHITE");
     etiquetas.put("tiempo_negras", "BLACK");
+    etiquetas.put("tiempo", "Time");
+    etiquetas.put("incremento", "Increment");
   }
 
   private void SetDictado() {
@@ -50,7 +52,6 @@ public class English extends Language implements Serializable {
     dictado.put("negras", "black");
     dictado.put("tono_actual", "current pitch");
     dictado.put("velocidad_actual", "current speed");
-    dictado.put("atras", "back");
     dictado.put("mover", "go");
     dictado.put("asistente_on", "voice assistant enabled");
     dictado.put("asistente_off", "voice assistant disabled");
@@ -58,5 +59,6 @@ public class English extends Language implements Serializable {
     dictado.put("rapido", "Rapid chess");
     dictado.put("blitz", "Blitz chess");
     dictado.put("personalizar", "Personalize");
+    dictado.put("horas", "Hours");
   }
 }

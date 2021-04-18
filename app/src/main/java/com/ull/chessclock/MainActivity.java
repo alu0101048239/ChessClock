@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import java.util.Timer;
@@ -19,6 +20,8 @@ public class MainActivity extends SuperActivity {
   Button white_time1;
   Button white_time2;
   static MediaPlayer mp;
+  Timer t1;
+  Timer t2;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,8 @@ public class MainActivity extends SuperActivity {
     white_time2 = findViewById(R.id.whiteTime2);
     SetButtonsTexts();
     mp = MediaPlayer.create(this, R.raw.button_sound);
+    t1 = new Timer();
+    t2 = new Timer();
     SetSpeechRecognizer(MainActivity.this);
   }
 
@@ -40,7 +45,7 @@ public class MainActivity extends SuperActivity {
     if (keeper.toUpperCase().equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes"))) {
       Opciones();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
-      modelo.Pausar();
+      modelo.Pausar(t1, t2);
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
     } else if (keeper.equals("parar") || keeper.equals("stop")) {
       Reset();
@@ -61,11 +66,12 @@ public class MainActivity extends SuperActivity {
 
   public TimerTask CreateTask(String player) {
     TimerTask tarea;
-    if (player == "1") {
+    if (player.equals("1")) {
       tarea = new TimerTask() {
         @Override
         public void run() {
           b2.setText(modelo.GetSecondPlayer().Start());
+          GameOver();
         }
       };
     } else {
@@ -73,10 +79,21 @@ public class MainActivity extends SuperActivity {
         @Override
         public void run() {
           b1.setText(modelo.GetFirstPlayer().Start());
+          GameOver();
         }
       };
     }
     return tarea;
+  }
+
+  private void GameOver() {
+    if (modelo.GetFirstPlayer().GetStarted() == 0 || modelo.GetSecondPlayer().GetStarted() == 0) {
+      modelo.Pausar(t1, t2);
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
+      Intent intent = new Intent(this, End.class);
+      intent.putExtra("Modelo", modelo);
+      startActivityForResult(intent, 1);
+    }
   }
 
   public void MovePlayerOne() {
@@ -84,7 +101,9 @@ public class MainActivity extends SuperActivity {
     b2.setEnabled(true);
     b1.setText(modelo.GetFirstPlayer().AddIncrement());
     TimerTask tarea = CreateTask("1");
-    modelo.MovePlayer1(tarea);
+    t2 = new Timer();
+    modelo.GetFirstPlayer().Pause(t1);
+    t2.scheduleAtFixedRate(tarea, 0, 10);
     mp.start();
   }
 
@@ -93,7 +112,9 @@ public class MainActivity extends SuperActivity {
     b1.setEnabled(true);
     b2.setText(modelo.GetSecondPlayer().AddIncrement());
     TimerTask tarea = CreateTask("2");
-    modelo.MovePlayer2(tarea);
+    t1 = new Timer();
+    modelo.GetSecondPlayer().Pause(t2);
+    t1.scheduleAtFixedRate(tarea, 0, 10);
     mp.start();
   }
 
@@ -133,7 +154,7 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Pause(View view) {
-    modelo.Pausar();
+    modelo.Pausar(t1, t2);
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
   }
 
@@ -142,7 +163,7 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Reset() {
-    modelo.Resetear();
+    modelo.Resetear(t1, t2);
     b1.setText(modelo.GetFirstPlayer().SetTime());
     b2.setText(modelo.GetSecondPlayer().SetTime());
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
@@ -156,11 +177,16 @@ public class MainActivity extends SuperActivity {
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
         SetValues();
       }
+    } else if (requestCode == 1) {
+      if (resultCode == Activity.RESULT_OK) {
+        modelo.Resetear(t1, t2);
+        b1.setText(modelo.GetFirstPlayer().SetTime());
+        b2.setText(modelo.GetSecondPlayer().SetTime());
+      }
     }
   }
 
   public void SetValues() {
-    modelo.SetTimers(new Timer(), new Timer());
     super.SetValues();
     SetButtonsTexts();
   }
@@ -168,7 +194,7 @@ public class MainActivity extends SuperActivity {
  @Override
   protected void onPause() {
     super.onPause();
-    modelo.Pausar();
+    modelo.Pausar(t1, t2);
   }
 
   public void SetButtonsTexts() {
@@ -176,6 +202,9 @@ public class MainActivity extends SuperActivity {
     black_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_negras"));
     white_time1.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
     white_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
+    System.out.println("Horas: " + modelo.GetFirstPlayer().GetHoras());
+    System.out.println("Minutos: " + modelo.GetFirstPlayer().GetMinutos());
+    System.out.println("Segundos: " + modelo.GetFirstPlayer().GetSegundos());
     b1.setText(modelo.GetFirstPlayer().StartTime());
     b2.setText(modelo.GetSecondPlayer().StartTime());
   }

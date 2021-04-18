@@ -13,6 +13,16 @@
         android:theme="@style/Theme.ChessClock">
         <activity android:name=".Options"></activity>
         <activity android:name=".VoiceSettings"></activity>
+        <activity
+            android:name=".End"
+            android:excludeFromRecents="true"
+            android:theme="@style/DialogActivity">
+            </activity>
+        <activity
+            android:name=".CustomGame"
+            android:excludeFromRecents="true"
+            android:theme="@style/DialogActivity">
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
