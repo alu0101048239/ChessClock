@@ -30,6 +30,8 @@ public class German extends Language implements Serializable {
     etiquetas.put("tiempo_negras", "SCHWARZ");
     etiquetas.put("tiempo", "Zeit");
     etiquetas.put("incremento", "Zuwachs");
+    etiquetas.put("agudo", "Akut");
+    etiquetas.put("grave", "Tief");
   }
 
   private void SetDictado() {
@@ -52,8 +54,8 @@ public class German extends Language implements Serializable {
     dictado.put("mover", "gleich");
     dictado.put("asistente_on", "Sprachassistent aktiviert");
     dictado.put("asistente_off", "Sprachassistent deaktiviert");
-    dictado.put("clasico", "Klassisches Schach");
-    dictado.put("rapido", "Schnellschach");
+    dictado.put("clásico", "Klassisches Schach");
+    dictado.put("rápido", "Schnellschach");
     dictado.put("blitz", "Blitzschach");
     dictado.put("personalizar", "Personifizieren");
     dictado.put("horas", "Stunden");

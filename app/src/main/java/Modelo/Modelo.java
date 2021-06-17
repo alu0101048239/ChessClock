@@ -2,7 +2,6 @@ package Modelo;
 
 import java.io.Serializable;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class Modelo implements Serializable {
   Clock firstPlayer;
@@ -42,14 +41,12 @@ public class Modelo implements Serializable {
   public String BlackTime() {
     int minutos = firstPlayer.GetMinutos();
     int segundos = firstPlayer.GetSegundos();
-    String time = voz.SetTime(minutos, segundos);
-    return time;
+    return voz.SetTime(minutos, segundos);
   }
 
   public String WhiteTime() {
     int minutos = secondPlayer.GetMinutos();
     int segundos = secondPlayer.GetSegundos();
-    String time = voz.SetTime(minutos, segundos);
-    return time;
+    return voz.SetTime(minutos, segundos);
   }
 }

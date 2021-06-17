@@ -3,6 +3,8 @@
     package="com.ull.chessclock">
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -11,19 +13,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChessClock">
-        <activity android:name=".Options"></activity>
-        <activity android:name=".VoiceSettings"></activity>
+        <activity android:name=".Options" android:screenOrientation="portrait"></activity>
+        <activity android:name=".VoiceSettings" android:screenOrientation="portrait"></activity>
         <activity
             android:name=".End"
             android:excludeFromRecents="true"
-            android:theme="@style/DialogActivity">
+            android:theme="@style/DialogActivity"
+            android:screenOrientation="portrait">
             </activity>
         <activity
             android:name=".CustomGame"
             android:excludeFromRecents="true"
-            android:theme="@style/DialogActivity">
+            android:theme="@style/DialogActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

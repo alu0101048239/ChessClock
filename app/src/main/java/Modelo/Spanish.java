@@ -30,6 +30,8 @@ public class Spanish extends Language implements Serializable {
     etiquetas.put("tiempo_negras", "NEGRAS");
     etiquetas.put("tiempo", "Tiempo");
     etiquetas.put("incremento", "Incremento");
+    etiquetas.put("agudo", "Agudo");
+    etiquetas.put("grave", "Grave");
   }
 
   private void SetDictado() {

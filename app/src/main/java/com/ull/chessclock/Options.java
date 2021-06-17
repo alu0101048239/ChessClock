@@ -1,15 +1,23 @@
 package com.ull.chessclock;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+
+import java.util.Set;
+
 import Modelo.Modelo;
 
 public class Options extends SuperActivity implements AdapterView.OnItemSelectedListener {
@@ -18,16 +26,27 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   TextView lenguaje;
   Button ajustesVoz;
   TextView modo_juego;
+  TextView idioma;
+  TextView juego;
   Spinner game;
+  // BLUETOOTH
+  Button bluet;
+  BluetoothAdapter mBluetoothAdapter;
+  private Set<BluetoothDevice> pairedDevices;
+  ListView lv;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_options);
+    mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    //bluet = findViewById(R.id.bluet);
+    //lv = (ListView)findViewById(R.id.listView);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
     SetValues();
     language = findViewById(R.id.languageSpinner);
-    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, android.R.layout.simple_spinner_item);
+    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, R.layout.spinner_item);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     language.setAdapter(adapter);
     language.setOnItemSelectedListener(this);
@@ -43,7 +62,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     }
 
     game = findViewById(R.id.gameSpinner);
-    ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.game, android.R.layout.simple_spinner_item);
+    ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.game, R.layout.game_spinner);
     adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     game.setAdapter(adapter2);
     game.setOnItemSelectedListener(this);
@@ -62,6 +81,8 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     lenguaje = findViewById(R.id.language);
     ajustesVoz = findViewById(R.id.ajustesVoz);
     modo_juego = findViewById(R.id.juego);
+    idioma = findViewById(R.id.idioma);
+    juego = findViewById(R.id.game_name);
     SetButtonsTexts();
     SetSpeechRecognizer(Options.this);
   }
@@ -74,6 +95,24 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
 
   public void VoiceSettings(View view) {
     VoiceMenu();
+  }
+
+  public void Blue(View view) {
+    if (mBluetoothAdapter == null) {
+      Log.d("Options", "Does not have BT capabilities");
+    }
+    if (!mBluetoothAdapter.isEnabled()) {
+      Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+      startActivityForResult(enableBTIntent, 0);
+      pairedDevices = mBluetoothAdapter.getBondedDevices();
+      //IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+      //registerReceiver(mBroadcastReceiver, BTIntent);
+    }
+    if (mBluetoothAdapter.isEnabled()) {
+      mBluetoothAdapter.disable();
+      //IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+      //registerReceiver(mBroadcastReceiver, BTIntent);
+    }
   }
 
   public void VoiceMenu() {
@@ -94,7 +133,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
       language.setSelection(1);
     } else if (keeper.equals("deutsche")) {
       language.setSelection(2);
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras"))) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       onBackPressed();
     } else {
@@ -120,24 +159,31 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     String spinner = parent.getItemAtPosition(position).toString();
     switch (spinner) {
       case "English":
+        idioma.setText(spinner);
         ChangeLanguage("en_GB");
         break;
       case "Deutsche":
+        idioma.setText(spinner);
         ChangeLanguage("de_DE");
         break;
       case "Español":
+        idioma.setText(spinner);
         ChangeLanguage("es_ES");
         break;
       case "Clásico":
+        juego.setText(spinner);
         ChangeMode("Clásico");
         break;
       case "Rápido":
+        juego.setText(spinner);
         ChangeMode("Rápido");
         break;
       case "Blitz":
+        juego.setText(spinner);
         ChangeMode("Blitz");
         break;
       case "Personalizar":
+        juego.setText(spinner);
         ChangeMode("Personalizar");
         Customize();
         break;

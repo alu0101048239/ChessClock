@@ -135,7 +135,7 @@ public class VoiceSettings extends SuperActivity {
       SubirVelocidad();
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("bajar_velocidad").toLowerCase())) {
       BajarVelocidad();
-    }  else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras"))) {
+    }  else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       onBackPressed();
     } else {
