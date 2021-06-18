@@ -5,7 +5,9 @@ import java.io.Serializable;
 public class Custom extends GameMode implements Serializable {
   int horas;
   int segundos;
-  public Custom() {}
+  public Custom() {
+    name = "Personalize";
+  }
 
   public void SetSeconds(int seconds) {
     segundos = seconds;

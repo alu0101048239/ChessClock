@@ -7,6 +7,7 @@ public class GameMode implements Serializable {
   int increment;
   int MIN;
   int MAX;
+  String name;
 
   public GameMode () {
     time = 0;
@@ -51,6 +52,10 @@ public class GameMode implements Serializable {
 
   public int GetSeconds() {
     return 0;
+  }
+
+  public String GetName() {
+    return name;
   }
 
 }

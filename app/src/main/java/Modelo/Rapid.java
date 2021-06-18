@@ -9,5 +9,6 @@ public class Rapid extends GameMode implements Serializable {
     MAX = 60;
     time = 15;
     increment = 10;
+    name = "Rapid";
   }
 }

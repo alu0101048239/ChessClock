@@ -8,14 +8,18 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.ArrayRes;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import Modelo.Modelo;
@@ -29,6 +33,9 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   TextView idioma;
   TextView juego;
   Spinner game;
+  ArrayAdapter<CharSequence> adapter2;
+  ArrayAdapter<CharSequence> adapter;
+  Boolean spinner_counter;
   // BLUETOOTH
   Button bluet;
   BluetoothAdapter mBluetoothAdapter;
@@ -46,35 +53,42 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
     SetValues();
     language = findViewById(R.id.languageSpinner);
-    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, R.layout.spinner_item);
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    adapter = ArrayAdapter.createFromResource(this, R.array.languages, R.layout.spinner_item);
     language.setAdapter(adapter);
     language.setOnItemSelectedListener(this);
+
+    int game_language;
+
     switch (modelo.GetVoz().GetLanguage().GetLanguage()) {
       case "es_ES":
         language.setSelection(0);
+        game_language = R.array.game_esp;
         break;
       case "en_GB":
         language.setSelection(1);
+        game_language = R.array.game_eng;
         break;
       default:
         language.setSelection(2);
+        game_language = R.array.game_deu;
     }
-
     game = findViewById(R.id.gameSpinner);
-    ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.game, R.layout.game_spinner);
-    adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+    adapter2 = ArrayAdapter.createFromResource(this, game_language, R.layout.game_spinner);
     game.setAdapter(adapter2);
     game.setOnItemSelectedListener(this);
-    switch (modelo.GetVoz().GetLanguage().GetLanguage()) {
-      case "Rápido":
+    switch (modelo.GetFirstPlayer().GetMode().GetName()) {
+      case "Classical":
+        game.setSelection(0);
+        break;
+      case "Rapid":
         game.setSelection(1);
         break;
       case "Blitz":
         game.setSelection(2);
         break;
       default:
-        game.setSelection(0);
+        game.setSelection(3);
     }
 
     ajustes = findViewById(R.id.settings);
@@ -85,6 +99,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     juego = findViewById(R.id.game_name);
     SetButtonsTexts();
     SetSpeechRecognizer(Options.this);
+    spinner_counter = false;
   }
 
   public void ReturnData() {
@@ -147,7 +162,6 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     if (requestCode == 0 || requestCode == 1) {
       if (resultCode == Activity.RESULT_OK) {
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
-        System.out.println("Tiempo: " + modelo.GetFirstPlayer().GetMinutos());
         SetValues();
         ReturnData();
       }
@@ -157,45 +171,64 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   @Override
   public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
     String spinner = parent.getItemAtPosition(position).toString();
-    switch (spinner) {
-      case "English":
-        idioma.setText(spinner);
-        ChangeLanguage("en_GB");
-        break;
-      case "Deutsche":
-        idioma.setText(spinner);
-        ChangeLanguage("de_DE");
-        break;
-      case "Español":
-        idioma.setText(spinner);
-        ChangeLanguage("es_ES");
-        break;
-      case "Clásico":
-        juego.setText(spinner);
-        ChangeMode("Clásico");
-        break;
-      case "Rápido":
-        juego.setText(spinner);
-        ChangeMode("Rápido");
-        break;
-      case "Blitz":
-        juego.setText(spinner);
-        ChangeMode("Blitz");
-        break;
-      case "Personalizar":
-        juego.setText(spinner);
-        ChangeMode("Personalizar");
-        Customize();
-        break;
+    System.out.println("Total: " + parent.getAdapter().getCount());
+
+    if (parent.getAdapter().getCount() == 3) {
+      switch (spinner) {
+        case "English":
+          idioma.setText(spinner);
+          ChangeLanguage("en_GB", R.array.game_eng);
+          break;
+        case "Deutsche":
+          idioma.setText(spinner);
+          ChangeLanguage("de_DE", R.array.game_deu);
+          break;
+        case "Español":
+          idioma.setText(spinner);
+          ChangeLanguage("es_ES", R.array.game_esp);
+          break;
+      }
+    } else if (parent.getAdapter().getCount() == 4) {
+      switch (spinner) {
+        case "Clásico":
+        case "Classical":
+        case "Klassisches":
+          juego.setText(spinner);
+          ChangeMode("Clásico");
+          break;
+        case "Rápido":
+        case "Rapid":
+        case "Schnell":
+          juego.setText(spinner);
+          ChangeMode("Rápido");
+          break;
+        case "Blitz":
+          juego.setText(spinner);
+          ChangeMode("Blitz");
+          break;
+        case "Personalizar":
+        case "Personalize":
+        case "Personifizieren":
+          juego.setText(spinner);
+          ChangeMode("Personalizar");
+          if (spinner_counter) {
+            Customize();
+          }
+          break;
+      }
     }
+    spinner_counter = true;
     ReturnData();
   }
 
-  private void ChangeLanguage(String newLanguage) {
+  private void ChangeLanguage(String newLanguage, int game_spinner) {
     modelo.GetVoz().SetLanguage(newLanguage);
     tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
     SetButtonsTexts();
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("idioma"));
+
+    //adapter2 = ArrayAdapter.createFromResource(this, game_spinner, R.layout.game_spinner);
+    //game.setAdapter(adapter2);
   }
 
   public void SetButtonsTexts() {

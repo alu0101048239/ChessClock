@@ -9,5 +9,6 @@ public class Classic extends GameMode implements Serializable {
     MAX = 120;
     time = 60;
     increment = 30;
+    name = "Classical";
   }
 }

@@ -9,5 +9,6 @@ public class Blitz extends GameMode implements Serializable {
     MAX = 10;
     time = 3;
     increment = 2;
+    name = "Blitz";
   }
 }
