@@ -30,7 +30,7 @@ public class English extends Language implements Serializable {
     etiquetas.put("asistente", "Voice assistant");
     etiquetas.put("tiempo_blancas", "WHITE");
     etiquetas.put("tiempo_negras", "BLACK");
-    etiquetas.put("tiempo", "Time");
+    etiquetas.put("tiempo", "TIME");
     etiquetas.put("incremento", "Increment");
     etiquetas.put("agudo", "High");
     etiquetas.put("grave", "Deep");

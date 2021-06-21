@@ -12,9 +12,11 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -27,6 +29,8 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
   SpeechRecognizer speechRecognizer;
   Intent speechRecognizerIntent;
   String keeper;
+  private static String TAG = "PermissionDemo";
+  private static final int RECORD_REQUEST_CODE = 101;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +44,8 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
     tts.SetVoice(modelo.GetVoz().GetVoice(),  new Locale(modelo.GetVoz().GetLanguage().GetLanguage()));
   }
 
-  public void checkVoiceCommandPermission(Context context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      if ((!(ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == (PackageManager.PERMISSION_GRANTED)))) {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
-        startActivity(intent);
-        finish();
-      }
-    }
-  }
-
   public void SetSpeechRecognizer(Context context) {
-    checkVoiceCommandPermission(context);
+    setupPermissions();
     keeper = "";
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
     speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -119,5 +113,40 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
   public void onBackPressed() {
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
     super.onBackPressed();
+  }
+
+  private void setupPermissions() {
+
+    int permission = ContextCompat.checkSelfPermission(this,
+            Manifest.permission.RECORD_AUDIO);
+
+    if (permission != PackageManager.PERMISSION_GRANTED) {
+      Log.i(TAG, "Permission to record denied");
+      makeRequest();
+    }
+  }
+
+  protected void makeRequest() {
+    ActivityCompat.requestPermissions(this,
+            new String[]{Manifest.permission.RECORD_AUDIO},
+            RECORD_REQUEST_CODE);
+  }
+
+  public void onRequestPermissionsResult(int requestCode,
+                                         String permissions[], int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    switch (requestCode) {
+      case RECORD_REQUEST_CODE: {
+
+        if (grantResults.length == 0
+                || grantResults[0] !=
+                PackageManager.PERMISSION_GRANTED) {
+
+          Log.i(TAG, "Permission has been denied by user");
+        } else {
+          Log.i(TAG, "Permission has been granted by user");
+        }
+      }
+    }
   }
 }

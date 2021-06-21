@@ -1,10 +1,16 @@
 package com.ull.chessclock;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import java.util.Timer;
@@ -201,9 +207,6 @@ public class MainActivity extends SuperActivity {
     black_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_negras"));
     white_time1.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
     white_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
-    System.out.println("Horas: " + modelo.GetFirstPlayer().GetHoras());
-    System.out.println("Minutos: " + modelo.GetFirstPlayer().GetMinutos());
-    System.out.println("Segundos: " + modelo.GetFirstPlayer().GetSegundos());
     b1.setText(modelo.GetFirstPlayer().StartTime());
     b2.setText(modelo.GetSecondPlayer().StartTime());
   }

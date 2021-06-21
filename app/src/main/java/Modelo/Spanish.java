@@ -28,7 +28,7 @@ public class Spanish extends Language implements Serializable {
     etiquetas.put("asistente", "Asistente de voz");
     etiquetas.put("tiempo_blancas", "BLANCAS");
     etiquetas.put("tiempo_negras", "NEGRAS");
-    etiquetas.put("tiempo", "Tiempo");
+    etiquetas.put("tiempo", "TIEMPO");
     etiquetas.put("incremento", "Incremento");
     etiquetas.put("agudo", "Agudo");
     etiquetas.put("grave", "Grave");

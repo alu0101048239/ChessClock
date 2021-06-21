@@ -5,162 +5,273 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#c2c3b9"
+    android:background="#ccc0af"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/negras"
+    <LinearLayout
+        android:id="@+id/vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:onClick="PlayerOne"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="65sp"
-        android:backgroundTint="@color/button_background_color"
-        app:layout_constraintBottom_toTopOf="@+id/options"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/whiteTime2" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100"
+        tools:layout_editor_absoluteX="182dp"
+        tools:layout_editor_absoluteY="138dp">
 
-    <Button
-        android:id="@+id/blancas"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
-        android:onClick="PlayerTwo"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="65sp"
-        android:backgroundTint="@color/button_background_color"
-        app:iconTint="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/whiteTime"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/options" />
 
-    <Button
-        android:id="@+id/whiteTime"
-        android:layout_width="144dp"
-        android:layout_height="77dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="5dp"
-        android:backgroundTint="@color/white"
-        android:onClick="SpeakWhiteTime"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        <LinearLayout
+            android:id="@+id/arriba"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:weightSum="100"
+            android:layout_weight="14"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.015">
 
-    <Button
-        android:id="@+id/whiteTime2"
-        android:layout_width="144dp"
-        android:layout_height="77dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@color/white"
-        android:onClick="SpeakWhiteTime"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
 
-    <Button
-        android:id="@+id/blackTime"
-        android:layout_width="144dp"
-        android:layout_height="77dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:backgroundTint="@color/black"
-        android:onClick="SpeakBlackTime"
-        android:text=""
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.96"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+            <Button
+                android:id="@+id/whiteTime2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="44"
+                android:backgroundTint="@color/white"
+                android:onClick="SpeakWhiteTime"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.04"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/blackTime2"
-        android:layout_width="144dp"
-        android:layout_height="77dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
-        android:backgroundTint="@color/black"
-        android:onClick="SpeakBlackTime"
-        android:text=""
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.96"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="8" />
 
-    <ImageButton
-        android:id="@+id/options"
-        android:layout_width="79dp"
-        android:layout_height="79dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:onClick="Options"
-        app:layout_constraintBottom_toTopOf="@+id/blancas"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.934"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/negras"
-        app:srcCompat="@android:drawable/ic_menu_info_details" />
+            <Button
+                android:id="@+id/blackTime2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="44"
+                android:backgroundTint="@color/black"
+                android:onClick="SpeakBlackTime"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.96"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-    <ImageButton
-        android:id="@+id/pause"
-        android:layout_width="79dp"
-        android:layout_height="79dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:onClick="Pause"
-        app:layout_constraintBottom_toTopOf="@+id/blancas"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.077"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/negras"
-        app:layout_constraintVertical_bias="0.35"
-        app:srcCompat="@android:drawable/ic_media_pause" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
 
-    <ImageButton
-        android:id="@+id/reset"
-        android:layout_width="79dp"
-        android:layout_height="79dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:onClick="Reset"
-        app:layout_constraintBottom_toTopOf="@+id/blancas"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.521"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/negras"
-        app:layout_constraintVertical_bias="0.35"
-        app:srcCompat="@android:drawable/ic_menu_rotate" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/negras"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:backgroundTint="@color/button_background_color"
+            android:onClick="PlayerOne"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="65sp"
+            android:layout_weight="29"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="172dp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/centro"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:weightSum="100"
+            android:layout_weight="10"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.391"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.548">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/reset"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:onClick="Reset"
+                android:layout_weight="32"
+                app:srcCompat="@android:drawable/ic_menu_rotate"
+                tools:layout_editor_absoluteX="164dp"
+                tools:layout_editor_absoluteY="353dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/pause"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:onClick="Pause"
+                android:layout_weight="32"
+                app:srcCompat="@android:drawable/ic_media_pause"
+                tools:layout_editor_absoluteX="38dp"
+                tools:layout_editor_absoluteY="353dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/options"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:onClick="Options"
+                android:layout_weight="32"
+                app:srcCompat="@android:drawable/ic_menu_info_details"
+                tools:layout_editor_absoluteX="287dp"
+                tools:layout_editor_absoluteY="360dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/blancas"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:backgroundTint="@color/button_background_color"
+            android:onClick="PlayerTwo"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="65sp"
+            android:layout_weight="29"
+            app:iconTint="#FFFFFF"
+            tools:layout_editor_absoluteX="72dp"
+            tools:layout_editor_absoluteY="464dp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/abajo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:weightSum="100"
+            android:layout_weight="14"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.928">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
+
+            <Button
+                android:id="@+id/whiteTime"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="44"
+                android:backgroundTint="@color/white"
+                android:onClick="SpeakWhiteTime"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.045"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="8" />
+
+
+            <Button
+                android:id="@+id/blackTime"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="44"
+                android:backgroundTint="@color/black"
+                android:onClick="SpeakBlackTime"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.96"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

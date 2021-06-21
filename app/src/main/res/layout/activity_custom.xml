@@ -4,137 +4,274 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#acacac"
+    android:background="#ccc0af"
     tools:context=".CustomGame"
     android:theme="@style/Theme.AppCompat.Light.Dialog">
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="105dp"
-        android:layout_height="38dp"
-        android:text=""
-        android:textSize="30sp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/global"
+        android:orientation="vertical"
+        android:weightSum="100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.024" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/increment"
-        android:layout_width="155dp"
-        android:layout_height="38dp"
-        android:text=""
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time"
-        app:layout_constraintVertical_bias="0.482" />
 
-    <NumberPicker
-        android:id="@+id/hoursTime"
-        android:layout_width="70dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="60dp"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:scrollbarDefaultDelayBeforeFade="400"
-        android:theme="@style/AppTheme.Picker"
-        app:layout_constraintBottom_toTopOf="@+id/increment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.135"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time"
-        app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text=""
+            android:textSize="30sp"
+            android:textAlignment="center"
+            android:layout_weight="7"
+            android:textColor="@color/black"
+            android:background="#e6bc53"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.024" />
 
-    <NumberPicker
-        android:id="@+id/minutesTime"
-        android:layout_width="70dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="60dp"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:scrollbarDefaultDelayBeforeFade="400"
-        android:theme="@style/AppTheme.Picker"
-        app:layout_constraintBottom_toTopOf="@+id/increment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time"
-        app:layout_constraintVertical_bias="0.0" />
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
 
-    <NumberPicker
-        android:id="@+id/secondsTime"
-        android:layout_width="70dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="60dp"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:scrollbarDefaultDelayBeforeFade="400"
-        android:theme="@style/AppTheme.Picker"
-        app:layout_constraintBottom_toTopOf="@+id/increment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.874"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time"
-        app:layout_constraintVertical_bias="0.0" />
 
-    <NumberPicker
-        android:id="@+id/increments"
-        android:layout_width="228dp"
-        android:layout_height="47dp"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:scrollbarDefaultDelayBeforeFade="400"
-        android:theme="@style/AppTheme.Picker"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/increment"
-        app:layout_constraintVertical_bias="0.228" />
+        <LinearLayout
+            android:id="@+id/gameTime"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:weightSum="100"
+            android:layout_weight="40"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.185">
 
-    <TextView
-        android:id="@+id/horas"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="15dp"
-        android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/hoursTime"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.13"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.821" />
+            <LinearLayout
+                android:id="@+id/hours"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="30"
+                android:orientation="vertical"
+                android:weightSum="100"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.028"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.134">
 
-    <TextView
-        android:id="@+id/minutos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="15dp"
-        android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/minutesTime"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.244"
-        app:layout_constraintStart_toEndOf="@+id/horas"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.822" />
+                <TextView
+                    android:id="@+id/horas"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_weight="10"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toTopOf="@+id/hoursTime"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.13"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.821" />
 
-    <TextView
-        android:id="@+id/segundos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="15dp"
-        android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/secondsTime"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toEndOf="@+id/minutos"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.825" />
+                <NumberPicker
+                    android:id="@+id/hoursTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="90"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:scrollbarDefaultDelayBeforeFade="400"
+                    android:theme="@style/AppTheme.Picker"
+                    app:layout_constraintBottom_toTopOf="@+id/increment"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.135"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/time"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="5" />
+
+            <LinearLayout
+                android:id="@+id/minutes"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="30"
+                android:orientation="vertical"
+                android:weightSum="100"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.562"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.134">
+
+                <TextView
+                    android:id="@+id/minutos"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_weight="10"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toTopOf="@+id/minutesTime"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.244"
+                    app:layout_constraintStart_toEndOf="@+id/horas"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.822" />
+
+                <NumberPicker
+                    android:id="@+id/minutesTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="90"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:scrollbarDefaultDelayBeforeFade="400"
+                    android:theme="@style/AppTheme.Picker"
+                    app:layout_constraintBottom_toTopOf="@+id/increment"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/time"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="5" />
+
+            <LinearLayout
+                android:id="@+id/seconds"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="30"
+                android:orientation="vertical"
+                android:weightSum="100"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.134">
+
+                <TextView
+                    android:id="@+id/segundos"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_weight="10"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toTopOf="@+id/secondsTime"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.504"
+                    app:layout_constraintStart_toEndOf="@+id/minutos"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.825" />
+
+                <NumberPicker
+                    android:id="@+id/secondsTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="90"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:scrollbarDefaultDelayBeforeFade="400"
+                    android:theme="@style/AppTheme.Picker"
+                    app:layout_constraintBottom_toTopOf="@+id/increment"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.874"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/time"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
+
+
+        <LinearLayout
+            android:id="@+id/incremento"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:weightSum="100"
+            android:layout_weight="40"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.744">
+
+            <TextView
+                android:id="@+id/increment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:text=""
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:layout_weight="10"
+                android:textColor="@color/black"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/time"
+                app:layout_constraintVertical_bias="0.482" />
+
+            <NumberPicker
+                android:id="@+id/increments"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:scaleX="1"
+                android:scaleY="1"
+                android:layout_weight="90"
+                android:scrollbarDefaultDelayBeforeFade="400"
+                android:theme="@style/AppTheme.Picker"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/increment"
+                app:layout_constraintVertical_bias="0.228" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

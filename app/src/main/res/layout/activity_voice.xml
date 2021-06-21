@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#acacac"
+    android:background="#ccc0af"
     tools:context=".VoiceSettings">
 
     <LinearLayout
@@ -15,20 +15,16 @@
         tools:layout_editor_absoluteX="65dp"
         tools:layout_editor_absoluteY="70dp">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="2.5" />
-
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="ajustess"
-            android:textColor="@color/white"
+            android:text=""
+            android:textColor="@color/black"
             android:textSize="40sp"
-            android:layout_weight="15"
+            android:layout_weight="10"
             android:textAlignment="center"
+            android:background="#e6bc53"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -36,16 +32,22 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.06" />
 
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
+
 
         <Button
             android:id="@+id/cambiarVoz"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:onClick="ChangeVoice"
-            android:text="cbiar vo"
-            android:textColor="@color/white"
+            android:text=""
+            android:textColor="@color/black"
             android:textSize="40sp"
             android:layout_weight="15"
+            android:backgroundTint="#faebd7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -62,7 +64,7 @@
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="#5218fa"
+            android:background="#faebd7"
             android:gravity="left"
             android:orientation="horizontal"
             android:layout_weight="15"
@@ -85,8 +87,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text=""
-                android:textColor="@color/white"
-                android:textSize="30sp" />
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
@@ -130,18 +133,18 @@
             android:id="@+id/cambiarTono"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="Tono"
-            android:textSize="30sp"
-            android:textColor="@color/white"
+            android:text=""
+            android:textSize="40sp"
+            android:textColor="@color/black"
             android:textAlignment="center"
-            android:background="#5218fa"
+            android:background="#faebd7"
             android:layout_weight="10" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="20"
-            android:background="#5218fa"
+            android:layout_weight="22.5"
+            android:background="#faebd7"
             android:orientation="horizontal"
             android:weightSum="2.3"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -160,10 +163,11 @@
             <Button
                 android:id="@+id/masAgudo"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#ffa07a"
                 android:onClick="Aguda"
+                android:textColor="@color/black"
                 android:text=""
                 android:textSize="30sp" />
 
@@ -176,11 +180,12 @@
             <Button
                 android:id="@+id/masGrave"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#87cefa"
                 android:onClick="Grave"
                 android:text=""
+                android:textColor="@color/black"
                 android:textSize="30sp" />
 
             <androidx.appcompat.widget.AppCompatEditText
@@ -203,6 +208,7 @@
             android:text=""
             android:textSize="24sp"
             android:layout_weight="10"
+            android:background="#faebd7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.092"

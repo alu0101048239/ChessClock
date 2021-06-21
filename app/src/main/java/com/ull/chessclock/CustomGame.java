@@ -29,7 +29,7 @@ public class CustomGame extends SuperActivity {
     getWindowManager().getDefaultDisplay().getMetrics(dm);
     int width = dm.widthPixels;
     int height = dm.heightPixels;
-    getWindow().setLayout((int)(width*.9),(int)(height*.6));
+    getWindow().setLayout(width,(int)(height*.9));
     tv_horas = findViewById(R.id.horas);
     tv_minutos = findViewById(R.id.minutos);
     tv_segundos = findViewById(R.id.segundos);

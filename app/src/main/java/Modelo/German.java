@@ -28,7 +28,7 @@ public class German extends Language implements Serializable {
     etiquetas.put("asistente", "Sprachassistent");
     etiquetas.put("tiempo_blancas", "ANZIEHENDER");
     etiquetas.put("tiempo_negras", "SCHWARZ");
-    etiquetas.put("tiempo", "Zeit");
+    etiquetas.put("tiempo", "ZEIT");
     etiquetas.put("incremento", "Zuwachs");
     etiquetas.put("agudo", "Akut");
     etiquetas.put("grave", "Tief");
