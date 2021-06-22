@@ -33,7 +33,6 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   Spinner game;
   ArrayAdapter<CharSequence> adapter2;
   ArrayAdapter<CharSequence> adapter;
-  Boolean spinner_counter;
   // BLUETOOTH
   Button bluet;
   BluetoothAdapter mBluetoothAdapter;
@@ -50,8 +49,6 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     //lv = (ListView)findViewById(R.id.listView);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
     SetValues();
-    spinner_counter = false;
-    System.out.println("Booleano: " + spinner_counter);
     language = findViewById(R.id.languageSpinner);
     adapter = ArrayAdapter.createFromResource(this, R.array.languages, R.layout.spinner_item);
     language.setAdapter(adapter);
@@ -87,8 +84,6 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
       case "Blitz":
         game.setSelection(2);
         break;
-      default:
-        game.setSelection(3);
     }
 
     ajustes = findViewById(R.id.settings);
@@ -137,7 +132,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   public void VoiceManagement(String keeper) {
     if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz").toLowerCase())) {
       VoiceMenu();
-    } else if (keeper.equals("idioma") || keeper.equals("language") || keeper.equals("sprache")) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("idioma").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("idioma"));
     } else if (keeper.equals("español")) {
       language.setSelection(0);
@@ -145,9 +140,24 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
       language.setSelection(1);
     } else if (keeper.equals("deutsche")) {
       language.setSelection(2);
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("clásico").toLowerCase())) {
+      ChangeMode("Clásico");
+      game.setSelection(0);
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("rápido").toLowerCase())) {
+      ChangeMode("Rápido");
+      game.setSelection(1);
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("blitz").toLowerCase())) {
+      ChangeMode("Blitz");
+      game.setSelection(2);
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("personalizar").toLowerCase())) {
+      ChangeMode("Personalizar");
+      game.setSelection(3);
+      Customize();
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       onBackPressed();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+      this.finishAffinity();
     } else {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
@@ -200,13 +210,10 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
         case "Personalize":
         case "Personifizieren":
           ChangeMode("Personalizar");
-          if (spinner_counter) {
-            Customize();
-          }
+          Customize();
           break;
       }
     }
-    spinner_counter = true;
     ReturnData();
   }
 

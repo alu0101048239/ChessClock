@@ -59,5 +59,8 @@ public class German extends Language implements Serializable {
     dictado.put("blitz", "Blitzschach");
     dictado.put("personalizar", "Personifizieren");
     dictado.put("horas", "Stunden");
+    dictado.put("off_asistente", "Assistent deaktivieren");
+    dictado.put("on_asistente", "Assistent aktivieren");
+    dictado.put("salir", "Beenden");
   }
 }

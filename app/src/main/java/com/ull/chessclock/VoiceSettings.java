@@ -135,9 +135,23 @@ public class VoiceSettings extends SuperActivity {
       SubirVelocidad();
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("bajar_velocidad").toLowerCase())) {
       BajarVelocidad();
-    }  else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       onBackPressed();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("off_asistente").toLowerCase())) {
+      set_assistant.setChecked(false);
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("asistente_off"));
+      modelo.GetVoz().Assistant(false);
+      tts.SetAssistant(false);
+      ReturnData();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("on_asistente").toLowerCase())) {
+      set_assistant.setChecked(true);
+      modelo.GetVoz().Assistant(true);
+      tts.SetAssistant(true);
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("asistente_on"));
+      ReturnData();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+      this.finishAffinity();
     } else {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }

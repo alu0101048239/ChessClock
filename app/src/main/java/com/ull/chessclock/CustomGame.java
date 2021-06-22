@@ -90,11 +90,21 @@ public class CustomGame extends SuperActivity {
       tts.Speak(speech);
     });
     ReturnData();
+    SetSpeechRecognizer(CustomGame.this);
   }
 
   public void ReturnData() {
     Intent returnIntent = new Intent();
     returnIntent.putExtra("Modelo",  modelo);
     setResult(Activity.RESULT_OK, returnIntent);
+  }
+
+  public void VoiceManagement(String keeper) {
+    if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
+      onBackPressed();
+    } else {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+    }
   }
 }

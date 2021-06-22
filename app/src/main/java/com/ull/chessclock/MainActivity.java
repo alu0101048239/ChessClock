@@ -64,6 +64,8 @@ public class MainActivity extends SuperActivity {
       } else {
         MovePlayerOne();
       }
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+      this.finishAffinity();
     } else {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }

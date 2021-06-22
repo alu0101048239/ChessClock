@@ -62,5 +62,8 @@ public class English extends Language implements Serializable {
     dictado.put("blitz", "Blitz chess");
     dictado.put("personalizar", "Personalize");
     dictado.put("horas", "Hours");
+    dictado.put("off_asistente", "Enable assistant");
+    dictado.put("on_asistente", "Disable assistant");
+    dictado.put("salir", "Exit");
   }
 }
