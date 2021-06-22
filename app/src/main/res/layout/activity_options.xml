@@ -7,128 +7,159 @@
     android:background="#ccc0af"
     tools:context=".Options">
 
-
-    <TextView
-        android:id="@+id/settings"
-        android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:text=""
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="40sp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/globalLayout"
+        android:orientation="vertical"
+        android:weightSum="100"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.046" />
+        app:layout_constraintTop_toTopOf="parent" >
 
-    <Button
-        android:id="@+id/ajustesVoz"
-        android:layout_width="0dp"
-        android:layout_height="121dp"
-        android:layout_marginTop="5dp"
-        android:onClick="VoiceSettings"
-        android:text="ajustes voz"
-        android:textColor="@color/black"
-        android:textSize="40sp"
-        android:backgroundTint="#faebd7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settings"
-        app:layout_constraintVertical_bias="0.023" />
+        <TextView
+            android:id="@+id/settings"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="40sp"
+            android:layout_weight="10"
+            android:background="#e6bc53"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.046" />
 
-    <Spinner
-        android:id="@+id/gameSpinner"
-        android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:background="#faebd7"
-        android:spinnerMode="dialog"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/languageSpinner"
-        app:layout_constraintVertical_bias="0.34" />
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
 
-    <TextView
-        android:id="@+id/juego"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text=""
-        android:textColor="#faebd7"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/gameSpinner"
-        app:layout_constraintVertical_bias="0.101" />
+        <Button
+            android:id="@+id/ajustesVoz"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:backgroundTint="#faebd7"
+            android:onClick="VoiceSettings"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="40sp"
+            android:layout_weight="25"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.18" />
 
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
 
+        <LinearLayout
+            android:id="@+id/idiomaLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:weightSum="100"
+            android:layout_weight="25"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.48">
 
+            <TextView
+                android:id="@+id/language"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="35"
+                android:background="#faebd7"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="40sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/languageSpinner"
+                app:layout_constraintVertical_bias="0.036" />
 
-    <TextView
-        android:id="@+id/game_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:text=""
-        android:textColor="#faebd7"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="@+id/gameSpinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/juego"
-        app:layout_constraintVertical_bias="0.0" />
+            <Spinner
+                android:id="@+id/languageSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="65"
+                android:background="#faebd7"
+                android:spinnerMode="dialog"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ajustesVoz"
+                app:layout_constraintVertical_bias="0.036" />
 
-    <Spinner
-        android:id="@+id/languageSpinner"
-        android:layout_width="0dp"
-        android:layout_height="133dp"
-        android:background="#faebd7"
-        android:spinnerMode="dialog"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ajustesVoz"
-        app:layout_constraintVertical_bias="0.036" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/language"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:text=""
-        android:textAlignment="center"
-        android:textColor="#faebd7"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/languageSpinner"
-        app:layout_constraintVertical_bias="0.036" />
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
 
-    <TextView
-        android:id="@+id/idioma"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:text=""
-        android:textColor="#faebd7"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="@+id/languageSpinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/language"
-        app:layout_constraintVertical_bias="0.464" />
+        <LinearLayout
+            android:id="@+id/juegoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:weightSum="100"
+            android:layout_weight="25"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.862">
+
+            <TextView
+                android:id="@+id/juego"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="35"
+                android:background="#faebd7"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="40sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/gameSpinner"
+                app:layout_constraintVertical_bias="0.101" />
+
+            <Spinner
+                android:id="@+id/gameSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="65"
+                android:background="#faebd7"
+                android:spinnerMode="dialog"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/languageSpinner"
+                app:layout_constraintVertical_bias="0.34" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 
     <!--Button
         android:id="@+id/bluet"

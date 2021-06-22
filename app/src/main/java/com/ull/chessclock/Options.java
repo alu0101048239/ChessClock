@@ -30,8 +30,6 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   TextView lenguaje;
   Button ajustesVoz;
   TextView modo_juego;
-  TextView idioma;
-  TextView juego;
   Spinner game;
   ArrayAdapter<CharSequence> adapter2;
   ArrayAdapter<CharSequence> adapter;
@@ -52,6 +50,8 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     //lv = (ListView)findViewById(R.id.listView);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
     SetValues();
+    spinner_counter = false;
+    System.out.println("Booleano: " + spinner_counter);
     language = findViewById(R.id.languageSpinner);
     adapter = ArrayAdapter.createFromResource(this, R.array.languages, R.layout.spinner_item);
     language.setAdapter(adapter);
@@ -95,11 +95,8 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     lenguaje = findViewById(R.id.language);
     ajustesVoz = findViewById(R.id.ajustesVoz);
     modo_juego = findViewById(R.id.juego);
-    idioma = findViewById(R.id.idioma);
-    juego = findViewById(R.id.game_name);
     SetButtonsTexts();
     SetSpeechRecognizer(Options.this);
-    spinner_counter = false;
   }
 
   public void ReturnData() {
@@ -171,20 +168,16 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   @Override
   public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
     String spinner = parent.getItemAtPosition(position).toString();
-    System.out.println("Total: " + parent.getAdapter().getCount());
 
     if (parent.getAdapter().getCount() == 3) {
       switch (spinner) {
         case "English":
-          idioma.setText(spinner);
           ChangeLanguage("en_GB", R.array.game_eng);
           break;
         case "Deutsche":
-          idioma.setText(spinner);
           ChangeLanguage("de_DE", R.array.game_deu);
           break;
         case "Español":
-          idioma.setText(spinner);
           ChangeLanguage("es_ES", R.array.game_esp);
           break;
       }
@@ -193,23 +186,19 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
         case "Clásico":
         case "Classical":
         case "Klassisches":
-          juego.setText(spinner);
           ChangeMode("Clásico");
           break;
         case "Rápido":
         case "Rapid":
         case "Schnell":
-          juego.setText(spinner);
           ChangeMode("Rápido");
           break;
         case "Blitz":
-          juego.setText(spinner);
           ChangeMode("Blitz");
           break;
         case "Personalizar":
         case "Personalize":
         case "Personifizieren":
-          juego.setText(spinner);
           ChangeMode("Personalizar");
           if (spinner_counter) {
             Customize();
