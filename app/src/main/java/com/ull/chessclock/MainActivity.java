@@ -7,8 +7,8 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Modelo;
@@ -20,6 +20,8 @@ public class MainActivity extends SuperActivity {
   Button black_time2;
   Button white_time1;
   Button white_time2;
+  ImageButton pause;
+  ImageButton reset;
   static MediaPlayer mp;
   Timer t1;
   Timer t2;
@@ -40,11 +42,17 @@ public class MainActivity extends SuperActivity {
     corona_blancas = findViewById(R.id.coronaBlancas);
     corona_negras = findViewById(R.id.coronaNegras);
     corona_blancas.setVisibility(View.INVISIBLE);
+    pause = findViewById(R.id.pause);
+    reset = findViewById(R.id.reset);
     SetButtonsTexts();
     mp = MediaPlayer.create(this, R.raw.button_sound);
     t1 = new Timer();
     t2 = new Timer();
     SetSpeechRecognizer(MainActivity.this);
+    if (modelo.GetFirstPlayer().GetStarted() != 1) {
+      pause.setEnabled(false);
+      reset.setEnabled(false);
+    }
   }
 
   public void VoiceManagement(String keeper) {
@@ -105,6 +113,8 @@ public class MainActivity extends SuperActivity {
   }
 
   public void MovePlayerOne() {
+    pause.setEnabled(true);
+    reset.setEnabled(true);
     b1.setEnabled(false);
     b2.setEnabled(true);
     corona_blancas.setVisibility(View.VISIBLE);
@@ -118,6 +128,8 @@ public class MainActivity extends SuperActivity {
   }
 
   public void MovePlayerTwo() {
+    pause.setEnabled(true);
+    reset.setEnabled(true);
     b2.setEnabled(false);
     b1.setEnabled(true);
     corona_negras.setVisibility(View.VISIBLE);
@@ -167,11 +179,14 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Pause(View view) {
+    pause.setEnabled(false);
     modelo.Pausar(t1, t2);
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
   }
 
   public void Reset(View view) {
+    pause.setEnabled(false);
+    reset.setEnabled(false);
     Reset();
   }
 

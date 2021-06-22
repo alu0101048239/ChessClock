@@ -84,7 +84,6 @@ public class Clock implements Serializable {
         segundos = segundos - 60;
       }
     }
-
     current_time = SetTime();
     return current_time;
   }
