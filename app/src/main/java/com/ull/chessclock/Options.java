@@ -4,24 +4,17 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.annotation.ArrayRes;
 import androidx.annotation.Nullable;
-
-import java.util.ArrayList;
 import java.util.Set;
-
 import Modelo.Modelo;
 
 public class Options extends SuperActivity implements AdapterView.OnItemSelectedListener {

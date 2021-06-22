@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.TextView;
-
 import Modelo.Modelo;
 
 public class End extends SuperActivity {

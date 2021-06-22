@@ -91,19 +91,38 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/negras"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:backgroundTint="@color/button_background_color"
-            android:onClick="PlayerOne"
-            android:text=""
-            android:textColor="@color/black"
-            android:textSize="65sp"
-            android:layout_weight="29"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="172dp" />
+            android:layout_weight="29" >
+
+            <Button
+                android:id="@+id/negras"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/black"
+                android:onClick="PlayerOne"
+                android:text="60:30:00"
+                android:textColor="@color/white"
+                android:textSize="65sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="172dp" />
+
+            <ImageView
+                android:id="@+id/coronaNegras"
+                android:layout_width="43dp"
+                android:layout_height="37dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="86dp"
+                android:layout_marginTop="19dp"
+                android:elevation="2dp"
+                android:src="@drawable/corona">
+
+            </ImageView>
+
+        </RelativeLayout>
+
 
         <androidx.appcompat.widget.AppCompatEditText
             android:layout_width="0dp"
@@ -181,19 +200,35 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/blancas"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:backgroundTint="@color/button_background_color"
-            android:onClick="PlayerTwo"
-            android:text=""
-            android:textColor="@color/black"
-            android:textSize="65sp"
-            android:layout_weight="29"
-            app:iconTint="#FFFFFF"
-            tools:layout_editor_absoluteX="72dp"
-            tools:layout_editor_absoluteY="464dp" />
+            android:layout_weight="29" >
+
+            <Button
+                android:id="@+id/blancas"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/white"
+                android:onClick="PlayerTwo"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="65sp"
+                app:iconTint="#FFFFFF"
+                tools:layout_editor_absoluteX="72dp"
+                tools:layout_editor_absoluteY="464dp" />
+
+            <ImageView
+                android:id="@+id/coronaBlancas"
+                android:layout_width="43dp"
+                android:layout_height="37dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="86dp"
+                android:layout_marginTop="19dp"
+                android:elevation="2dp"
+                android:src="@drawable/corona"></ImageView>
+
+        </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatEditText
             android:layout_width="0dp"
@@ -269,8 +304,6 @@
                 android:layout_weight="2" />
 
         </LinearLayout>
-
-
 
     </LinearLayout>
 

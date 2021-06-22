@@ -1,18 +1,14 @@
 package com.ull.chessclock;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Modelo;
@@ -27,6 +23,8 @@ public class MainActivity extends SuperActivity {
   static MediaPlayer mp;
   Timer t1;
   Timer t2;
+  ImageView corona_blancas;
+  ImageView corona_negras;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +37,9 @@ public class MainActivity extends SuperActivity {
     black_time2 = findViewById(R.id.blackTime2);
     white_time1 = findViewById(R.id.whiteTime);
     white_time2 = findViewById(R.id.whiteTime2);
+    corona_blancas = findViewById(R.id.coronaBlancas);
+    corona_negras = findViewById(R.id.coronaNegras);
+    corona_blancas.setVisibility(View.INVISIBLE);
     SetButtonsTexts();
     mp = MediaPlayer.create(this, R.raw.button_sound);
     t1 = new Timer();
@@ -106,6 +107,8 @@ public class MainActivity extends SuperActivity {
   public void MovePlayerOne() {
     b1.setEnabled(false);
     b2.setEnabled(true);
+    corona_blancas.setVisibility(View.VISIBLE);
+    corona_negras.setVisibility(View.INVISIBLE);
     b1.setText(modelo.GetFirstPlayer().AddIncrement());
     TimerTask tarea = CreateTask("1");
     t2 = new Timer();
@@ -117,6 +120,9 @@ public class MainActivity extends SuperActivity {
   public void MovePlayerTwo() {
     b2.setEnabled(false);
     b1.setEnabled(true);
+    corona_negras.setVisibility(View.VISIBLE);
+    corona_blancas.setVisibility(View.INVISIBLE);
+
     b2.setText(modelo.GetSecondPlayer().AddIncrement());
     TimerTask tarea = CreateTask("2");
     t1 = new Timer();
