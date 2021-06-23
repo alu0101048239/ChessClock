@@ -164,7 +164,7 @@ public class CustomGame extends SuperActivity {
               break;
           }
         } else {  // incremento
-          pattern = "incremento\\s(([1-9])|([1-5][0-9]))";
+          pattern = "incremento\\s(([0-9])|([1-5][0-9]))";
           r = Pattern.compile(pattern);
           m = r.matcher(keeper);
 
@@ -183,6 +183,9 @@ public class CustomGame extends SuperActivity {
           }
         }
         break;
+
+      default:
+        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
   }
 }
