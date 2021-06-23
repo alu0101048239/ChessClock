@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import Modelo.Modelo;
 
 public class CustomGame extends SuperActivity {
@@ -78,6 +82,7 @@ public class CustomGame extends SuperActivity {
       tts.Speak(speech);
     });
 
+
     increments.setMinValue(0);
     increments.setMaxValue(59);
     increments.setOnValueChangedListener((picker, oldVal, newVal) -> {
@@ -100,11 +105,84 @@ public class CustomGame extends SuperActivity {
   }
 
   public void VoiceManagement(String keeper) {
-    if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
-      onBackPressed();
-    } else {
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+    String[] words = keeper.split("\\s+");
+    for (int i = 0; i < words.length; i++) {
+      words[i] = words[i].replaceAll("[^\\w]", "");
+    }
+
+    switch(words.length) {
+      case 1:
+        if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
+          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
+          onBackPressed();
+        } else {
+          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+        }
+        break;
+
+      case 2:
+        String pattern = "(([1-9])|([1-5][0-9]))\\s(minuto|hora|segundo)s?";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(keeper);
+
+        if (m.find()) {
+          int time = Integer.parseInt(words[0]);
+          switch(words[1]) {
+            case "minuto":
+            case "minutos":
+              modelo.GetFirstPlayer().GetMode().SetTime(time);
+              modelo.GetSecondPlayer().GetMode().SetTime(time);
+              modelo.GetFirstPlayer().Reset();
+              modelo.GetSecondPlayer().Reset();
+              String texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("minutos");
+              tts.Speak(texto);
+              minutos.setValue(time);
+              break;
+            case "hora":
+            case "horas":
+              if (time > 23) {
+                tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+              } else {
+                modelo.GetFirstPlayer().GetMode().SetHours(time);
+                modelo.GetSecondPlayer().GetMode().SetHours(time);
+                modelo.GetFirstPlayer().Reset();
+                modelo.GetSecondPlayer().Reset();
+                texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("horas");
+                tts.Speak(texto);
+                horas.setValue(time);
+              }
+              break;
+            case "segundo":
+            case "segundos":
+              modelo.GetFirstPlayer().GetMode().SetSeconds(time);
+              modelo.GetSecondPlayer().GetMode().SetSeconds(time);
+              modelo.GetFirstPlayer().Reset();
+              modelo.GetSecondPlayer().Reset();
+              texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
+              tts.Speak(texto);
+              segundos.setValue(time);
+              break;
+          }
+        } else {  // incremento
+          pattern = "incremento\\s(([1-9])|([1-5][0-9]))";
+          r = Pattern.compile(pattern);
+          m = r.matcher(keeper);
+
+          if (m.find()) {
+            int incremento = Integer.parseInt(words[1]);
+            modelo.GetFirstPlayer().GetMode().SetIncrement(incremento);
+            modelo.GetSecondPlayer().GetMode().SetIncrement(incremento);
+            modelo.GetFirstPlayer().Reset();
+            modelo.GetSecondPlayer().Reset();
+            String speech = modelo.GetVoz().GetLanguage().GetTagById("incremento") + incremento +
+                    modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
+            tts.Speak(speech);
+            increments.setValue(incremento);
+          } else {
+            tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+          }
+        }
+        break;
     }
   }
 }
