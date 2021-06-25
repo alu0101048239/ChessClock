@@ -26,6 +26,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   Spinner game;
   ArrayAdapter<CharSequence> adapter2;
   ArrayAdapter<CharSequence> adapter;
+  Button conectividad;
   // BLUETOOTH
   Button bluet;
   BluetoothAdapter mBluetoothAdapter;
@@ -83,6 +84,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     lenguaje = findViewById(R.id.language);
     ajustesVoz = findViewById(R.id.ajustesVoz);
     modo_juego = findViewById(R.id.juego);
+    conectividad = findViewById(R.id.bluetoothButton);
     SetButtonsTexts();
     SetSpeechRecognizer(Options.this);
   }
@@ -120,6 +122,17 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     Intent intent = new Intent(this, VoiceSettings.class);
     intent.putExtra("Modelo", modelo);
     startActivityForResult(intent, 0);
+  }
+
+  public void Connectivity(View view) {
+    Conectividad();
+  }
+
+  public void Conectividad() {
+    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("conectividad"));
+    Intent intent = new Intent(this, Connectivity.class);
+    intent.putExtra("Modelo", modelo);
+    startActivityForResult(intent, 2);
   }
 
   public void VoiceManagement(String keeper) {
@@ -225,6 +238,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     lenguaje.setText(modelo.GetVoz().GetLanguage().GetTagById("idioma"));
     ajustesVoz.setText(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz"));
     modo_juego.setText(modelo.GetVoz().GetLanguage().GetTagById("juego"));
+    conectividad.setText(modelo.GetVoz().GetLanguage().GetTagById("conectividad"));
   }
 
   private void ChangeMode(String mode) {

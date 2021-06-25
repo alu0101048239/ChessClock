@@ -1,7 +1,9 @@
 package com.ull.chessclock;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ public class MainActivity extends SuperActivity {
   ImageView corona_blancas;
   ImageView corona_negras;
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -51,7 +54,9 @@ public class MainActivity extends SuperActivity {
     SetSpeechRecognizer(MainActivity.this);
     if (modelo.GetFirstPlayer().GetStarted() != 1) {
       pause.setEnabled(false);
+      pause.setAlpha((float) 0.25);
       reset.setEnabled(false);
+      reset.setAlpha((float) 0.25);
     }
   }
 
@@ -59,9 +64,15 @@ public class MainActivity extends SuperActivity {
     if (keeper.toUpperCase().equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes"))) {
       Opciones();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
+      pause.setEnabled(false);
+      pause.setAlpha((float) 0.25);
       modelo.Pausar(t1, t2);
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
     } else if (keeper.equals("parar") || keeper.equals("stop")) {
+      pause.setEnabled(false);
+      pause.setAlpha((float) 0.25);
+      reset.setEnabled(false);
+      reset.setAlpha((float) 0.25);
       Reset();
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("blancas"))) {
       SpeakTime("blancas");
@@ -114,7 +125,9 @@ public class MainActivity extends SuperActivity {
 
   public void MovePlayerOne() {
     pause.setEnabled(true);
+    pause.setAlpha((float) 1);
     reset.setEnabled(true);
+    reset.setAlpha((float) 1);
     b1.setEnabled(false);
     b2.setEnabled(true);
     corona_blancas.setVisibility(View.VISIBLE);
@@ -129,7 +142,9 @@ public class MainActivity extends SuperActivity {
 
   public void MovePlayerTwo() {
     pause.setEnabled(true);
+    pause.setAlpha((float) 1);
     reset.setEnabled(true);
+    reset.setAlpha((float) 1);
     b2.setEnabled(false);
     b1.setEnabled(true);
     corona_negras.setVisibility(View.VISIBLE);
@@ -180,21 +195,42 @@ public class MainActivity extends SuperActivity {
 
   public void Pause(View view) {
     pause.setEnabled(false);
+    pause.setAlpha((float) 0.25);
     modelo.Pausar(t1, t2);
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
   }
 
   public void Reset(View view) {
     pause.setEnabled(false);
+    pause.setAlpha((float) 0.25);
     reset.setEnabled(false);
+    reset.setAlpha((float) 0.25);
     Reset();
   }
 
   public void Reset() {
-    modelo.Resetear(t1, t2);
-    b1.setText(modelo.GetFirstPlayer().SetTime());
-    b2.setText(modelo.GetSecondPlayer().SetTime());
-    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
+    pause.setEnabled(false);
+    pause.setAlpha((float) 0.25);
+    modelo.Pausar(t1, t2);
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
+    builder.setMessage(modelo.GetVoz().GetLanguage().GetTagById("descripción"));
+    builder.setPositiveButton(modelo.GetVoz().GetLanguage().GetTagById("aceptar"), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        modelo.Resetear(t1, t2);
+        b1.setText(modelo.GetFirstPlayer().SetTime());
+        b2.setText(modelo.GetSecondPlayer().SetTime());
+        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
+      }
+    });
+    builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+
+      }
+    });
+    builder.show();
   }
 
   @Override
@@ -218,6 +254,7 @@ public class MainActivity extends SuperActivity {
     super.SetValues();
     SetButtonsTexts();
   }
+
 
  @Override
   protected void onPause() {

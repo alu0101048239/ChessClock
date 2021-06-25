@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import Modelo.Modelo;
 
 public class CustomGame extends SuperActivity {
