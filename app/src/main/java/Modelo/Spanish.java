@@ -37,6 +37,7 @@ public class Spanish extends Language implements Serializable {
     etiquetas.put("descripción", "Perderá el progreso de la partida");
     etiquetas.put("aceptar", "Aceptar");
     etiquetas.put("cancelar", "Cancelar");
+    etiquetas.put("penalización", "Penalización");
   }
 
   private void SetDictado() {

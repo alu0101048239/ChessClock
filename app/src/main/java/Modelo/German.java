@@ -37,6 +37,7 @@ public class German extends Language implements Serializable {
     etiquetas.put("descripción", "Du verlierst den Spielfortschritt");
     etiquetas.put("aceptar", "Akzeptieren");
     etiquetas.put("cancelar", "Stornieren");
+    etiquetas.put("penalización", "Bestrafung");
   }
 
   private void SetDictado() {

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -29,7 +30,7 @@ public class MainActivity extends SuperActivity {
   Timer t2;
   ImageView corona_blancas;
   ImageView corona_negras;
-
+  Boolean game_paused;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class MainActivity extends SuperActivity {
     corona_blancas.setVisibility(View.INVISIBLE);
     pause = findViewById(R.id.pause);
     reset = findViewById(R.id.reset);
+    game_paused = false;
     SetButtonsTexts();
     mp = MediaPlayer.create(this, R.raw.button_sound);
     t1 = new Timer();
@@ -58,16 +60,37 @@ public class MainActivity extends SuperActivity {
       reset.setEnabled(false);
       reset.setAlpha((float) 0.25);
     }
+
+    // Penalización
+
+    b1.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        if (b1.isEnabled() && b2.isEnabled()) {
+          Penalizacion();
+          return true;
+        }
+        return false;
+      }
+    });
+
+    b2.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        if (b1.isEnabled() && b2.isEnabled()) {
+          Penalizacion();
+          return true;
+        }
+        return false;
+      }
+    });
   }
 
   public void VoiceManagement(String keeper) {
     if (keeper.toUpperCase().equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes"))) {
       Opciones();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
-      pause.setEnabled(false);
-      pause.setAlpha((float) 0.25);
-      modelo.Pausar(t1, t2);
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
+      CheckPause();
     } else if (keeper.equals("parar") || keeper.equals("stop")) {
       pause.setEnabled(false);
       pause.setAlpha((float) 0.25);
@@ -80,9 +103,9 @@ public class MainActivity extends SuperActivity {
       SpeakTime("negras");
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("mover"))) {
       if (b2.isEnabled()) {
-        MovePlayerTwo();
+        MovePlayerTwo(true);
       } else {
-        MovePlayerOne();
+        MovePlayerOne(true);
       }
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
       this.finishAffinity();
@@ -115,7 +138,7 @@ public class MainActivity extends SuperActivity {
 
   private void GameOver() {
     if (modelo.GetFirstPlayer().GetStarted() == 0 || modelo.GetSecondPlayer().GetStarted() == 0) {
-      modelo.Pausar(t1, t2);
+      CheckPause();
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
       Intent intent = new Intent(this, End.class);
       intent.putExtra("Modelo", modelo);
@@ -123,47 +146,56 @@ public class MainActivity extends SuperActivity {
     }
   }
 
-  public void MovePlayerOne() {
-    pause.setEnabled(true);
-    pause.setAlpha((float) 1);
-    reset.setEnabled(true);
-    reset.setAlpha((float) 1);
-    b1.setEnabled(false);
-    b2.setEnabled(true);
-    corona_blancas.setVisibility(View.VISIBLE);
-    corona_negras.setVisibility(View.INVISIBLE);
-    b1.setText(modelo.GetFirstPlayer().AddIncrement());
-    TimerTask tarea = CreateTask("1");
-    t2 = new Timer();
-    modelo.GetFirstPlayer().Pause(t1);
-    t2.scheduleAtFixedRate(tarea, 0, 10);
-    mp.start();
+  /* Juegan blancas */
+  public void MovePlayerOne(Boolean incremento) {
+    if (!game_paused) {
+      pause.setEnabled(true);
+      pause.setAlpha((float) 1);
+      reset.setEnabled(true);
+      reset.setAlpha((float) 1);
+      b1.setEnabled(false);
+      b2.setEnabled(true);
+      corona_blancas.setVisibility(View.VISIBLE);
+      corona_negras.setVisibility(View.INVISIBLE);
+      if (incremento) {
+        b1.setText(modelo.GetFirstPlayer().AddIncrement());
+      }
+      TimerTask tarea = CreateTask("1");
+      t2 = new Timer();
+      modelo.GetFirstPlayer().Pause(t1);
+      t2.scheduleAtFixedRate(tarea, 0, 10);
+      mp.start();
+    }
   }
 
-  public void MovePlayerTwo() {
-    pause.setEnabled(true);
-    pause.setAlpha((float) 1);
-    reset.setEnabled(true);
-    reset.setAlpha((float) 1);
-    b2.setEnabled(false);
-    b1.setEnabled(true);
-    corona_negras.setVisibility(View.VISIBLE);
-    corona_blancas.setVisibility(View.INVISIBLE);
-
-    b2.setText(modelo.GetSecondPlayer().AddIncrement());
-    TimerTask tarea = CreateTask("2");
-    t1 = new Timer();
-    modelo.GetSecondPlayer().Pause(t2);
-    t1.scheduleAtFixedRate(tarea, 0, 10);
-    mp.start();
+  /* Juegan negras */
+  public void MovePlayerTwo(Boolean incremento) {
+    if (!game_paused) {
+      pause.setEnabled(true);
+      pause.setAlpha((float) 1);
+      reset.setEnabled(true);
+      reset.setAlpha((float) 1);
+      b2.setEnabled(false);
+      b1.setEnabled(true);
+      corona_negras.setVisibility(View.VISIBLE);
+      corona_blancas.setVisibility(View.INVISIBLE);
+      if (incremento) {
+        b2.setText(modelo.GetSecondPlayer().AddIncrement());
+      }
+      TimerTask tarea = CreateTask("2");
+      t1 = new Timer();
+      modelo.GetSecondPlayer().Pause(t2);
+      t1.scheduleAtFixedRate(tarea, 0, 10);
+      mp.start();
+    }
   }
 
   public void PlayerOne(View view) {
-    MovePlayerOne();
+    MovePlayerOne(true);
   }
 
   public void PlayerTwo(View view) {
-    MovePlayerTwo();
+    MovePlayerTwo(true);
   }
 
   public void SpeakWhiteTime(View view) {
@@ -194,24 +226,18 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Pause(View view) {
-    pause.setEnabled(false);
-    pause.setAlpha((float) 0.25);
-    modelo.Pausar(t1, t2);
-    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
+    CheckPause();
   }
 
   public void Reset(View view) {
-    pause.setEnabled(false);
-    pause.setAlpha((float) 0.25);
-    reset.setEnabled(false);
-    reset.setAlpha((float) 0.25);
     Reset();
   }
 
   public void Reset() {
-    pause.setEnabled(false);
-    pause.setAlpha((float) 0.25);
-    modelo.Pausar(t1, t2);
+    if (!game_paused) {
+      CheckPause();
+    }
+    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     builder.setMessage(modelo.GetVoz().GetLanguage().GetTagById("descripción"));
@@ -222,12 +248,19 @@ public class MainActivity extends SuperActivity {
         b1.setText(modelo.GetFirstPlayer().SetTime());
         b2.setText(modelo.GetSecondPlayer().SetTime());
         tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
+        b1.setEnabled(true);
+        b2.setEnabled(false);
+        game_paused = false;
+        pause.setEnabled(false);
+        pause.setAlpha((float) 0.25);
+        reset.setEnabled(false);
+        reset.setAlpha((float) 0.25);
       }
     });
     builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
-
+        tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar"));
       }
     });
     builder.show();
@@ -247,6 +280,12 @@ public class MainActivity extends SuperActivity {
         b1.setText(modelo.GetFirstPlayer().SetTime());
         b2.setText(modelo.GetSecondPlayer().SetTime());
       }
+    } else if (requestCode == 2) {
+      modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+      b1.setText(modelo.GetFirstPlayer().SetTime());
+      b2.setText(modelo.GetSecondPlayer().SetTime());
+      System.out.println("Minutos: " + modelo.GetFirstPlayer().GetMinutos());
+      System.out.println("Segundos: " + modelo.GetFirstPlayer().GetSegundos());
     }
   }
 
@@ -255,6 +294,30 @@ public class MainActivity extends SuperActivity {
     SetButtonsTexts();
   }
 
+  public void CheckPause() {
+    if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
+      game_paused = false;
+      if (modelo.GetFirstPlayer().GetTurn()) {
+        MovePlayerTwo(false);
+      } else {
+        MovePlayerOne(false);
+      }
+
+    } else {
+      if (b1.isEnabled()) { // están jugando negras
+        modelo.GetFirstPlayer().SetTurn(true);
+        modelo.GetSecondPlayer().SetTurn(false);
+      } else { // están jugando blancas
+        modelo.GetSecondPlayer().SetTurn(true);
+        modelo.GetFirstPlayer().SetTurn(false);
+      }
+      b1.setEnabled(true);
+      b2.setEnabled(true);
+      modelo.Pausar(t1, t2);
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
+      game_paused = true;
+    }
+  }
 
  @Override
   protected void onPause() {
@@ -269,5 +332,12 @@ public class MainActivity extends SuperActivity {
     white_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
     b1.setText(modelo.GetFirstPlayer().StartTime());
     b2.setText(modelo.GetSecondPlayer().StartTime());
+  }
+
+  public void Penalizacion() {
+    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("penalización"));
+    Intent intent = new Intent(this, Penalization.class);
+    intent.putExtra("Modelo", modelo);
+    startActivityForResult(intent, 2);
   }
 }

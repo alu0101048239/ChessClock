@@ -16,6 +16,7 @@ public class Clock implements Serializable {
   GameMode mode;
   String mode_string;
   int started;
+  Boolean turn;
 
   public Clock(String id) {
     SetMode("Clásico"); // modo clásico por defecto
@@ -24,6 +25,7 @@ public class Clock implements Serializable {
     playerId = id;
     modalidad = 0;
     started = -1;
+    turn = false;
   }
 
   public Clock() {
@@ -44,6 +46,14 @@ public class Clock implements Serializable {
     started = -1;
   }
 
+  public Boolean GetTurn() {
+    return turn;
+  }
+
+  public void SetTurn(Boolean turn_) {
+    turn = turn_;
+  }
+
   public String AddIncrement() {
     if (started == 1) {
       segundos += mode.GetIncrement();
@@ -53,6 +63,7 @@ public class Clock implements Serializable {
   }
 
   public String Start() {
+    turn = true;
     if (started == -1) {
       started = 1;
     }
@@ -105,6 +116,7 @@ public class Clock implements Serializable {
   }
 
   public void Reset() {
+    turn = false;
     horas = mode.GetHours();
     minutos = mode.GetTime();
     segundos = mode.GetSeconds() + mode.GetIncrement();
@@ -207,5 +219,10 @@ public class Clock implements Serializable {
       }
     }
     return time;
+  }
+
+  public void SetPenalization(int minutes, int seconds) {
+    minutos += minutes;
+    segundos += seconds;
   }
 }
