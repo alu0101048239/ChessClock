@@ -63,26 +63,20 @@ public class MainActivity extends SuperActivity {
 
     // Penalización
 
-    b1.setOnLongClickListener(new View.OnLongClickListener() {
-      @Override
-      public boolean onLongClick(View v) {
-        if (b1.isEnabled() && b2.isEnabled()) {
-          Penalizacion();
-          return true;
-        }
-        return false;
+    b1.setOnLongClickListener(v -> {
+      if (b1.isEnabled() && b2.isEnabled()) {
+        Penalizacion(1); // penalización a las negras
+        return true;
       }
+      return false;
     });
 
-    b2.setOnLongClickListener(new View.OnLongClickListener() {
-      @Override
-      public boolean onLongClick(View v) {
-        if (b1.isEnabled() && b2.isEnabled()) {
-          Penalizacion();
-          return true;
-        }
-        return false;
+    b2.setOnLongClickListener(v -> {
+      if (b1.isEnabled() && b2.isEnabled()) {
+        Penalizacion(0); // penalización a las blancas
+        return true;
       }
+      return false;
     });
   }
 
@@ -334,10 +328,11 @@ public class MainActivity extends SuperActivity {
     b2.setText(modelo.GetSecondPlayer().StartTime());
   }
 
-  public void Penalizacion() {
+  public void Penalizacion(int player) {
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("penalización"));
     Intent intent = new Intent(this, Penalization.class);
     intent.putExtra("Modelo", modelo);
+    intent.putExtra("player", player);
     startActivityForResult(intent, 2);
   }
 }

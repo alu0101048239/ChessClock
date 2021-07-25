@@ -19,12 +19,15 @@ public class Penalization extends SuperActivity {
   TextView text_segundos;
   int add_minutes;
   int add_seconds;
+  int player;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_penalization);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
+    player = getIntent().getIntExtra("player", -1);
+    System.out.println("Jugador: " + player);
     SetValues();
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -57,6 +60,7 @@ public class Penalization extends SuperActivity {
       String speech = newVal + modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
       tts.Speak(speech);
     }));
+    SetSpeechRecognizer(Penalization.this);
   }
 
   public void ReturnData() {
@@ -68,10 +72,60 @@ public class Penalization extends SuperActivity {
   @Override
   public void onBackPressed() {
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
-    modelo.GetFirstPlayer().SetPenalization(add_minutes, add_seconds);
-    modelo.GetSecondPlayer().SetPenalization(add_minutes, add_seconds);
+    if (player == 0) { // blancas
+      modelo.GetSecondPlayer().SetPenalization(add_minutes, add_seconds);
+    } else if (player == 1) {
+      modelo.GetFirstPlayer().SetPenalization(add_minutes, add_seconds);
+    }
     ReturnData();
     super.onBackPressed();
   }
 
+  public void VoiceManagement(String keeper) {
+    String[] words = keeper.split("\\s+");
+    for (int i = 0; i < words.length; i++) {
+      words[i] = words[i].replaceAll("[^\\w]", "");
+    }
+
+    switch(words.length) {
+      case 1:
+        if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
+          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
+          onBackPressed();
+        } else {
+          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+        }
+        break;
+
+      case 2:
+        String pattern = "(([1-9])|([1-5][0-9]))\\s(minuto|segundo)s?";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(keeper);
+
+        if (m.find()) {
+          int time = Integer.parseInt(words[0]);
+          switch (words[1]) {
+            case "minuto":
+            case "minutos":
+              add_minutes = time;
+              String texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("minutos");
+              tts.Speak(texto);
+              minutos.setValue(time);
+              break;
+            case "segundo":
+            case "segundos":
+             add_seconds = time;
+              texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
+              tts.Speak(texto);
+              segundos.setValue(time);
+              break;
+          }
+        } else {
+          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+        }
+
+      default:
+        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+    }
+  }
 }
