@@ -123,6 +123,7 @@ public class Penalization extends SuperActivity {
         } else {
           tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
         }
+        break;
 
       default:
         tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
