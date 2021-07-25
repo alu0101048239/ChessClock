@@ -157,7 +157,7 @@
                 android:layout_height="match_parent"
                 android:onClick="Reset"
                 android:layout_weight="32"
-                app:srcCompat="@android:drawable/ic_menu_rotate"
+                android:src="@android:drawable/ic_menu_rotate"
                 tools:layout_editor_absoluteX="164dp"
                 tools:layout_editor_absoluteY="353dp" />
 
@@ -172,7 +172,7 @@
                 android:layout_height="match_parent"
                 android:onClick="Pause"
                 android:layout_weight="32"
-                app:srcCompat="@android:drawable/ic_media_pause"
+                android:src="@android:drawable/ic_media_pause"
                 tools:layout_editor_absoluteX="38dp"
                 tools:layout_editor_absoluteY="353dp" />
 
@@ -187,7 +187,7 @@
                 android:layout_height="match_parent"
                 android:onClick="Options"
                 android:layout_weight="32"
-                app:srcCompat="@android:drawable/ic_menu_info_details"
+                android:src="@android:drawable/ic_menu_info_details"
                 tools:layout_editor_absoluteX="287dp"
                 tools:layout_editor_absoluteY="360dp" />
 
