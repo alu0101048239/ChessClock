@@ -48,6 +48,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     language.setAdapter(adapter);
     language.setOnItemSelectedListener(this);
 
+
     int game_language;
 
     switch (modelo.GetVoz().GetLanguage().GetLanguage()) {
@@ -172,7 +173,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == 0 || requestCode == 1) {
+    if (requestCode == 0 || requestCode == 1 || requestCode == 2) {
       if (resultCode == Activity.RESULT_OK) {
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
         SetValues();

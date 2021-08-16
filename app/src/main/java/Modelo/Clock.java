@@ -1,7 +1,5 @@
 package Modelo;
 
-import android.widget.Button;
-
 import java.io.Serializable;
 import java.util.Timer;
 
@@ -225,4 +223,5 @@ public class Clock implements Serializable {
     minutos += minutes;
     segundos += seconds;
   }
+
 }

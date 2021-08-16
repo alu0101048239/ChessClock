@@ -3,11 +3,13 @@ package com.ull.chessclock;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -15,6 +17,19 @@ import android.widget.ImageView;
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Modelo;
+import Modelo.ChatUtils;
+
+// chatutils
+
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 
 public class MainActivity extends SuperActivity {
   Button b1;
@@ -31,6 +46,12 @@ public class MainActivity extends SuperActivity {
   ImageView corona_blancas;
   ImageView corona_negras;
   Boolean game_paused;
+
+  // bluetooth
+  public static final int MESSAGE_STATE_CHANGED = 0;
+  private ChatUtils chatUtils;
+  BluetoothAdapter bluetoothAdapter;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +74,19 @@ public class MainActivity extends SuperActivity {
     mp = MediaPlayer.create(this, R.raw.button_sound);
     t1 = new Timer();
     t2 = new Timer();
+
+    //bluetooth
+    chatUtils = new ChatUtils(this, handler);
+    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+    // Comprobamos si el Talkback está activado
+    /*AccessibilityManager am = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+    boolean isAccessibilityEnabled = am.isEnabled();
+    boolean isExploreByTouchEnabled = am.isTouchExplorationEnabled();
+    if (isAccessibilityEnabled || isExploreByTouchEnabled) {
+
+    }*/
+
     SetSpeechRecognizer(MainActivity.this);
     if (modelo.GetFirstPlayer().GetStarted() != 1) {
       pause.setEnabled(false);
@@ -97,9 +131,9 @@ public class MainActivity extends SuperActivity {
       SpeakTime("negras");
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("mover"))) {
       if (b2.isEnabled()) {
-        MovePlayerTwo(true);
+        MovePlayerTwo(true, true);
       } else {
-        MovePlayerOne(true);
+        MovePlayerOne(true, true);
       }
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
       this.finishAffinity();
@@ -141,7 +175,7 @@ public class MainActivity extends SuperActivity {
   }
 
   /* Juegan blancas */
-  public void MovePlayerOne(Boolean incremento) {
+  public void MovePlayerOne(Boolean incremento, Boolean thread) {
     if (!game_paused) {
       pause.setEnabled(true);
       pause.setAlpha((float) 1);
@@ -159,11 +193,14 @@ public class MainActivity extends SuperActivity {
       modelo.GetFirstPlayer().Pause(t1);
       t2.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
+      if (thread) {
+        chatUtils.write();
+      }
     }
   }
 
   /* Juegan negras */
-  public void MovePlayerTwo(Boolean incremento) {
+  public void MovePlayerTwo(Boolean incremento, Boolean thread) {
     if (!game_paused) {
       pause.setEnabled(true);
       pause.setAlpha((float) 1);
@@ -181,15 +218,18 @@ public class MainActivity extends SuperActivity {
       modelo.GetSecondPlayer().Pause(t2);
       t1.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
+      if (thread) {
+        chatUtils.write();
+      }
     }
   }
 
   public void PlayerOne(View view) {
-    MovePlayerOne(true);
+    MovePlayerOne(true, true);
   }
 
   public void PlayerTwo(View view) {
-    MovePlayerTwo(true);
+    MovePlayerTwo(true, true);
   }
 
   public void SpeakWhiteTime(View view) {
@@ -267,6 +307,9 @@ public class MainActivity extends SuperActivity {
       if (resultCode == Activity.RESULT_OK) {
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
         SetValues();
+        if (modelo.GetAddress() != null) {
+          chatUtils.connect(bluetoothAdapter.getRemoteDevice(modelo.GetAddress()));
+        }
       }
     } else if (requestCode == 1) {
       if (resultCode == Activity.RESULT_OK) {
@@ -278,8 +321,6 @@ public class MainActivity extends SuperActivity {
       modelo = (Modelo) data.getExtras().getSerializable("Modelo");
       b1.setText(modelo.GetFirstPlayer().SetTime());
       b2.setText(modelo.GetSecondPlayer().SetTime());
-      System.out.println("Minutos: " + modelo.GetFirstPlayer().GetMinutos());
-      System.out.println("Segundos: " + modelo.GetFirstPlayer().GetSegundos());
     }
   }
 
@@ -292,9 +333,9 @@ public class MainActivity extends SuperActivity {
     if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
       game_paused = false;
       if (modelo.GetFirstPlayer().GetTurn()) {
-        MovePlayerTwo(false);
+        MovePlayerTwo(false, true);
       } else {
-        MovePlayerOne(false);
+        MovePlayerOne(false, true);
       }
 
     } else {
@@ -335,4 +376,39 @@ public class MainActivity extends SuperActivity {
     intent.putExtra("player", player);
     startActivityForResult(intent, 2);
   }
+
+  private Handler handler = new Handler(message -> {
+    switch (message.what) {
+      case MESSAGE_STATE_CHANGED:
+        switch (message.arg1) {
+          case ChatUtils.STATE_NONE:
+            setState("Not Connected");
+            break;
+          case ChatUtils.STATE_LISTEN:
+            setState("Not Connected");
+            break;
+          case ChatUtils.STATE_CONNECTING:
+            setState("Connecting...");
+            break;
+          case ChatUtils.STATE_CONNECTED:
+            setState("Connected: " );
+            break;
+        }
+        break;
+    }
+    return false;
+  });
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (chatUtils != null) {
+      chatUtils.stop();
+    }
+  }
+
+  private void setState(CharSequence subTitle) {
+    getSupportActionBar().setSubtitle(subTitle);
+  }
+
 }

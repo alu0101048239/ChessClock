@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ull.chessclock">
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" / -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
     <application
         android:allowBackup="true"
@@ -14,8 +16,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChessClock">
-
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".DeviceListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +29,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Options"
             android:screenOrientation="portrait" />
@@ -33,28 +38,21 @@
         <activity
             android:name=".End"
             android:excludeFromRecents="true"
-            android:theme="@style/DialogActivity"
-            android:screenOrientation="portrait">
-            </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/DialogActivity" />
         <activity
             android:name=".CustomGame"
             android:excludeFromRecents="true"
-            android:theme="@style/DialogActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/DialogActivity" />
         <activity
             android:name=".Penalization"
             android:excludeFromRecents="true"
-            android:theme="@style/DialogActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/DialogActivity" />
         <activity
             android:name=".Connectivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

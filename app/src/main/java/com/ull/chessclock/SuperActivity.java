@@ -1,7 +1,6 @@
 package com.ull.chessclock;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,7 +20,7 @@ import java.util.Locale;
 import Modelo.Modelo;
 import Modelo.TTS;
 
-public class SuperActivity extends Activity implements TextToSpeech.OnInitListener {
+public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
   Modelo modelo;
   TTS tts;
   SpeechRecognizer speechRecognizer;

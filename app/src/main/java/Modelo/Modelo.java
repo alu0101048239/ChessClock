@@ -1,17 +1,25 @@
 package Modelo;
 
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
 import java.io.Serializable;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class Modelo implements Serializable {
   Clock firstPlayer;
   Clock secondPlayer;
   Voice voz;
+  String address;
 
   public Modelo() {
     firstPlayer = new Clock("1");
     secondPlayer = new Clock("2");
     voz = new Voice();
+    address = null;
   }
 
   public Clock GetFirstPlayer() {
@@ -49,4 +57,13 @@ public class Modelo implements Serializable {
     int segundos = secondPlayer.GetSegundos();
     return voz.SetTime(minutos, segundos);
   }
+
+  public String GetAddress() {
+    return address;
+  }
+
+  public void SetAddress(String ad) {
+    address = ad;
+  }
+
 }
