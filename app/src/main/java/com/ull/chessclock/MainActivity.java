@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -18,18 +17,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Modelo;
 import Modelo.ChatUtils;
-
-// chatutils
-
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.util.Log;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.UUID;
 
 public class MainActivity extends SuperActivity {
   Button b1;
@@ -51,6 +38,7 @@ public class MainActivity extends SuperActivity {
   public static final int MESSAGE_STATE_CHANGED = 0;
   private ChatUtils chatUtils;
   BluetoothAdapter bluetoothAdapter;
+  Boolean bluetooth_connected;
 
 
   @Override
@@ -74,6 +62,7 @@ public class MainActivity extends SuperActivity {
     mp = MediaPlayer.create(this, R.raw.button_sound);
     t1 = new Timer();
     t2 = new Timer();
+    bluetooth_connected = false;
 
     //bluetooth
     chatUtils = new ChatUtils(this, handler);
@@ -195,7 +184,12 @@ public class MainActivity extends SuperActivity {
       mp.start();
       if (thread) {
         chatUtils.write();
+        if (bluetooth_connected) {
+          b2.setEnabled(false);
+          b2.setAlpha(0.25F);
+        }
       }
+
     }
   }
 
@@ -220,7 +214,12 @@ public class MainActivity extends SuperActivity {
       mp.start();
       if (thread) {
         chatUtils.write();
+        if (bluetooth_connected) {
+          b1.setEnabled(false);
+          b1.setAlpha(0.25F);
+        }
       }
+
     }
   }
 
@@ -275,28 +274,20 @@ public class MainActivity extends SuperActivity {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     builder.setMessage(modelo.GetVoz().GetLanguage().GetTagById("descripción"));
-    builder.setPositiveButton(modelo.GetVoz().GetLanguage().GetTagById("aceptar"), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        modelo.Resetear(t1, t2);
-        b1.setText(modelo.GetFirstPlayer().SetTime());
-        b2.setText(modelo.GetSecondPlayer().SetTime());
-        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
-        b1.setEnabled(true);
-        b2.setEnabled(false);
-        game_paused = false;
-        pause.setEnabled(false);
-        pause.setAlpha((float) 0.25);
-        reset.setEnabled(false);
-        reset.setAlpha((float) 0.25);
-      }
+    builder.setPositiveButton(modelo.GetVoz().GetLanguage().GetTagById("aceptar"), (dialog, which) -> {
+      modelo.Resetear(t1, t2);
+      b1.setText(modelo.GetFirstPlayer().SetTime());
+      b2.setText(modelo.GetSecondPlayer().SetTime());
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
+      b1.setEnabled(true);
+      b2.setEnabled(false);
+      game_paused = false;
+      pause.setEnabled(false);
+      pause.setAlpha((float) 0.25);
+      reset.setEnabled(false);
+      reset.setAlpha((float) 0.25);
     });
-    builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar"));
-      }
-    });
+    builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), (dialog, which) -> tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar")));
     builder.show();
   }
 
@@ -305,6 +296,7 @@ public class MainActivity extends SuperActivity {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == 0) {
       if (resultCode == Activity.RESULT_OK) {
+        assert data != null;
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
         SetValues();
         if (modelo.GetAddress() != null) {
@@ -318,6 +310,7 @@ public class MainActivity extends SuperActivity {
         b2.setText(modelo.GetSecondPlayer().SetTime());
       }
     } else if (requestCode == 2) {
+      assert data != null;
       modelo = (Modelo) data.getExtras().getSerializable("Modelo");
       b1.setText(modelo.GetFirstPlayer().SetTime());
       b2.setText(modelo.GetSecondPlayer().SetTime());
@@ -392,6 +385,7 @@ public class MainActivity extends SuperActivity {
             break;
           case ChatUtils.STATE_CONNECTED:
             setState("Connected: " );
+            bluetooth_connected = true;
             break;
         }
         break;
