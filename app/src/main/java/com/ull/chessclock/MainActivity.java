@@ -2,11 +2,8 @@ package com.ull.chessclock;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -15,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,9 +32,10 @@ public class MainActivity extends SuperActivity {
   Timer t2;
   ImageView corona_blancas;
   ImageView corona_negras;
-  Boolean game_paused;
+  public Boolean game_paused;
+  Boolean game_finished;
 
-  // bluetooth
+  // Bluetooth
   public static final int MESSAGE_STATE_CHANGED = 0;
   private ChatUtils chatUtils;
   BluetoothAdapter bluetoothAdapter;
@@ -67,6 +64,7 @@ public class MainActivity extends SuperActivity {
     t1 = new Timer();
     t2 = new Timer();
     bluetooth_connected = false;
+    game_finished = false;
 
     //bluetooth
     chatUtils = new ChatUtils(this, handler);
@@ -89,7 +87,6 @@ public class MainActivity extends SuperActivity {
     }
 
     // Penalización
-
     b1.setOnLongClickListener(v -> {
       if (b1.isEnabled() && b2.isEnabled()) {
         Penalizacion(1); // penalización a las negras
@@ -157,9 +154,10 @@ public class MainActivity extends SuperActivity {
     return tarea;
   }
 
-  private void GameOver() {
-    if (modelo.GetFirstPlayer().GetStarted() == 0 || modelo.GetSecondPlayer().GetStarted() == 0) {
-      CheckPause(true);
+  public void GameOver() {
+    if ((modelo.GetFirstPlayer().GetStarted() == 0 || modelo.GetSecondPlayer().GetStarted() == 0) && (!game_finished)) {
+      System.out.println("chivato");
+      game_finished = true;
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
       Intent intent = new Intent(this, End.class);
       intent.putExtra("Modelo", modelo);
@@ -270,6 +268,7 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Opciones() {
+    System.out.println("tiempo antes: " + modelo.GetFirstPlayer().GetSegundos());
     chatUtils.write("sttgs".getBytes());
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
@@ -338,8 +337,11 @@ public class MainActivity extends SuperActivity {
       if (resultCode == Activity.RESULT_OK) {
         assert data != null;
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
-        SetValues();
-        if (modelo.GetAddress() != null) {
+        //SetValues();
+        System.out.println("tiempo despues: " + modelo.GetFirstPlayer().GetSegundos());
+        b1.setText(modelo.GetFirstPlayer().SetTime());
+        b2.setText(modelo.GetSecondPlayer().SetTime());
+        if (modelo.GetAddress() != null && !bluetooth_connected) {
           chatUtils.connect(bluetoothAdapter.getRemoteDevice(modelo.GetAddress()));
         }
       }
@@ -348,10 +350,12 @@ public class MainActivity extends SuperActivity {
         modelo.Resetear(t1, t2);
         b1.setText(modelo.GetFirstPlayer().SetTime());
         b2.setText(modelo.GetSecondPlayer().SetTime());
+        game_finished = false;
       }
     } else if (requestCode == 2) {
       assert data != null;
       modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+      System.out.println("tiempo despues: " + modelo.GetFirstPlayer().GetSegundos());
       b1.setText(modelo.GetFirstPlayer().SetTime());
       b2.setText(modelo.GetSecondPlayer().SetTime());
     }
@@ -363,7 +367,6 @@ public class MainActivity extends SuperActivity {
   }
 
   public void CheckPause(Boolean thread) {
-
     if (!bluetooth_connected) { // Partida normal
       if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
         game_paused = false;
@@ -423,8 +426,6 @@ public class MainActivity extends SuperActivity {
         }
       }
     }
-
-
   }
 
  @Override
@@ -443,6 +444,7 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Penalizacion(int player) {
+    System.out.println("tiempo antes: " + modelo.GetFirstPlayer().GetSegundos());
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("penalización"));
     Intent intent = new Intent(this, Penalization.class);
     intent.putExtra("Modelo", modelo);

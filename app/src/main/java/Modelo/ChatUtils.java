@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -300,7 +299,9 @@ public class ChatUtils {
                 mainActivity.Reset(false);
 
               case "sttgs":
-                mainActivity.CheckPause(false);
+                if (!mainActivity.game_paused) {
+                  mainActivity.CheckPause(false);
+                }
             }
 
           });

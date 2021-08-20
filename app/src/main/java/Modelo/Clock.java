@@ -179,6 +179,8 @@ public class Clock implements Serializable {
     }
     minutos = mode.GetTime();
     segundos = mode.GetIncrement();
+    centesimas = 0;
+    horas = 0;
   }
 
   public GameMode GetMode() {

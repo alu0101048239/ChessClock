@@ -1,13 +1,7 @@
 package Modelo;
 
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-
 import java.io.Serializable;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class Modelo implements Serializable {
   Clock firstPlayer;

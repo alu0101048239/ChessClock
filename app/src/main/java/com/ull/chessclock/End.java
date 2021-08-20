@@ -22,8 +22,8 @@ public class End extends SuperActivity {
     getWindow().setLayout((int)(width*.7),(int)(height*.5));
     end_game = findViewById(R.id.endGame);
     end_game.setText(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
-    SetSpeechRecognizer(End.this);
     ReturnData();
+    SetSpeechRecognizer(End.this);
   }
 
   public void ReturnData() {
@@ -40,4 +40,5 @@ public class End extends SuperActivity {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
   }
+
 }

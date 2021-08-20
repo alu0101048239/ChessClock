@@ -1,22 +1,16 @@
 package com.ull.chessclock;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-
 import java.util.Objects;
-import java.util.Set;
 import Modelo.Modelo;
 
 public class Options extends SuperActivity implements AdapterView.OnItemSelectedListener {
@@ -29,20 +23,12 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   ArrayAdapter<CharSequence> adapter2;
   ArrayAdapter<CharSequence> adapter;
   Button conectividad;
-  // BLUETOOTH
-  Button bluet;
-  BluetoothAdapter mBluetoothAdapter;
-  private Set<BluetoothDevice> pairedDevices;
-  ListView lv;
-
+  int check;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_options);
-    mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    //bluet = findViewById(R.id.bluet);
-    //lv = (ListView)findViewById(R.id.listView);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
     SetValues();
     language = findViewById(R.id.languageSpinner);
@@ -50,7 +36,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     language.setAdapter(adapter);
     language.setOnItemSelectedListener(this);
     Objects.requireNonNull(getSupportActionBar()).hide();
-
+    check = 0;
 
     int game_language;
 
@@ -101,24 +87,6 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
 
   public void VoiceSettings(View view) {
     VoiceMenu();
-  }
-
-  public void Blue(View view) {
-    if (mBluetoothAdapter == null) {
-      Log.d("Options", "Does not have BT capabilities");
-    }
-    if (!mBluetoothAdapter.isEnabled()) {
-      Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-      startActivityForResult(enableBTIntent, 0);
-      pairedDevices = mBluetoothAdapter.getBondedDevices();
-      //IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-      //registerReceiver(mBroadcastReceiver, BTIntent);
-    }
-    if (mBluetoothAdapter.isEnabled()) {
-      mBluetoothAdapter.disable();
-      //IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-      //registerReceiver(mBroadcastReceiver, BTIntent);
-    }
   }
 
   public void VoiceMenu() {
@@ -191,6 +159,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   @Override
   public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
     String spinner = parent.getItemAtPosition(position).toString();
+    check++;
 
     if (parent.getAdapter().getCount() == 3) {
       switch (spinner) {
@@ -205,28 +174,32 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
           break;
       }
     } else if (parent.getAdapter().getCount() == 4) {
-      switch (spinner) {
-        case "Clásico":
-        case "Classical":
-        case "Klassisches":
-          ChangeMode("Clásico");
-          break;
-        case "Rápido":
-        case "Rapid":
-        case "Schnell":
-          ChangeMode("Rápido");
-          break;
-        case "Blitz":
-          ChangeMode("Blitz");
-          break;
-        case "Personalizar":
-        case "Personalize":
-        case "Personifizieren":
-          ChangeMode("Personalizar");
-          Customize();
-          break;
+
+      if (++check > 3) {
+        switch (spinner) {
+          case "Clásico":
+          case "Classical":
+          case "Klassisches":
+            ChangeMode("Clásico");
+            break;
+          case "Rápido":
+          case "Rapid":
+          case "Schnell":
+            ChangeMode("Rápido");
+            break;
+          case "Blitz":
+            ChangeMode("Blitz");
+            break;
+          case "Personalizar":
+          case "Personalize":
+          case "Personifizieren":
+            ChangeMode("Personalizar");
+            Customize();
+            break;
+        }
       }
     }
+    System.out.println("ey: " + modelo.GetFirstPlayer().GetSegundos());
     ReturnData();
   }
 
