@@ -2,6 +2,8 @@ package com.ull.chessclock;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
@@ -13,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Modelo;
@@ -107,13 +111,13 @@ public class MainActivity extends SuperActivity {
     if (keeper.toUpperCase().equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes"))) {
       Opciones();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
-      CheckPause();
+      CheckPause(true);
     } else if (keeper.equals("parar") || keeper.equals("stop")) {
       pause.setEnabled(false);
       pause.setAlpha((float) 0.25);
       reset.setEnabled(false);
       reset.setAlpha((float) 0.25);
-      Reset();
+      Reset(true);
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("blancas"))) {
       SpeakTime("blancas");
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("negras"))) {
@@ -155,7 +159,7 @@ public class MainActivity extends SuperActivity {
 
   private void GameOver() {
     if (modelo.GetFirstPlayer().GetStarted() == 0 || modelo.GetSecondPlayer().GetStarted() == 0) {
-      CheckPause();
+      CheckPause(true);
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
       Intent intent = new Intent(this, End.class);
       intent.putExtra("Modelo", modelo);
@@ -183,13 +187,20 @@ public class MainActivity extends SuperActivity {
       t2.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
       if (thread) {
-        chatUtils.write();
+        chatUtils.write("press".getBytes());
         if (bluetooth_connected) {
           b2.setEnabled(false);
           b2.setAlpha(0.25F);
+          pause.setEnabled(false);
+          pause.setAlpha(0.25F);
+          reset.setEnabled(false);
+          reset.setAlpha(0.25F);
+          black_time1.setEnabled(false);
+          white_time1.setEnabled(false);
+          black_time1.setAlpha(0.25F);
+          white_time1.setAlpha(0.25F);
         }
       }
-
     }
   }
 
@@ -213,13 +224,20 @@ public class MainActivity extends SuperActivity {
       t1.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
       if (thread) {
-        chatUtils.write();
+        chatUtils.write("press".getBytes());
         if (bluetooth_connected) {
           b1.setEnabled(false);
           b1.setAlpha(0.25F);
+          pause.setEnabled(false);
+          pause.setAlpha(0.25F);
+          reset.setEnabled(false);
+          reset.setAlpha(0.25F);
+          black_time2.setEnabled(false);
+          white_time2.setEnabled(false);
+          black_time2.setAlpha(0.25F);
+          white_time2.setAlpha(0.25F);
         }
       }
-
     }
   }
 
@@ -252,6 +270,7 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Opciones() {
+    chatUtils.write("sttgs".getBytes());
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
     intent.putExtra("Modelo", modelo);
@@ -259,16 +278,16 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Pause(View view) {
-    CheckPause();
+    CheckPause(true);
   }
 
   public void Reset(View view) {
-    Reset();
+    Reset(true);
   }
 
-  public void Reset() {
+  public void Reset(Boolean thread) {
     if (!game_paused) {
-      CheckPause();
+      CheckPause(true);
     }
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -286,9 +305,30 @@ public class MainActivity extends SuperActivity {
       pause.setAlpha((float) 0.25);
       reset.setEnabled(false);
       reset.setAlpha((float) 0.25);
+      if (bluetooth_connected) {
+        if (!thread) {
+          b1.setEnabled(false);
+          b2.setEnabled(false);
+        } else {
+          System.out.println("aqui");
+          if (modelo.GetFirstPlayer().GetTurn()) {
+            b2.setEnabled(false);
+            b1.setEnabled(true);
+          } else {
+            b1.setEnabled(false);
+            b2.setEnabled(true);
+          }
+        }
+      }
     });
     builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), (dialog, which) -> tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar")));
     builder.show();
+
+    if (bluetooth_connected) {
+      if (thread) {
+        chatUtils.write("reset".getBytes());
+      }
+    }
   }
 
   @Override
@@ -322,29 +362,69 @@ public class MainActivity extends SuperActivity {
     SetButtonsTexts();
   }
 
-  public void CheckPause() {
-    if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
-      game_paused = false;
-      if (modelo.GetFirstPlayer().GetTurn()) {
-        MovePlayerTwo(false, true);
-      } else {
-        MovePlayerOne(false, true);
-      }
+  public void CheckPause(Boolean thread) {
 
-    } else {
-      if (b1.isEnabled()) { // están jugando negras
-        modelo.GetFirstPlayer().SetTurn(true);
-        modelo.GetSecondPlayer().SetTurn(false);
-      } else { // están jugando blancas
-        modelo.GetSecondPlayer().SetTurn(true);
-        modelo.GetFirstPlayer().SetTurn(false);
+    if (!bluetooth_connected) { // Partida normal
+      if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
+        game_paused = false;
+        if (modelo.GetFirstPlayer().GetTurn()) {
+          MovePlayerTwo(false, true);
+        } else {
+          MovePlayerOne(false, true);
+        }
+
+      } else {
+        if (b1.isEnabled()) { // están jugando negras
+          modelo.GetFirstPlayer().SetTurn(true);
+          modelo.GetSecondPlayer().SetTurn(false);
+        } else { // están jugando blancas
+          modelo.GetSecondPlayer().SetTurn(true);
+          modelo.GetFirstPlayer().SetTurn(false);
+        }
+        b1.setEnabled(true);
+        b2.setEnabled(true);
+        modelo.Pausar(t1, t2);
+        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
+        game_paused = true;
       }
-      b1.setEnabled(true);
-      b2.setEnabled(true);
-      modelo.Pausar(t1, t2);
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
-      game_paused = true;
+    } else {  // Partida por Bluetooth
+
+      if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
+        game_paused = false;
+        if (modelo.GetFirstPlayer().GetTurn()) {
+          MovePlayerTwo(false, false);
+        } else {
+          MovePlayerOne(false, false);
+        }
+
+        if (thread) {
+          chatUtils.write("pause".getBytes());
+        } else {
+          pause.setEnabled(false);
+          pause.setAlpha(0.25F);
+        }
+
+      } else {
+        if (b1.isEnabled()) { // están jugando negras
+          modelo.GetFirstPlayer().SetTurn(true);
+          modelo.GetSecondPlayer().SetTurn(false);
+        } else { // están jugando blancas
+          modelo.GetSecondPlayer().SetTurn(true);
+          modelo.GetFirstPlayer().SetTurn(false);
+        }
+        b1.setEnabled(true);
+        b2.setEnabled(true);
+        modelo.Pausar(t1, t2);
+        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
+        game_paused = true;
+
+        if (thread) {
+          chatUtils.write("pause".getBytes());
+        }
+      }
     }
+
+
   }
 
  @Override
@@ -371,24 +451,21 @@ public class MainActivity extends SuperActivity {
   }
 
   private Handler handler = new Handler(message -> {
-    switch (message.what) {
-      case MESSAGE_STATE_CHANGED:
-        switch (message.arg1) {
-          case ChatUtils.STATE_NONE:
-            setState("Not Connected");
-            break;
-          case ChatUtils.STATE_LISTEN:
-            setState("Not Connected");
-            break;
-          case ChatUtils.STATE_CONNECTING:
-            setState("Connecting...");
-            break;
-          case ChatUtils.STATE_CONNECTED:
-            setState("Connected: " );
-            bluetooth_connected = true;
-            break;
-        }
-        break;
+    if (message.what == MESSAGE_STATE_CHANGED) {
+      switch (message.arg1) {
+        case ChatUtils.STATE_NONE:
+        case ChatUtils.STATE_LISTEN:
+          setState("Not Connected");
+          modelo.Pausar(t1, t2);
+          break;
+        case ChatUtils.STATE_CONNECTING:
+          setState("Connecting...");
+          break;
+        case ChatUtils.STATE_CONNECTED:
+          setState("Connected: ");
+          bluetooth_connected = true;
+          break;
+      }
     }
     return false;
   });
@@ -402,7 +479,7 @@ public class MainActivity extends SuperActivity {
   }
 
   private void setState(CharSequence subTitle) {
-    getSupportActionBar().setSubtitle(subTitle);
+    Objects.requireNonNull(getSupportActionBar()).setSubtitle(subTitle);
   }
 
 }

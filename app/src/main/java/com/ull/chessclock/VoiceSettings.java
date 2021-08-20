@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import java.util.Objects;
+
 import Modelo.Modelo;
 
 public class VoiceSettings extends SuperActivity {
@@ -34,6 +37,7 @@ public class VoiceSettings extends SuperActivity {
     set_assistant.setChecked(modelo.GetVoz().GetAssistant());
     SetButtonsTexts();
     SetSpeechRecognizer(VoiceSettings.this);
+    Objects.requireNonNull(getSupportActionBar()).hide();
   }
 
   public void SubirVelocidad() {

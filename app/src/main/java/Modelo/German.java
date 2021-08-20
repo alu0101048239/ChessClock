@@ -38,6 +38,8 @@ public class German extends Language implements Serializable {
     etiquetas.put("aceptar", "Akzeptieren");
     etiquetas.put("cancelar", "Stornieren");
     etiquetas.put("penalización", "Bestrafung");
+    etiquetas.put("emparejados", "gekoppelte geräte");
+    etiquetas.put("disponibles", "verfügbare geräte");
   }
 
   private void SetDictado() {
@@ -68,5 +70,10 @@ public class German extends Language implements Serializable {
     dictado.put("off_asistente", "Assistent deaktivieren");
     dictado.put("on_asistente", "Assistent aktivieren");
     dictado.put("salir", "Beenden");
+    dictado.put("emparejados", "gekoppelte");
+    dictado.put("disponibles", "verfügbare");
+    dictado.put("ninguno", "weder");
+    dictado.put("visibilidad", "sichtbarkeit aktivieren");
+    dictado.put("buscar", "geräte suchen");
   }
 }

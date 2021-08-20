@@ -1,6 +1,7 @@
 package com.ull.chessclock;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,8 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -130,19 +133,16 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
   }
 
   public void onRequestPermissionsResult(int requestCode,
-                                         String permissions[], int[] grantResults) {
+                                         @NonNull String[] permissions, @NonNull int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    switch (requestCode) {
-      case RECORD_REQUEST_CODE: {
+    if (requestCode == RECORD_REQUEST_CODE) {
+      if (grantResults.length == 0
+              || grantResults[0] !=
+              PackageManager.PERMISSION_GRANTED) {
 
-        if (grantResults.length == 0
-                || grantResults[0] !=
-                PackageManager.PERMISSION_GRANTED) {
-
-          Log.i(TAG, "Permission has been denied by user");
-        } else {
-          Log.i(TAG, "Permission has been granted by user");
-        }
+        Log.i(TAG, "Permission has been denied by user");
+      } else {
+        Log.i(TAG, "Permission has been granted by user");
       }
     }
   }

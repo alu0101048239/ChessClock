@@ -18,85 +18,30 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Objects;
 import java.util.Set;
-import Modelo.ChatUtils;
 import Modelo.Modelo;
 
 public class Connectivity extends SuperActivity {
   private Context context;
   private BluetoothAdapter bluetoothAdapter;
-  //private ChatUtils chatUtils;
-  private EditText edCreateMessage;
   private ArrayAdapter<String> adapterMainChat;
-  Button btnSendMessage;
   Modelo modelo;
-
-  private final int LOCATION_PERMISSION_REQUEST = 101;
-  private final int SELECT_DEVICE = 102;
 
   public static final int MESSAGE_STATE_CHANGED = 0;
   public static final int MESSAGE_READ = 1;
   public static final int MESSAGE_WRITE = 2;
   public static final int MESSAGE_DEVICE_NAME = 3;
   public static final int MESSAGE_TOAST = 4;
-
   public static final String DEVICE_NAME = "deviceName";
   public static final String TOAST = "toast";
-  private String connectedDevice;
-
-  /* Device List Activity */
   private ListView listPairedDevices, listAvailableDevices;
   private ProgressBar progressScanDevices;
   private ArrayAdapter<String> adapterPairedDevices, adapterAvailableDevices;
-  /* Device List Activity */
 
-  /*private Handler handler = new Handler(new Handler.Callback() {
-    @Override
-    public boolean handleMessage(Message message) {
-      switch (message.what) {
-        case MESSAGE_STATE_CHANGED:
-          switch (message.arg1) {
-            case ChatUtils.STATE_NONE:
-              setState("Not Connected");
-              break;
-            case ChatUtils.STATE_LISTEN:
-              setState("Not Connected");
-              break;
-            case ChatUtils.STATE_CONNECTING:
-              setState("Connecting...");
-              break;
-            case ChatUtils.STATE_CONNECTED:
-              setState("Connected: " + connectedDevice);
-              break;
-          }
-          break;
-        case MESSAGE_WRITE:
-          byte[] buffer1 = (byte[]) message.obj;
-          String outputBuffer = new String(buffer1);
-          adapterMainChat.add("Me: " + outputBuffer);
-          break;
-        case MESSAGE_READ:
-          byte[] buffer = (byte[]) message.obj;
-          String inputBuffer = new String(buffer, 0, message.arg1);
-          adapterMainChat.add(connectedDevice + ": " + inputBuffer);
-          break;
-        case MESSAGE_DEVICE_NAME:
-          connectedDevice = message.getData().getString(DEVICE_NAME);
-          Toast.makeText(context, connectedDevice, Toast.LENGTH_SHORT).show();
-          break;
-        case MESSAGE_TOAST:
-          Toast.makeText(context, message.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
-          break;
-      }
-      return false;
-    }
-  });*/
-
-  private void setState(CharSequence subTitle) {
-    getSupportActionBar().setSubtitle(subTitle);
-  }
-
+  private TextView paired;
+  private TextView available;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -106,22 +51,23 @@ public class Connectivity extends SuperActivity {
     init();
     initBluetooth();
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
-    //chatUtils = new ChatUtils(context, handler, btnSendMessage);
+
+    paired = findViewById(R.id.paired);
+    paired.setText(modelo.GetVoz().GetLanguage().GetTagById("emparejados"));
+    available = findViewById(R.id.available);
+    available.setText(modelo.GetVoz().GetLanguage().GetTagById("disponibles"));
+    Objects.requireNonNull(getSupportActionBar()).setTitle("Bluetooth");
+    SetSpeechRecognizer(Connectivity.this);
   }
 
   private void init() {
-    edCreateMessage = findViewById(R.id.ed_enter_message);
-    btnSendMessage = findViewById(R.id.btn_send_msg);
-
     adapterMainChat = new ArrayAdapter<>(context, R.layout.message_layout);
-
-    /* Device List Activity */
     listPairedDevices = findViewById(R.id.list_paired_devices);
     listAvailableDevices = findViewById(R.id.list_available_devices);
     progressScanDevices = findViewById(R.id.progress_scan_devices);
 
-    adapterPairedDevices = new ArrayAdapter<String>(context, R.layout.device_list_item);
-    adapterAvailableDevices = new ArrayAdapter<String>(context, R.layout.device_list_item);
+    adapterPairedDevices = new ArrayAdapter<>(context, R.layout.device_list_item);
+    adapterAvailableDevices = new ArrayAdapter<>(context, R.layout.device_list_item);
 
     listPairedDevices.setAdapter(adapterPairedDevices);
     listAvailableDevices.setAdapter(adapterAvailableDevices);
@@ -129,13 +75,8 @@ public class Connectivity extends SuperActivity {
     listAvailableDevices.setOnItemClickListener((adapterView, view, i, l) -> {
       String info = ((TextView) view).getText().toString();
       String address = info.substring(info.length() - 17);
+      tts.Speak(info.substring(0, info.length() - 17));
 
-      //Intent intent = new Intent();
-      //intent.putExtra("deviceAddress", address);
-      //setResult(RESULT_OK, intent);
-      //finish();
-
-      //chatUtils.connect(bluetoothAdapter.getRemoteDevice(address));
     });
 
     bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -157,26 +98,18 @@ public class Connectivity extends SuperActivity {
 
       String info = ((TextView) view).getText().toString();
       String address = info.substring(info.length() - 17);
-
-      //Intent intent = new Intent();
-      //intent.putExtra("deviceAddress", address);
-      //setResult(Activity.RESULT_OK, intent);
-      //finish();
-
-      //chatUtils.connect(bluetoothAdapter.getRemoteDevice(address));
-
       modelo.SetAddress(address);
+      tts.Speak(info.substring(0, info.length() - 17));
+
+      System.out.println("Lista: ");
+      for (int j = 0; j < listPairedDevices.getCount(); j++) {
+        String x = (String) listPairedDevices.getItemAtPosition(j);
+        System.out.println(j + ": " + x.substring(0, x.length() - 17));
+      }
+
+
       ReturnData();
     });
-    /* Device List Activity */
-
-    /*btnSendMessage.setOnClickListener(view -> {
-      String message = edCreateMessage.getText().toString();
-      if (!message.isEmpty()) {
-        edCreateMessage.setText("");
-        chatUtils.write(message.getBytes());
-      }
-    });*/ //descomentar
   }
 
   private void initBluetooth() {
@@ -194,36 +127,19 @@ public class Connectivity extends SuperActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      /*case R.id.menu_search_devices:
-        checkPermissions();
-        return true;*/
-      case R.id.menu_enable_bluetooth:
-        enableBluetooth();
-        return true;
-      case R.id.menu_scan_devices:
-        scanDevices();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
+    if (item.getItemId() == R.id.menu_enable_bluetooth) {
+      enableBluetooth();
+      return true;
+    } else if (item.getItemId() == R.id.menu_scan_devices) {
+      scanDevices();
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
     }
   }
 
-  /*private void checkPermissions() {
-    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(Connectivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
-    } else {
-      Intent intent = new Intent(context, DeviceListActivity.class);
-      startActivityForResult(intent, SELECT_DEVICE);
-    }
-  }*/
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    /*if (requestCode == SELECT_DEVICE && resultCode == RESULT_OK) {
-      String address = data.getStringExtra("deviceAddress");
-      chatUtils.connect(bluetoothAdapter.getRemoteDevice(address));
-    }*/
     super.onActivityResult(requestCode, resultCode, data);
     modelo = (Modelo) data.getExtras().getSerializable("Modelo");
     ReturnData();
@@ -235,35 +151,10 @@ public class Connectivity extends SuperActivity {
     setResult(Activity.RESULT_OK, returnIntent);
   }
 
-  /*@Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode == LOCATION_PERMISSION_REQUEST) {
-      if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        Intent intent = new Intent(context, DeviceListActivity.class);
-        startActivityForResult(intent, SELECT_DEVICE);
-      } else {
-        new AlertDialog.Builder(context)
-                .setCancelable(false)
-                .setMessage("Location permission is required.\n Please grant")
-                .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialogInterface, int i) {
-                    checkPermissions();
-                  }
-                })
-                .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialogInterface, int i) {
-                    Connectivity.this.finish();
-                  }
-                }).show();
-      }
-    } else {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-  }*/
-
   private void enableBluetooth() {
+
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("visibilidad"));
+
     if (!bluetoothAdapter.isEnabled()) {
       bluetoothAdapter.enable();
     }
@@ -287,7 +178,6 @@ public class Connectivity extends SuperActivity {
     }
   }
 
-  /* Device List Activity */
   private BroadcastReceiver bluetoothDeviceListener = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -295,6 +185,7 @@ public class Connectivity extends SuperActivity {
 
       if (BluetoothDevice.ACTION_FOUND.equals(action)) {
         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+        assert device != null;
         if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
           adapterAvailableDevices.add(device.getName() + "\n" + device.getAddress());
         }
@@ -310,6 +201,9 @@ public class Connectivity extends SuperActivity {
   };
 
   private void scanDevices() {
+
+    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("buscar"));
+
     progressScanDevices.setVisibility(View.VISIBLE);
     adapterAvailableDevices.clear();
     Toast.makeText(context, "Scan started", Toast.LENGTH_SHORT).show();
@@ -320,5 +214,38 @@ public class Connectivity extends SuperActivity {
     bluetoothAdapter.startDiscovery();
   }
 
-  /* Device List Activity */
+  public void VoiceManagement(String keeper) {
+    if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("emparejados"))) {
+      StringBuilder text = new StringBuilder(modelo.GetVoz().GetLanguage().GetTagById("emparejados") + ":");
+
+      if (listPairedDevices.getCount() == 0) {
+        text.append(modelo.GetVoz().GetLanguage().GetDictadoById("ninguno"));
+      }
+
+      for (int j = 0; j < listPairedDevices.getCount(); j++) {
+        String x = (String) listPairedDevices.getItemAtPosition(j);
+        text.append(x.substring(0, x.length() - 17));
+        text.append(":");
+      }
+      tts.Speak(text.toString());
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("disponibles"))) {
+      StringBuilder text = new StringBuilder(modelo.GetVoz().GetLanguage().GetTagById("disponibles") + ":");
+
+      if (listAvailableDevices.getCount() == 0) {
+        text.append(modelo.GetVoz().GetLanguage().GetDictadoById("ninguno"));
+      }
+
+      for (int j = 0; j < listAvailableDevices.getCount(); j++) {
+        String x = (String) listAvailableDevices.getItemAtPosition(j);
+        text.append(x.substring(0, x.length() - 17));
+        text.append(":");
+      }
+      tts.Speak(text.toString());
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
+      onBackPressed();
+    } else {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+    }
+  }
 }

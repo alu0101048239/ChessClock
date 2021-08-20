@@ -40,6 +40,8 @@ public class English extends Language implements Serializable {
     etiquetas.put("aceptar", "Accept");
     etiquetas.put("cancelar", "Cancel");
     etiquetas.put("penalización", "Penalization");
+    etiquetas.put("emparejados", "Paired devices");
+    etiquetas.put("disponibles", "Available devices");
   }
 
   private void SetDictado() {
@@ -71,5 +73,10 @@ public class English extends Language implements Serializable {
     dictado.put("off_asistente", "Enable assistant");
     dictado.put("on_asistente", "Disable assistant");
     dictado.put("salir", "Exit");
+    dictado.put("emparejados", "paired");
+    dictado.put("disponibles", "available");
+    dictado.put("ninguno", "none");
+    dictado.put("visibilidad", "enable visibility");
+    dictado.put("buscar", "search for devices");
   }
 }

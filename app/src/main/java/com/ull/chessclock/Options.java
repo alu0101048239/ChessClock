@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+
+import java.util.Objects;
 import java.util.Set;
 import Modelo.Modelo;
 
@@ -47,6 +49,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     adapter = ArrayAdapter.createFromResource(this, R.array.languages, R.layout.spinner_item);
     language.setAdapter(adapter);
     language.setOnItemSelectedListener(this);
+    Objects.requireNonNull(getSupportActionBar()).hide();
 
 
     int game_language;
@@ -165,6 +168,8 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
       onBackPressed();
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
       this.finishAffinity();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("conectividad").toLowerCase())) {
+      Conectividad();
     } else {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
@@ -175,6 +180,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == 0 || requestCode == 1 || requestCode == 2) {
       if (resultCode == Activity.RESULT_OK) {
+        assert data != null;
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
         SetValues();
         ReturnData();
@@ -253,6 +259,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     intent.putExtra("Modelo", modelo);
     startActivityForResult(intent, 1);
   }
+
 
   @Override
   public void onNothingSelected(AdapterView<?> parent) {}
