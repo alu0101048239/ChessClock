@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import com.ull.chessclock.Connectivity;
+import com.ull.chessclock.Bluetooth;
 import com.ull.chessclock.MainActivity;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,7 +58,7 @@ public class ChatUtils {
 
   public synchronized void setState(int state) {
     this.state = state;
-    handler.obtainMessage(Connectivity.MESSAGE_STATE_CHANGED, state, -1).sendToTarget();
+    handler.obtainMessage(Bluetooth.MESSAGE_STATE_CHANGED, state, -1).sendToTarget();
   }
 
   private synchronized void start() {
@@ -116,11 +116,6 @@ public class ChatUtils {
   }
 
   public void write(byte[] buffer) {
-    StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-    for (StackTraceElement element : stackTraceElements) {
-      System.out.println("Invocante en write(): " + element.getMethodName());
-    }
-
     ConnectedThread connThread;
     synchronized (this) {
       if (state != STATE_CONNECTED) {
@@ -270,7 +265,7 @@ public class ChatUtils {
 
         try {
           bytes = inputStream.read(buffer);
-          handler.obtainMessage(Connectivity.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+          handler.obtainMessage(Bluetooth.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
 
           String option = new String(buffer, StandardCharsets.ISO_8859_1).substring(0, 5);
 
@@ -317,7 +312,7 @@ public class ChatUtils {
       try {
 
         outputStream.write(buffer); // escribes el mensaje en tu propio móvil
-        handler.obtainMessage(Connectivity.MESSAGE_WRITE, -1, -1, buffer).sendToTarget(); // escribe el mensaje en el otro móvil
+        handler.obtainMessage(Bluetooth.MESSAGE_WRITE, -1, -1, buffer).sendToTarget(); // escribe el mensaje en el otro móvil
         String option = new String(buffer, StandardCharsets.ISO_8859_1);
         switch (option) {
           case "press":
@@ -351,9 +346,9 @@ public class ChatUtils {
   }
 
   private void connectionLost() {
-    Message message = handler.obtainMessage(Connectivity.MESSAGE_TOAST);
+    Message message = handler.obtainMessage(Bluetooth.MESSAGE_TOAST);
     Bundle bundle = new Bundle();
-    bundle.putString(Connectivity.TOAST, "Connection Lost");
+    bundle.putString(Bluetooth.TOAST, "Connection Lost");
     message.setData(bundle);
     handler.sendMessage(message);
 
@@ -361,9 +356,9 @@ public class ChatUtils {
   }
 
   private synchronized void connectionFailed() {
-    Message message = handler.obtainMessage(Connectivity.MESSAGE_TOAST);
+    Message message = handler.obtainMessage(Bluetooth.MESSAGE_TOAST);
     Bundle bundle = new Bundle();
-    bundle.putString(Connectivity.TOAST, "Cant connect to the device");
+    bundle.putString(Bluetooth.TOAST, "Cant connect to the device");
     message.setData(bundle);
     handler.sendMessage(message);
 
@@ -384,9 +379,9 @@ public class ChatUtils {
     connectedThread = new ConnectedThread(socket);
     connectedThread.start();
 
-    Message message = handler.obtainMessage(Connectivity.MESSAGE_DEVICE_NAME);
+    Message message = handler.obtainMessage(Bluetooth.MESSAGE_DEVICE_NAME);
     Bundle bundle = new Bundle();
-    bundle.putString(Connectivity.DEVICE_NAME, device.getName());
+    bundle.putString(Bluetooth.DEVICE_NAME, device.getName());
     message.setData(bundle);
     handler.sendMessage(message);
 

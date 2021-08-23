@@ -8,12 +8,14 @@ public class Modelo implements Serializable {
   Clock secondPlayer;
   Voice voz;
   String address;
+  Boolean internet;
 
   public Modelo() {
     firstPlayer = new Clock("1");
     secondPlayer = new Clock("2");
     voz = new Voice();
     address = null;
+    internet = false;
   }
 
   public Clock GetFirstPlayer() {
@@ -58,6 +60,14 @@ public class Modelo implements Serializable {
 
   public void SetAddress(String ad) {
     address = ad;
+  }
+
+  public void SetInternet(Boolean option) {
+    internet = option;
+  }
+
+  public Boolean GetInternet() {
+    return internet;
   }
 
 }

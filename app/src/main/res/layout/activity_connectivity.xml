@@ -1,78 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="#ccc0af"
-android:orientation="vertical"
-android:weightSum="100"
-tools:context=".Connectivity">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ccc0af"
+    tools:context=".Connectivity">
 
-    <ProgressBar
-        android:id="@+id/progress_scan_devices"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
-
-    <TextView
-        android:id="@+id/paired"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:textSize="25sp"
-        android:background="#9e9e9e"
-        android:layout_weight="5"
-        android:textColor="@color/black"
-        android:text="" />
+        android:layout_height="match_parent"
+        android:id="@+id/globalLayout"
+        android:orientation="vertical"
+        android:weightSum="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/title"
+            android:layout_weight="10"
+            android:background="#e6bc53"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:text="" />
 
-    <ListView
-        android:id="@+id/list_paired_devices"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="40" />
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
+        <Button
+            android:id="@+id/bluetoothButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:backgroundTint="#faebd7"
+            android:onClick="BluetoothConnection"
+            android:text="@string/bluetooth"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:layout_weight="35" />
 
-    <TextView
-        android:id="@+id/available"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:textSize="25sp"
-        android:background="#9e9e9e"
-        android:layout_weight="5"
-        android:textColor="@color/black"
-        android:text="" />
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="10" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
+        <Button
+            android:id="@+id/internetButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:onClick="InternetConnection"
+            android:text="@string/internet"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:backgroundTint="#faebd7"
+            android:layout_weight="35" />
 
-    <ListView
-        android:id="@+id/list_available_devices"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="40" />
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
+    </LinearLayout>
 
-
-
-</LinearLayout>
-
+</androidx.constraintlayout.widget.ConstraintLayout>

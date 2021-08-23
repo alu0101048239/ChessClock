@@ -40,6 +40,8 @@ public class German extends Language implements Serializable {
     etiquetas.put("penalización", "Bestrafung");
     etiquetas.put("emparejados", "gekoppelte geräte");
     etiquetas.put("disponibles", "verfügbare geräte");
+    etiquetas.put("bluetooth", "bluetooth");
+    etiquetas.put("internet", "internet");
   }
 
   private void SetDictado() {

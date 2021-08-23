@@ -10,15 +10,27 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.scaledrone.lib.Listener;
+import com.scaledrone.lib.Room;
+import com.scaledrone.lib.RoomListener;
+import com.scaledrone.lib.Scaledrone;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Modelo;
 import Modelo.ChatUtils;
+import Modelo.MessageAdapter;
+import Modelo.MemberData;
+import Modelo.Message;
 
-public class MainActivity extends SuperActivity {
+public class MainActivity extends SuperActivity implements RoomListener {
   Button b1;
   Button b2;
   Button black_time1;
@@ -40,6 +52,15 @@ public class MainActivity extends SuperActivity {
   private ChatUtils chatUtils;
   BluetoothAdapter bluetoothAdapter;
   Boolean bluetooth_connected;
+
+  // Internet
+  private final String channelID = "xaSQZtVQveTzyTh2";
+  private final String roomName = "observable-room";
+  private EditText editText;
+  private Scaledrone scaledrone;
+  private MessageAdapter messageAdapter;
+  //private ListView messagesView;
+  MemberData globalData;
 
 
   @Override
@@ -66,19 +87,20 @@ public class MainActivity extends SuperActivity {
     bluetooth_connected = false;
     game_finished = false;
 
-    //bluetooth
+    // Bluetooth
     chatUtils = new ChatUtils(this, handler);
     bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-    // Comprobamos si el Talkback está activado
-    /*AccessibilityManager am = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
-    boolean isAccessibilityEnabled = am.isEnabled();
-    boolean isExploreByTouchEnabled = am.isTouchExplorationEnabled();
-    if (isAccessibilityEnabled || isExploreByTouchEnabled) {
+    // Internet
+    //editText = findViewById(R.id.editText);
+    messageAdapter = new MessageAdapter(this);
+    //messagesView = findViewById(R.id.messages_view);
+    //messagesView.setAdapter(messageAdapter);
 
-    }*/
-
+    globalData = new MemberData(getRandomName(), getRandomColor());
     SetSpeechRecognizer(MainActivity.this);
+
+
     if (modelo.GetFirstPlayer().GetStarted() != 1) {
       pause.setEnabled(false);
       pause.setAlpha((float) 0.25);
@@ -186,19 +208,23 @@ public class MainActivity extends SuperActivity {
       mp.start();
       if (thread) {
         chatUtils.write("press".getBytes());
-        if (bluetooth_connected) {
-          b2.setEnabled(false);
+        if (bluetooth_connected || modelo.GetInternet()) {
+          b2.setEnabled(false);  // desactivar blancas
           b2.setAlpha(0.25F);
-          pause.setEnabled(false);
+          pause.setEnabled(false);  // desactivar pause
           pause.setAlpha(0.25F);
-          reset.setEnabled(false);
+          reset.setEnabled(false);  // desactivar reset
           reset.setAlpha(0.25F);
-          black_time1.setEnabled(false);
-          white_time1.setEnabled(false);
+          black_time1.setEnabled(false); // desactivar tiempo negras
+          white_time1.setEnabled(false); // desactivar tiempo blancas
           black_time1.setAlpha(0.25F);
           white_time1.setAlpha(0.25F);
         }
+        if (modelo.GetInternet()) {
+          sendMessage("pressB");
+        }
       }
+
     }
   }
 
@@ -223,7 +249,7 @@ public class MainActivity extends SuperActivity {
       mp.start();
       if (thread) {
         chatUtils.write("press".getBytes());
-        if (bluetooth_connected) {
+        if (bluetooth_connected || modelo.GetInternet()) {
           b1.setEnabled(false);
           b1.setAlpha(0.25F);
           pause.setEnabled(false);
@@ -234,6 +260,9 @@ public class MainActivity extends SuperActivity {
           white_time2.setEnabled(false);
           black_time2.setAlpha(0.25F);
           white_time2.setAlpha(0.25F);
+        }
+        if (modelo.GetInternet()) {
+          sendMessage("pressW");
         }
       }
     }
@@ -268,8 +297,13 @@ public class MainActivity extends SuperActivity {
   }
 
   public void Opciones() {
-    System.out.println("tiempo antes: " + modelo.GetFirstPlayer().GetSegundos());
-    chatUtils.write("sttgs".getBytes());
+    if (bluetooth_connected) {
+      chatUtils.write("sttgs".getBytes());
+    }
+
+    if (modelo.GetInternet()) {
+      sendMessage("settings");
+    }
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
     intent.putExtra("Modelo", modelo);
@@ -288,11 +322,17 @@ public class MainActivity extends SuperActivity {
     if (!game_paused) {
       CheckPause(true);
     }
+    System.out.println("turno negras? " + modelo.GetFirstPlayer().GetTurn());
+    System.out.println("turno blancas? " + modelo.GetSecondPlayer().GetTurn());
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     builder.setMessage(modelo.GetVoz().GetLanguage().GetTagById("descripción"));
     builder.setPositiveButton(modelo.GetVoz().GetLanguage().GetTagById("aceptar"), (dialog, which) -> {
+      int turn = 0;
+      if (modelo.GetSecondPlayer().GetTurn()) {
+        turn = 1;
+      }
       modelo.Resetear(t1, t2);
       b1.setText(modelo.GetFirstPlayer().SetTime());
       b2.setText(modelo.GetSecondPlayer().SetTime());
@@ -304,13 +344,12 @@ public class MainActivity extends SuperActivity {
       pause.setAlpha((float) 0.25);
       reset.setEnabled(false);
       reset.setAlpha((float) 0.25);
-      if (bluetooth_connected) {
+      if (bluetooth_connected || modelo.GetInternet()) {
         if (!thread) {
           b1.setEnabled(false);
           b2.setEnabled(false);
         } else {
-          System.out.println("aqui");
-          if (modelo.GetFirstPlayer().GetTurn()) {
+          if (turn == 0) {
             b2.setEnabled(false);
             b1.setEnabled(true);
           } else {
@@ -323,10 +362,12 @@ public class MainActivity extends SuperActivity {
     builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), (dialog, which) -> tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar")));
     builder.show();
 
-    if (bluetooth_connected) {
-      if (thread) {
-        chatUtils.write("reset".getBytes());
-      }
+    if (bluetooth_connected && thread) {
+      chatUtils.write("reset".getBytes());
+    }
+
+    if (modelo.GetInternet() && thread) {
+      sendMessage("reset");
     }
   }
 
@@ -337,12 +378,39 @@ public class MainActivity extends SuperActivity {
       if (resultCode == Activity.RESULT_OK) {
         assert data != null;
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
-        //SetValues();
-        System.out.println("tiempo despues: " + modelo.GetFirstPlayer().GetSegundos());
+        SetValues();
         b1.setText(modelo.GetFirstPlayer().SetTime());
         b2.setText(modelo.GetSecondPlayer().SetTime());
         if (modelo.GetAddress() != null && !bluetooth_connected) {
           chatUtils.connect(bluetoothAdapter.getRemoteDevice(modelo.GetAddress()));
+        }
+
+        if (modelo.GetInternet()) {
+          setState("Online - Connected");
+          scaledrone = new Scaledrone(channelID, globalData);
+          scaledrone.connect(new Listener() {
+            @Override
+            public void onOpen() {
+              System.out.println("Scaledrone connection open");
+              // Since the MainActivity itself already implement RoomListener we can pass it as a target
+              scaledrone.subscribe(roomName, MainActivity.this);
+            }
+
+            @Override
+            public void onOpenFailure(Exception ex) {
+              System.err.println(ex);
+            }
+
+            @Override
+            public void onFailure(Exception ex) {
+              System.err.println(ex);
+            }
+
+            @Override
+            public void onClosed(String reason) {
+              System.err.println(reason);
+            }
+          });
         }
       }
     } else if (requestCode == 1) {
@@ -367,7 +435,7 @@ public class MainActivity extends SuperActivity {
   }
 
   public void CheckPause(Boolean thread) {
-    if (!bluetooth_connected) { // Partida normal
+    if (!bluetooth_connected && !modelo.GetInternet()) { // Partida normal
       if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
         game_paused = false;
         if (modelo.GetFirstPlayer().GetTurn()) {
@@ -390,7 +458,7 @@ public class MainActivity extends SuperActivity {
         tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
         game_paused = true;
       }
-    } else {  // Partida por Bluetooth
+    } else {  // Partida por Bluetooth o por internet
 
       if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
         game_paused = false;
@@ -402,6 +470,9 @@ public class MainActivity extends SuperActivity {
 
         if (thread) {
           chatUtils.write("pause".getBytes());
+          if (modelo.GetInternet()) {
+            sendMessage("pause");
+          }
         } else {
           pause.setEnabled(false);
           pause.setAlpha(0.25F);
@@ -423,6 +494,9 @@ public class MainActivity extends SuperActivity {
 
         if (thread) {
           chatUtils.write("pause".getBytes());
+          if (modelo.GetInternet()) {
+            sendMessage("pause");
+          }
         }
       }
     }
@@ -457,14 +531,14 @@ public class MainActivity extends SuperActivity {
       switch (message.arg1) {
         case ChatUtils.STATE_NONE:
         case ChatUtils.STATE_LISTEN:
-          setState("Not Connected");
+          setState("BT - Not Connected");
           modelo.Pausar(t1, t2);
           break;
         case ChatUtils.STATE_CONNECTING:
-          setState("Connecting...");
+          setState("BT - Connecting...");
           break;
         case ChatUtils.STATE_CONNECTED:
-          setState("Connected: ");
+          setState("BT - Connected: ");
           bluetooth_connected = true;
           break;
       }
@@ -484,4 +558,80 @@ public class MainActivity extends SuperActivity {
     Objects.requireNonNull(getSupportActionBar()).setSubtitle(subTitle);
   }
 
+  // ------------------------------------- INTERNET -----------------------------------------------
+
+  private String getRandomName() {
+    String[] adjs = {"autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark", "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter", "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue", "billowing", "broken", "cold", "damp", "falling", "frosty", "green", "long", "late", "lingering", "bold", "little", "morning", "muddy", "old", "red", "rough", "still", "small", "sparkling", "throbbing", "shy", "wandering", "withered", "wild", "black", "young", "holy", "solitary", "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine", "polished", "ancient", "purple", "lively", "nameless"};
+    String[] nouns = {"waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning", "snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter", "forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook", "butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly", "feather", "grass", "haze", "mountain", "night", "pond", "darkness", "snowflake", "silence", "sound", "sky", "shape", "surf", "thunder", "violet", "water", "wildflower", "wave", "water", "resonance", "sun", "wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper", "frog", "smoke", "star"};
+    return (
+            adjs[(int) Math.floor(Math.random() * adjs.length)] +
+                    "_" +
+                    nouns[(int) Math.floor(Math.random() * nouns.length)]
+    );
+  }
+
+  private String getRandomColor() {
+    Random r = new Random();
+    StringBuilder sb = new StringBuilder("#");
+    while(sb.length() < 7){
+      sb.append(Integer.toHexString(r.nextInt()));
+    }
+    return sb.substring(0, 7);
+  }
+
+  public void sendMessage(String message) {
+    if (message.length() > 0) {
+      scaledrone.publish("observable-room", message);
+    }
+  }
+
+  // Successfully connected to Scaledrone room
+  @Override
+  public void onOpen(Room room) {
+    System.out.println("Connected to room");
+  }
+
+  // Connecting to Scaledrone room failed
+  @Override
+  public void onOpenFailure(Room room, Exception ex) {
+    System.err.println(ex);
+  }
+
+  @Override
+  public void onMessage(Room room, com.scaledrone.lib.Message receivedMessage) {
+    final ObjectMapper mapper = new ObjectMapper();
+    try {
+      final MemberData data = mapper.treeToValue(receivedMessage.getMember().getClientData(), MemberData.class);
+      boolean belongsToCurrentUser = receivedMessage.getClientID().equals(scaledrone.getClientID());
+      final Message message = new Message(receivedMessage.getData().asText(), data, belongsToCurrentUser);
+      runOnUiThread(() -> {
+
+        if (!message.isBelongsToCurrentUser()) { // mensaje recibido
+          switch (message.getText()) {
+            case "pressB":
+              MovePlayerOne(true, false);
+              break;
+            case "pressW":
+              MovePlayerTwo(true, false);
+              break;
+            case "pause":
+              CheckPause(false);
+              break;
+            case "reset":
+              Reset(false);
+              break;
+            case "settings":
+              if (!game_paused) {
+                CheckPause(false);
+              }
+              break;
+          }
+        }
+        //System.out.println("Contenido: " + message.getText() + " : " + message.isBelongsToCurrentUser());
+        messageAdapter.add(message);
+      });
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
 }

@@ -40,6 +40,8 @@ public class Spanish extends Language implements Serializable {
     etiquetas.put("penalización", "Penalización");
     etiquetas.put("emparejados", "Dispositivos emparejados");
     etiquetas.put("disponibles", "Dispositivos disponibles");
+    etiquetas.put("bluetooth", "bluetooth");
+    etiquetas.put("internet", "internet");
   }
 
   private void SetDictado() {

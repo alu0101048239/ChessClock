@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">ChessClock</string>
+    <string name="bluetooth">BLUETOOTH</string>
+    <string name="internet">INTERNET</string>
 
     <string-array name="languages">
         <item>Español</item>
