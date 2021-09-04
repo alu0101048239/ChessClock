@@ -113,6 +113,8 @@ public class CustomGame extends SuperActivity {
         if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
           tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
           onBackPressed();
+        } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+          this.finishAffinity();
         } else {
           tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
         }

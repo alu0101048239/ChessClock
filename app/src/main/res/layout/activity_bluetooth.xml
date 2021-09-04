@@ -27,8 +27,7 @@ tools:context=".Bluetooth">
         android:textSize="25sp"
         android:background="#9e9e9e"
         android:layout_weight="5"
-        android:textColor="@color/black"
-        android:text="" />
+        android:textColor="@color/black" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="0dp"
@@ -53,8 +52,7 @@ tools:context=".Bluetooth">
         android:textSize="25sp"
         android:background="#9e9e9e"
         android:layout_weight="5"
-        android:textColor="@color/black"
-        android:text="" />
+        android:textColor="@color/black" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="0dp"

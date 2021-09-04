@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scaledrone.lib.Listener;
@@ -131,7 +130,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
       Opciones();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
       CheckPause(true);
-    } else if (keeper.equals("parar") || keeper.equals("stop")) {
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("parar"))) {
       pause.setEnabled(false);
       pause.setAlpha((float) 0.25);
       reset.setEnabled(false);
@@ -147,6 +146,10 @@ public class MainActivity extends SuperActivity implements RoomListener {
       } else {
         MovePlayerOne(true, true);
       }
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("penalizacion_blancas"))) {
+      Penalizacion(0);
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("penalizacion_negras"))) {
+      Penalizacion(1);
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
       this.finishAffinity();
     } else {
@@ -411,6 +414,8 @@ public class MainActivity extends SuperActivity implements RoomListener {
               System.err.println(reason);
             }
           });
+        } else {
+          setState("");
         }
       }
     } else if (requestCode == 1) {

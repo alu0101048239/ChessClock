@@ -19,7 +19,6 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text="hola"
             android:textColor="@color/black"
             android:textSize="40sp"
             android:layout_weight="10"
@@ -43,7 +42,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:onClick="ChangeVoice"
-            android:text=""
             android:textColor="@color/black"
             android:textSize="40sp"
             android:layout_weight="15"
@@ -65,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="#faebd7"
-            android:gravity="left"
+            android:gravity="start"
             android:orientation="horizontal"
             android:layout_weight="15"
             android:weightSum="4.4"
@@ -86,7 +84,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text=""
                 android:textColor="@color/black"
                 android:textSize="30sp"
                 />
@@ -103,7 +100,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="#a4c639"
                 android:onClick="increaseSpeed"
-                android:text="+"
+                android:text="@string/plus"
                 android:textSize="40sp" />
 
             <androidx.appcompat.widget.AppCompatEditText
@@ -118,7 +115,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="#cd4b33"
                 android:onClick="decreaseSpeed"
-                android:text="-"
+                android:text="@string/minus"
                 android:textSize="40sp" />
 
 
@@ -133,7 +130,6 @@
             android:id="@+id/cambiarTono"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:text=""
             android:textSize="40sp"
             android:textColor="@color/black"
             android:textAlignment="center"
@@ -168,7 +164,6 @@
                 android:backgroundTint="#ffa07a"
                 android:onClick="Aguda"
                 android:textColor="@color/black"
-                android:text=""
                 android:textSize="30sp" />
 
             <androidx.appcompat.widget.AppCompatEditText
@@ -184,7 +179,6 @@
                 android:layout_weight="1"
                 android:backgroundTint="#87cefa"
                 android:onClick="Grave"
-                android:text=""
                 android:textColor="@color/black"
                 android:textSize="30sp" />
 
@@ -205,7 +199,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:onClick="Assistant"
-            android:text=""
             android:textSize="24sp"
             android:layout_weight="10"
             android:background="#faebd7"

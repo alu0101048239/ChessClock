@@ -2,6 +2,8 @@
     <string name="app_name">ChessClock</string>
     <string name="bluetooth">BLUETOOTH</string>
     <string name="internet">INTERNET</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
 
     <string-array name="languages">
         <item>Español</item>

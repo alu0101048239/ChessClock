@@ -45,7 +45,6 @@
                 android:layout_weight="44"
                 android:backgroundTint="@color/white"
                 android:onClick="SpeakWhiteTime"
-                android:text=""
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:rotation="180"
@@ -70,7 +69,6 @@
                 android:layout_weight="44"
                 android:backgroundTint="@color/black"
                 android:onClick="SpeakBlackTime"
-                android:text=""
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:rotation="180"
@@ -105,7 +103,6 @@
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/black"
                 android:onClick="PlayerOne"
-                android:text="60:30:00"
                 android:textColor="@color/white"
                 android:textSize="65sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -214,7 +211,6 @@
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/white"
                 android:onClick="PlayerTwo"
-                android:text=""
                 android:textColor="@color/black"
                 android:textSize="65sp"
                 app:iconTint="#FFFFFF"
@@ -229,7 +225,9 @@
                 android:layout_marginStart="86dp"
                 android:layout_marginTop="19dp"
                 android:elevation="3dp"
-                android:src="@drawable/corona"></ImageView>
+                android:src="@drawable/corona">
+
+            </ImageView>
 
         </RelativeLayout>
 
@@ -266,7 +264,6 @@
                 android:layout_weight="44"
                 android:backgroundTint="@color/white"
                 android:onClick="SpeakWhiteTime"
-                android:text=""
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -291,7 +288,6 @@
                 android:layout_weight="44"
                 android:backgroundTint="@color/black"
                 android:onClick="SpeakBlackTime"
-                android:text=""
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"

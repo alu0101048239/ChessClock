@@ -27,7 +27,6 @@ public class Penalization extends SuperActivity {
     setContentView(R.layout.activity_penalization);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
     player = getIntent().getIntExtra("player", -1);
-    System.out.println("Jugador: " + player);
     SetValues();
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -92,6 +91,8 @@ public class Penalization extends SuperActivity {
         if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
           tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
           onBackPressed();
+        } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+          this.finishAffinity();
         } else {
           tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
         }

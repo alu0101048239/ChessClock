@@ -240,6 +240,8 @@ public class Bluetooth extends SuperActivity {
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       onBackPressed();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+      this.finishAffinity();
     } else {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }

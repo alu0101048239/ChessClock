@@ -2,18 +2,19 @@ package com.ull.chessclock;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-
 import java.util.Objects;
 import Modelo.Modelo;
 
 public class Connectivity extends SuperActivity {
 
   TextView title;
+  Button internet;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +24,12 @@ public class Connectivity extends SuperActivity {
     SetValues();
     title = findViewById(R.id.title);
     title.setText(modelo.GetVoz().GetLanguage().GetTagById("conectividad"));
+    internet = findViewById(R.id.internetButton);
     Objects.requireNonNull(getSupportActionBar()).hide();
     SetSpeechRecognizer(Connectivity.this);
+    if (modelo.GetInternet()) {
+      internet.setBackgroundColor(Color.GREEN);
+    }
   }
 
   public void Bluetooth() {
@@ -36,9 +41,14 @@ public class Connectivity extends SuperActivity {
 
   public void Internet() {
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("internet"));
-    Intent intent = new Intent(this, Internet.class);
-    intent.putExtra("Modelo", modelo);
-    startActivityForResult(intent, 1);
+    if (modelo.GetInternet()) {
+      modelo.SetInternet(false);
+      internet.setBackgroundColor(Color.parseColor("#faebd7"));
+    } else {
+      modelo.SetInternet(true);
+      internet.setBackgroundColor(Color.GREEN);
+    }
+    ReturnData();
   }
 
 
@@ -61,6 +71,8 @@ public class Connectivity extends SuperActivity {
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       onBackPressed();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+      this.finishAffinity();
     } else {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }

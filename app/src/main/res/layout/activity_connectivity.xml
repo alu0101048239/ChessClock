@@ -25,8 +25,7 @@
             android:background="#e6bc53"
             android:textColor="@color/black"
             android:textAlignment="center"
-            android:textSize="40sp"
-            android:text="" />
+            android:textSize="40sp" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:layout_width="0dp"

@@ -78,5 +78,8 @@ public class Spanish extends Language implements Serializable {
     dictado.put("ninguno", "ninguno");
     dictado.put("visibilidad", "activar visibilidad");
     dictado.put("buscar", "buscar dispositivos");
+    dictado.put("penalizacion_blancas", "penalización blancas");
+    dictado.put("penalizacion_negras", "penalización negras");
+    dictado.put("parar", "parar");
   }
 }

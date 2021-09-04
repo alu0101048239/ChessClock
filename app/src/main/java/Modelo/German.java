@@ -77,5 +77,8 @@ public class German extends Language implements Serializable {
     dictado.put("ninguno", "weder");
     dictado.put("visibilidad", "sichtbarkeit aktivieren");
     dictado.put("buscar", "geräte suchen");
+    dictado.put("penalizacion_blancas", "weiß bestrafung");
+    dictado.put("penalizacion_negras", "schwarz bestrafung");
+    dictado.put("parar", "halt");
   }
 }
