@@ -81,5 +81,12 @@ public class Spanish extends Language implements Serializable {
     dictado.put("penalizacion_blancas", "penalización blancas");
     dictado.put("penalizacion_negras", "penalización negras");
     dictado.put("parar", "parar");
+    // Piezas
+    dictado.put("peón", "peón");
+    dictado.put("torre", "torre");
+    dictado.put("rey", "rey");
+    dictado.put("reina", "reina");
+    dictado.put("alfil", "alfil");
+    dictado.put("caballo", "caballo");
   }
 }

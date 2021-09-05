@@ -440,6 +440,9 @@ public class MainActivity extends SuperActivity implements RoomListener {
   }
 
   public void CheckPause(Boolean thread) {
+    int pauseIcon = android.R.drawable.ic_media_pause;
+    int playIcon = android.R.drawable.ic_media_play;
+
     if (!bluetooth_connected && !modelo.GetInternet()) { // Partida normal
       if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
         game_paused = false;
@@ -448,8 +451,9 @@ public class MainActivity extends SuperActivity implements RoomListener {
         } else {
           MovePlayerOne(false, true);
         }
-
+        pause.setImageResource(pauseIcon);
       } else {
+        pause.setImageResource(playIcon);
         if (b1.isEnabled()) { // están jugando negras
           modelo.GetFirstPlayer().SetTurn(true);
           modelo.GetSecondPlayer().SetTurn(false);
@@ -473,6 +477,8 @@ public class MainActivity extends SuperActivity implements RoomListener {
           MovePlayerOne(false, false);
         }
 
+        pause.setImageResource(pauseIcon);
+
         if (thread) {
           chatUtils.write("pause".getBytes());
           if (modelo.GetInternet()) {
@@ -491,6 +497,9 @@ public class MainActivity extends SuperActivity implements RoomListener {
           modelo.GetSecondPlayer().SetTurn(true);
           modelo.GetFirstPlayer().SetTurn(false);
         }
+
+        pause.setImageResource(playIcon);
+
         b1.setEnabled(true);
         b2.setEnabled(true);
         modelo.Pausar(t1, t2);

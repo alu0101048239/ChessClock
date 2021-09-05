@@ -83,5 +83,12 @@ public class English extends Language implements Serializable {
     dictado.put("penalizacion_blancas", "white penalization");
     dictado.put("penalizacion_negras", "black penalization");
     dictado.put("parar", "stop");
+    // Piezas
+    dictado.put("peón", "pawn");
+    dictado.put("torre", "rook");
+    dictado.put("rey", "king");
+    dictado.put("reina", "queen");
+    dictado.put("alfil", "bishop");
+    dictado.put("caballo", "knight");
   }
 }

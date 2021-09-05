@@ -80,5 +80,12 @@ public class German extends Language implements Serializable {
     dictado.put("penalizacion_blancas", "weiß bestrafung");
     dictado.put("penalizacion_negras", "schwarz bestrafung");
     dictado.put("parar", "halt");
+    // Piezas
+    dictado.put("peón", "bauer");
+    dictado.put("torre", "turm");
+    dictado.put("rey", "könig");
+    dictado.put("reina", "dame");
+    dictado.put("alfil", "läufer");
+    dictado.put("caballo", "springer");
   }
 }
