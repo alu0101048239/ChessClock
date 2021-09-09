@@ -153,7 +153,11 @@ public class MainActivity extends SuperActivity implements RoomListener {
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
       this.finishAffinity();
     } else {
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+      if (modelo.GetInternet()) {
+        sendMessage(modelo.Jugada(keeper));
+      } else {
+        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+      }
     }
   }
 
@@ -532,7 +536,6 @@ public class MainActivity extends SuperActivity implements RoomListener {
   }
 
   public void Penalizacion(int player) {
-    System.out.println("tiempo antes: " + modelo.GetFirstPlayer().GetSegundos());
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("penalización"));
     Intent intent = new Intent(this, Penalization.class);
     intent.putExtra("Modelo", modelo);
@@ -639,10 +642,16 @@ public class MainActivity extends SuperActivity implements RoomListener {
                 CheckPause(false);
               }
               break;
+            default:
+              tts.Speak(message.getText());
+              modelo.InsertMove("opponent", message.getText());
+          }
+        } else {
+          if (!message.getText().equals("pressB") && !message.getText().equals("pressW") && !message.getText().equals("pause") &&
+            !message.getText().equals("reset") && !message.getText().equals("settings")) {
+            modelo.InsertMove("me", message.getText());
           }
         }
-        //System.out.println("Contenido: " + message.getText() + " : " + message.isBelongsToCurrentUser());
-        messageAdapter.add(message);
       });
     } catch (JsonProcessingException e) {
       e.printStackTrace();

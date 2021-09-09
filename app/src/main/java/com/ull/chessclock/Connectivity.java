@@ -15,6 +15,7 @@ public class Connectivity extends SuperActivity {
 
   TextView title;
   Button internet;
+  TextView ayuda;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +28,19 @@ public class Connectivity extends SuperActivity {
     internet = findViewById(R.id.internetButton);
     Objects.requireNonNull(getSupportActionBar()).hide();
     SetSpeechRecognizer(Connectivity.this);
+    ayuda = findViewById(R.id.ayuda);
+    ayuda.setText(modelo.GetVoz().GetLanguage().GetTagById("ayuda"));
     if (modelo.GetInternet()) {
       internet.setBackgroundColor(Color.GREEN);
     }
+
+    internet.setOnLongClickListener(v -> {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("historial"));
+      Intent intent = new Intent(this, History.class);
+      intent.putExtra("Modelo", modelo);
+      startActivityForResult(intent, 1);
+      return true;
+    });
   }
 
   public void Bluetooth() {

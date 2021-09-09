@@ -42,6 +42,8 @@ public class Spanish extends Language implements Serializable {
     etiquetas.put("disponibles", "Dispositivos disponibles");
     etiquetas.put("bluetooth", "bluetooth");
     etiquetas.put("internet", "internet");
+    etiquetas.put("historial", "Historial");
+    etiquetas.put("ayuda", "Mantén presionado para acceder al historial");
   }
 
   private void SetDictado() {

@@ -42,6 +42,8 @@ public class German extends Language implements Serializable {
     etiquetas.put("disponibles", "verfügbare geräte");
     etiquetas.put("bluetooth", "bluetooth");
     etiquetas.put("internet", "internet");
+    etiquetas.put("historial", "Verlauf");
+    etiquetas.put("ayuda", "Lange drücken, um auf den Verlauf zuzugreifen");
   }
 
   private void SetDictado() {

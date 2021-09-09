@@ -1,6 +1,8 @@
 package Modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Timer;
 
 public class Modelo implements Serializable {
@@ -9,6 +11,7 @@ public class Modelo implements Serializable {
   Voice voz;
   String address;
   Boolean internet;
+  ArrayList<Hashtable<String, String>> jugadas;
 
   public Modelo() {
     firstPlayer = new Clock("1");
@@ -16,6 +19,7 @@ public class Modelo implements Serializable {
     voz = new Voice();
     address = null;
     internet = false;
+    jugadas = new ArrayList<>();
   }
 
   public Clock GetFirstPlayer() {
@@ -70,4 +74,69 @@ public class Modelo implements Serializable {
     return internet;
   }
 
+  public String Jugada(String keeper) {
+    keeper = keeper.toLowerCase();
+    String[] words = keeper.split("\\s+");
+    for (int i = 0; i < words.length; i++) {
+      words[i] = words[i].replaceAll("[^\\w]", "");
+    }
+    System.out.println("palabras: " + words.length);
+    for (String word : words) {
+      System.out.println(word);
+    }
+    String jugada = "";
+
+    if (words[0].contains(GetVoz().GetLanguage().GetDictadoById("torre"))) { // torre
+      jugada = "torre ";
+
+    } else if (words[0].equals(GetVoz().GetLanguage().GetDictadoById("rey")) || words[0].equals("reishe") || words[0].equals("reiche")) { // rey
+      jugada = "rey ";
+      if (words[0].equals("reiche")) {
+        jugada += "G";
+      } else if (words[0].equals("reishe")) {
+        jugada += "C";
+      }
+    } else if (words[0].equals(GetVoz().GetLanguage().GetDictadoById("reina"))) { // reina
+      jugada = "reina ";
+    } else if (words[0].equals(GetVoz().GetLanguage().GetDictadoById("peón")) || words[0].contains("eón")) { // peón
+      jugada = "peón ";
+    } else if (words[0].contains(GetVoz().GetLanguage().GetDictadoById("caballo")) || words[0].equals("hp") || words[0].equals("cv")) { // caballo
+      jugada = "caballo ";
+      if (words.length == 1) {
+        jugada += "F4";
+      }
+    } else if (words[0].contains("al") || words[0].contains("il")) { // alfil
+      jugada = "alfil ";
+    }
+
+    if (words.length == 2) {
+      if (words[1].charAt(0) == 'S' && words[1].length() == 2) {
+        jugada += "C" + words[1].charAt(1);
+      } else {
+        jugada += words[1].toUpperCase();
+      }
+    } else if (words.length == 3) {
+      if (words[1].length() == 1) {
+        jugada += words[1].toUpperCase() + words[2];
+      } else if (words[1].length() == 2) {
+        String letter = "" + words[1].charAt(0);
+        jugada += letter.toUpperCase() + words[2];
+      }
+    }
+
+    if (jugada.length() == 0) {
+      jugada = "Jugada sin determinar";
+    }
+    return jugada;
+  }
+
+  public void InsertMove(String player, String move) {
+    Hashtable<String, String> aux = new Hashtable<>();
+    aux.put(player, move);
+    jugadas.add(aux);
+  }
+
+  public ArrayList<Hashtable<String, String>> GetMoves() {
+    return jugadas;
+  }
 }
