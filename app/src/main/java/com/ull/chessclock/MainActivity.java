@@ -96,6 +96,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
     //messagesView = findViewById(R.id.messages_view);
     //messagesView.setAdapter(messageAdapter);
 
+    scaledrone = null;
     globalData = new MemberData(getRandomName(), getRandomColor());
     SetSpeechRecognizer(MainActivity.this);
 
@@ -394,30 +395,32 @@ public class MainActivity extends SuperActivity implements RoomListener {
 
         if (modelo.GetInternet()) {
           setState("Online - Connected");
-          scaledrone = new Scaledrone(channelID, globalData);
-          scaledrone.connect(new Listener() {
-            @Override
-            public void onOpen() {
-              System.out.println("Scaledrone connection open");
-              // Since the MainActivity itself already implement RoomListener we can pass it as a target
-              scaledrone.subscribe(roomName, MainActivity.this);
-            }
+          if (scaledrone == null) {
+            scaledrone = new Scaledrone(channelID, globalData);
+            scaledrone.connect(new Listener() {
+              @Override
+              public void onOpen() {
+                System.out.println("Scaledrone connection open");
+                // Since the MainActivity itself already implement RoomListener we can pass it as a target
+                scaledrone.subscribe(roomName, MainActivity.this);
+              }
 
-            @Override
-            public void onOpenFailure(Exception ex) {
-              System.err.println(ex);
-            }
+              @Override
+              public void onOpenFailure(Exception ex) {
+                System.err.println(ex);
+              }
 
-            @Override
-            public void onFailure(Exception ex) {
-              System.err.println(ex);
-            }
+              @Override
+              public void onFailure(Exception ex) {
+                System.err.println(ex);
+              }
 
-            @Override
-            public void onClosed(String reason) {
-              System.err.println(reason);
-            }
-          });
+              @Override
+              public void onClosed(String reason) {
+                System.err.println(reason);
+              }
+            });
+          }
         } else {
           setState("");
         }
@@ -624,6 +627,9 @@ public class MainActivity extends SuperActivity implements RoomListener {
       runOnUiThread(() -> {
 
         if (!message.isBelongsToCurrentUser()) { // mensaje recibido
+          if (modelo.GetPlayerName().length() == 0) {
+            modelo.SetPlayerName("Player 1");
+          }
           switch (message.getText()) {
             case "pressB":
               MovePlayerOne(true, false);
@@ -644,12 +650,17 @@ public class MainActivity extends SuperActivity implements RoomListener {
               break;
             default:
               tts.Speak(message.getText());
-              modelo.InsertMove("opponent", message.getText());
+              System.out.println("InsertMove recibido");
+              modelo.InsertMove("me", message.getText());
           }
         } else {
+          if (modelo.GetPlayerName().length() == 0) {
+            modelo.SetPlayerName("Player 2");
+          }
           if (!message.getText().equals("pressB") && !message.getText().equals("pressW") && !message.getText().equals("pause") &&
             !message.getText().equals("reset") && !message.getText().equals("settings")) {
-            modelo.InsertMove("me", message.getText());
+            System.out.println("InsertMove enviado");
+            modelo.InsertMove("opponent", message.getText());
           }
         }
       });

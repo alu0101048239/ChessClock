@@ -12,6 +12,7 @@ public class Modelo implements Serializable {
   String address;
   Boolean internet;
   ArrayList<Hashtable<String, String>> jugadas;
+  String playerName;
 
   public Modelo() {
     firstPlayer = new Clock("1");
@@ -20,6 +21,7 @@ public class Modelo implements Serializable {
     address = null;
     internet = false;
     jugadas = new ArrayList<>();
+    playerName = "";
   }
 
   public Clock GetFirstPlayer() {
@@ -138,5 +140,13 @@ public class Modelo implements Serializable {
 
   public ArrayList<Hashtable<String, String>> GetMoves() {
     return jugadas;
+  }
+
+  public void SetPlayerName(String name) {
+    playerName = name;
+  }
+
+  public String GetPlayerName() {
+    return playerName;
   }
 }

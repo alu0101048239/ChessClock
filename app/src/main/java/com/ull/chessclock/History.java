@@ -36,12 +36,15 @@ public class History extends SuperActivity {
 
   public void Jugadas() {
     ArrayList<Hashtable<String, String>> jugadas = modelo.GetMoves();
+    System.out.println("Registro de jugadas: ");
     for (Hashtable<String, String> jugada : jugadas) {
       Message message;
       if (jugada.containsKey("me")) {
-        message = new Message(jugada.get("me"), new MemberData("blancas", "#FF717E"), false);
+        System.out.println(jugada.get("me"));
+        message = new Message(jugada.get("me"), new MemberData(modelo.GetPlayerName(), "#FF717E"), false);
       } else {
-        message = new Message(jugada.get("opponent"), new MemberData("negras", "#ade105"), true);
+        System.out.println(jugada.get("opponent"));
+        message = new Message(jugada.get("opponent"), new MemberData(modelo.GetPlayerName(), "#ade105"), true);
       }
       messageAdapter.add(message);
     }
