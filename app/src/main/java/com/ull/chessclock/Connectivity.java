@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
 import java.util.Objects;
 import Modelo.Modelo;
 
@@ -53,8 +55,18 @@ public class Connectivity extends SuperActivity {
   public void Internet() {
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("internet"));
     if (modelo.GetInternet()) {
-      modelo.SetInternet(false);
-      internet.setBackgroundColor(Color.parseColor("#faebd7"));
+      // Cuadro de diálogo
+      tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("desconectar"));
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setTitle(modelo.GetVoz().GetLanguage().GetTagById("desconectar"));
+      builder.setMessage(modelo.GetVoz().GetLanguage().GetTagById("registro"));
+      builder.setPositiveButton(modelo.GetVoz().GetLanguage().GetTagById("aceptar"), (dialog, which) -> {
+        modelo.SetInternet(false);
+        internet.setBackgroundColor(Color.parseColor("#faebd7"));
+        modelo.ResetMoves();
+      });
+      builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), (dialog, which) -> tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar")));
+      builder.show();
     } else {
       modelo.SetInternet(true);
       internet.setBackgroundColor(Color.GREEN);

@@ -46,6 +46,8 @@ public class English extends Language implements Serializable {
     etiquetas.put("internet", "internet");
     etiquetas.put("historial", "History");
     etiquetas.put("ayuda", "Press and hold to access history");
+    etiquetas.put("desconectar", "Are you sure you want to disconnect internet");
+    etiquetas.put("registro", "You will lose movement log");
   }
 
   private void SetDictado() {

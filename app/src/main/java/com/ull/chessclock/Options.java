@@ -108,6 +108,7 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
   }
 
   public void VoiceManagement(String keeper) {
+    keeper = keeper.toLowerCase();
     if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes_voz").toLowerCase())) {
       VoiceMenu();
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("idioma").toLowerCase())) {
@@ -199,7 +200,6 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
         }
       }
     }
-    System.out.println("ey: " + modelo.GetFirstPlayer().GetSegundos());
     ReturnData();
   }
 

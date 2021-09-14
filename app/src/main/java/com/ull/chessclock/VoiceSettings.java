@@ -39,7 +39,7 @@ public class VoiceSettings extends SuperActivity {
   }
 
   public void SubirVelocidad() {
-    tts.SetSpeed(modelo.GetVoz().SetSpeed(modelo.GetVoz().GetSpeed() * 2));
+    tts.SetSpeed(modelo.GetVoz().SetSpeed((float) (modelo.GetVoz().GetSpeed() + 0.25)));
     velocidad.setText(String.valueOf(modelo.GetVoz().GetSpeed()));
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("subir_velocidad"));
     ReturnData();
@@ -50,7 +50,7 @@ public class VoiceSettings extends SuperActivity {
   }
 
   public void BajarVelocidad() {
-    tts.SetSpeed(modelo.GetVoz().SetSpeed(modelo.GetVoz().GetSpeed() / 2));
+    tts.SetSpeed(modelo.GetVoz().SetSpeed((float) (modelo.GetVoz().GetSpeed() - 0.25)));
     velocidad.setText(String.valueOf(modelo.GetVoz().GetSpeed()));
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("bajar_velocidad"));
     ReturnData();

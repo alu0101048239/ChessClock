@@ -1,5 +1,7 @@
 package com.ull.chessclock;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,6 +31,7 @@ public class History extends SuperActivity {
     title.setText(modelo.GetVoz().GetLanguage().GetTagById("historial"));
     messagesView = findViewById(R.id.messages_view);
     Objects.requireNonNull(getSupportActionBar()).hide();
+    SetSpeechRecognizer(History.this);
     messageAdapter = new MessageAdapter(this);
     messagesView.setAdapter(messageAdapter);
     Jugadas();
@@ -36,17 +39,26 @@ public class History extends SuperActivity {
 
   public void Jugadas() {
     ArrayList<Hashtable<String, String>> jugadas = modelo.GetMoves();
-    System.out.println("Registro de jugadas: ");
     for (Hashtable<String, String> jugada : jugadas) {
       Message message;
       if (jugada.containsKey("me")) {
-        System.out.println(jugada.get("me"));
         message = new Message(jugada.get("me"), new MemberData(modelo.GetPlayerName(), "#FF717E"), false);
       } else {
-        System.out.println(jugada.get("opponent"));
         message = new Message(jugada.get("opponent"), new MemberData(modelo.GetPlayerName(), "#ade105"), true);
       }
       messageAdapter.add(message);
+    }
+  }
+
+  public void VoiceManagement(String keeper) {
+    keeper = keeper.toLowerCase();
+    if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
+      onBackPressed();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+      this.finishAffinity();
+    } else {
+      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
   }
 }

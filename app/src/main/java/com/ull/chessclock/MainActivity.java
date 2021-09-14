@@ -20,14 +20,13 @@ import com.scaledrone.lib.Room;
 import com.scaledrone.lib.RoomListener;
 import com.scaledrone.lib.Scaledrone;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import Modelo.Modelo;
 import Modelo.ChatUtils;
-import Modelo.MessageAdapter;
 import Modelo.MemberData;
 import Modelo.Message;
+import Modelo.GameMode;
 
 public class MainActivity extends SuperActivity implements RoomListener {
   Button b1;
@@ -57,8 +56,6 @@ public class MainActivity extends SuperActivity implements RoomListener {
   private final String roomName = "observable-room";
   private EditText editText;
   private Scaledrone scaledrone;
-  private MessageAdapter messageAdapter;
-  //private ListView messagesView;
   MemberData globalData;
 
 
@@ -91,13 +88,8 @@ public class MainActivity extends SuperActivity implements RoomListener {
     bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     // Internet
-    //editText = findViewById(R.id.editText);
-    messageAdapter = new MessageAdapter(this);
-    //messagesView = findViewById(R.id.messages_view);
-    //messagesView.setAdapter(messageAdapter);
-
     scaledrone = null;
-    globalData = new MemberData(getRandomName(), getRandomColor());
+    globalData = new MemberData("player", "#FF717E");
     SetSpeechRecognizer(MainActivity.this);
 
 
@@ -186,7 +178,6 @@ public class MainActivity extends SuperActivity implements RoomListener {
 
   public void GameOver() {
     if ((modelo.GetFirstPlayer().GetStarted() == 0 || modelo.GetSecondPlayer().GetStarted() == 0) && (!game_finished)) {
-      System.out.println("chivato");
       game_finished = true;
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
       Intent intent = new Intent(this, End.class);
@@ -232,7 +223,6 @@ public class MainActivity extends SuperActivity implements RoomListener {
           sendMessage("pressB");
         }
       }
-
     }
   }
 
@@ -305,12 +295,14 @@ public class MainActivity extends SuperActivity implements RoomListener {
   }
 
   public void Opciones() {
-    if (bluetooth_connected) {
+    if (bluetooth_connected && ((modelo.GetFirstPlayer().GetStarted() == 1 || modelo.GetSecondPlayer().GetStarted() == 1))) {
       chatUtils.write("sttgs".getBytes());
-    }
-
-    if (modelo.GetInternet()) {
+    } else if (modelo.GetInternet()) {
       sendMessage("settings");
+    } else {
+      if (!game_paused && (modelo.GetFirstPlayer().GetStarted() == 1 || modelo.GetSecondPlayer().GetStarted() == 1)) {
+        CheckPause(true);
+      }
     }
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
     Intent intent = new Intent(this, Options.class);
@@ -330,42 +322,13 @@ public class MainActivity extends SuperActivity implements RoomListener {
     if (!game_paused) {
       CheckPause(true);
     }
-    System.out.println("turno negras? " + modelo.GetFirstPlayer().GetTurn());
-    System.out.println("turno blancas? " + modelo.GetSecondPlayer().GetTurn());
     tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
     builder.setMessage(modelo.GetVoz().GetLanguage().GetTagById("descripción"));
     builder.setPositiveButton(modelo.GetVoz().GetLanguage().GetTagById("aceptar"), (dialog, which) -> {
-      int turn = 0;
-      if (modelo.GetSecondPlayer().GetTurn()) {
-        turn = 1;
-      }
-      modelo.Resetear(t1, t2);
-      b1.setText(modelo.GetFirstPlayer().SetTime());
-      b2.setText(modelo.GetSecondPlayer().SetTime());
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
-      b1.setEnabled(true);
-      b2.setEnabled(false);
-      game_paused = false;
-      pause.setEnabled(false);
-      pause.setAlpha((float) 0.25);
-      reset.setEnabled(false);
-      reset.setAlpha((float) 0.25);
-      if (bluetooth_connected || modelo.GetInternet()) {
-        if (!thread) {
-          b1.setEnabled(false);
-          b2.setEnabled(false);
-        } else {
-          if (turn == 0) {
-            b2.setEnabled(false);
-            b1.setEnabled(true);
-          } else {
-            b1.setEnabled(false);
-            b2.setEnabled(true);
-          }
-        }
-      }
+      Resetear(thread);
     });
     builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), (dialog, which) -> tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar")));
     builder.show();
@@ -379,13 +342,52 @@ public class MainActivity extends SuperActivity implements RoomListener {
     }
   }
 
+
+  public void Resetear(Boolean thread) {
+    int turn = 0;
+    if (modelo.GetSecondPlayer().GetTurn()) {
+      turn = 1;
+    }
+    modelo.Resetear(t1, t2);
+    b1.setText(modelo.GetFirstPlayer().SetTime());
+    b2.setText(modelo.GetSecondPlayer().SetTime());
+    b1.setEnabled(true);
+    b2.setEnabled(false);
+    game_paused = false;
+    pause.setEnabled(false);
+    pause.setAlpha((float) 0.25);
+    reset.setEnabled(false);
+    reset.setAlpha((float) 0.25);
+    corona_negras.setVisibility(View.VISIBLE);
+    corona_blancas.setVisibility(View.INVISIBLE);
+    pause.setImageResource(android.R.drawable.ic_media_pause);
+    if (bluetooth_connected || modelo.GetInternet()) {
+      if (!thread) {
+        b1.setEnabled(false);
+        b2.setEnabled(false);
+      } else {
+        if (turn == 0) {
+          b2.setEnabled(false);
+          b1.setEnabled(true);
+        } else {
+          b1.setEnabled(false);
+          b2.setEnabled(true);
+        }
+      }
+    }
+  }
+
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == 0) {
       if (resultCode == Activity.RESULT_OK) {
         assert data != null;
+        GameMode mode = modelo.GetFirstPlayer().GetMode();
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+        if (!mode.GetName().equals(modelo.GetFirstPlayer().GetMode().GetName())) {
+          Resetear(true);
+        }
         SetValues();
         b1.setText(modelo.GetFirstPlayer().SetTime());
         b2.setText(modelo.GetSecondPlayer().SetTime());
@@ -580,25 +582,6 @@ public class MainActivity extends SuperActivity implements RoomListener {
 
   // ------------------------------------- INTERNET -----------------------------------------------
 
-  private String getRandomName() {
-    String[] adjs = {"autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark", "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter", "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue", "billowing", "broken", "cold", "damp", "falling", "frosty", "green", "long", "late", "lingering", "bold", "little", "morning", "muddy", "old", "red", "rough", "still", "small", "sparkling", "throbbing", "shy", "wandering", "withered", "wild", "black", "young", "holy", "solitary", "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine", "polished", "ancient", "purple", "lively", "nameless"};
-    String[] nouns = {"waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning", "snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter", "forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook", "butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly", "feather", "grass", "haze", "mountain", "night", "pond", "darkness", "snowflake", "silence", "sound", "sky", "shape", "surf", "thunder", "violet", "water", "wildflower", "wave", "water", "resonance", "sun", "wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper", "frog", "smoke", "star"};
-    return (
-            adjs[(int) Math.floor(Math.random() * adjs.length)] +
-                    "_" +
-                    nouns[(int) Math.floor(Math.random() * nouns.length)]
-    );
-  }
-
-  private String getRandomColor() {
-    Random r = new Random();
-    StringBuilder sb = new StringBuilder("#");
-    while(sb.length() < 7){
-      sb.append(Integer.toHexString(r.nextInt()));
-    }
-    return sb.substring(0, 7);
-  }
-
   public void sendMessage(String message) {
     if (message.length() > 0) {
       scaledrone.publish("observable-room", message);
@@ -644,13 +627,12 @@ public class MainActivity extends SuperActivity implements RoomListener {
               Reset(false);
               break;
             case "settings":
-              if (!game_paused) {
+              if (!game_paused && (modelo.GetFirstPlayer().GetStarted() == 1 || modelo.GetSecondPlayer().GetStarted() == 1)) {
                 CheckPause(false);
               }
               break;
             default:
               tts.Speak(message.getText());
-              System.out.println("InsertMove recibido");
               modelo.InsertMove("me", message.getText());
           }
         } else {
@@ -659,7 +641,6 @@ public class MainActivity extends SuperActivity implements RoomListener {
           }
           if (!message.getText().equals("pressB") && !message.getText().equals("pressW") && !message.getText().equals("pause") &&
             !message.getText().equals("reset") && !message.getText().equals("settings")) {
-            System.out.println("InsertMove enviado");
             modelo.InsertMove("opponent", message.getText());
           }
         }

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:opacity="opaque">
-    <item android:drawable="@color/purple_200" />
+    <item android:drawable="@color/orange"/>
     <item
         android:right="150dp"
         android:left="150dp"
         >
 
         <bitmap
-            android:src="@drawable/corona"
+            android:src="@drawable/logo"
             android:gravity="center" />
+
     </item>
+
 </layer-list>

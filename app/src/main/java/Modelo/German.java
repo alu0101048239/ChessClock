@@ -44,6 +44,8 @@ public class German extends Language implements Serializable {
     etiquetas.put("internet", "internet");
     etiquetas.put("historial", "Verlauf");
     etiquetas.put("ayuda", "Lange drücken, um auf den Verlauf zuzugreifen");
+    etiquetas.put("desconectar", "Möchten Sie das Internet wirklich trennen?");
+    etiquetas.put("registro", "Sie verlieren das Bewegungsprotokoll");
   }
 
   private void SetDictado() {

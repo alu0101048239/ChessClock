@@ -19,10 +19,12 @@
         android:theme="@style/Theme.ChessClock">
         <activity
             android:name=".History"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,6 +34,7 @@
         </activity>
         <activity
             android:name=".Connectivity"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

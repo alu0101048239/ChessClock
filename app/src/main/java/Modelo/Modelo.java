@@ -142,6 +142,10 @@ public class Modelo implements Serializable {
     return jugadas;
   }
 
+  public void ResetMoves() {
+    jugadas.clear();
+  }
+
   public void SetPlayerName(String name) {
     playerName = name;
   }
