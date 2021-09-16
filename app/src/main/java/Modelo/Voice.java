@@ -84,13 +84,12 @@ public class Voice implements Serializable {
     } else {
       iterator = 0;
     }
-    System.out.println("Nueva voz: " + newVoice);
     return newVoice;
   }
 
   public Locale SetVoice(String newVoice) {
     voice = newVoice;
-    Locale pais = null;
+    Locale pais;
     if (language instanceof English) {
       pais = new Locale("en", "GB");
     } else if (language instanceof Spanish) {

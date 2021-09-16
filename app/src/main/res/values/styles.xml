@@ -14,4 +14,8 @@
         <item name="android:textColorPrimary">@android:color/black</item>
         <!--item name="android:textSize">20dp</item-->
     </style>
+
+    <style name="transparent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 </resources>

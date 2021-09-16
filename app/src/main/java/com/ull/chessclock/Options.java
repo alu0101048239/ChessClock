@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+
+import java.util.Locale;
 import java.util.Objects;
 import Modelo.Modelo;
 
@@ -163,17 +165,20 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     check++;
 
     if (parent.getAdapter().getCount() == 3) {
-      switch (spinner) {
-        case "English":
-          ChangeLanguage("en_GB", R.array.game_eng);
-          break;
-        case "Deutsche":
-          ChangeLanguage("de_DE", R.array.game_deu);
-          break;
-        case "Español":
-          ChangeLanguage("es_ES", R.array.game_esp);
-          break;
+      if (++check > 3) {
+        switch (spinner) {
+          case "English":
+            ChangeLanguage("en_GB");
+            break;
+          case "Deutsche":
+            ChangeLanguage("de_DE");
+            break;
+          case "Español":
+            ChangeLanguage("es_ES");
+            break;
+        }
       }
+
     } else if (parent.getAdapter().getCount() == 4) {
 
       if (++check > 3) {
@@ -203,14 +208,18 @@ public class Options extends SuperActivity implements AdapterView.OnItemSelected
     ReturnData();
   }
 
-  private void ChangeLanguage(String newLanguage, int game_spinner) {
+  private void ChangeLanguage(String newLanguage) {
     modelo.GetVoz().SetLanguage(newLanguage);
     tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
     SetButtonsTexts();
+
+    modelo.GetVoz().SetVoz(modelo.GetVoz().GetLanguage().GetVoces()[0]);
+    Locale locale = modelo.GetVoz().SetVoice(modelo.GetVoz().GetLanguage().GetVoces()[0]);
+    tts.SetVoice(modelo.GetVoz().GetLanguage().GetVoces()[0], locale);
+
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("idioma"));
 
-    //adapter2 = ArrayAdapter.createFromResource(this, game_spinner, R.layout.game_spinner);
-    //game.setAdapter(adapter2);
+    System.out.println("Voz inglesa: " + modelo.GetVoz().GetVoice());
   }
 
   public void SetButtonsTexts() {

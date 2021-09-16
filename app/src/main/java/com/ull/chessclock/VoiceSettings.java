@@ -72,6 +72,7 @@ public class VoiceSettings extends SuperActivity {
 
   public void ChangingVoice() {
     String newVoice = modelo.GetVoz().ChangeVoice();
+    System.out.println("New voice: " + newVoice);
     tts.SetVoice(newVoice, modelo.GetVoz().SetVoice(newVoice));
     tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("cambiar_voz"));
     ReturnData();

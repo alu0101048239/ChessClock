@@ -10,15 +10,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scaledrone.lib.Listener;
 import com.scaledrone.lib.Room;
 import com.scaledrone.lib.RoomListener;
 import com.scaledrone.lib.Scaledrone;
+
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,7 +57,6 @@ public class MainActivity extends SuperActivity implements RoomListener {
   // Internet
   private final String channelID = "xaSQZtVQveTzyTh2";
   private final String roomName = "observable-room";
-  private EditText editText;
   private Scaledrone scaledrone;
   MemberData globalData;
 
@@ -385,6 +387,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
         assert data != null;
         GameMode mode = modelo.GetFirstPlayer().GetMode();
         modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+
         if (!mode.GetName().equals(modelo.GetFirstPlayer().GetMode().GetName())) {
           Resetear(true);
         }
@@ -429,9 +432,10 @@ public class MainActivity extends SuperActivity implements RoomListener {
       }
     } else if (requestCode == 1) {
       if (resultCode == Activity.RESULT_OK) {
-        modelo.Resetear(t1, t2);
-        b1.setText(modelo.GetFirstPlayer().SetTime());
-        b2.setText(modelo.GetSecondPlayer().SetTime());
+        //modelo.Resetear(t1, t2);
+        //b1.setText(modelo.GetFirstPlayer().SetTime());
+        //b2.setText(modelo.GetSecondPlayer().SetTime());
+        Resetear(true);
         game_finished = false;
       }
     } else if (requestCode == 2) {

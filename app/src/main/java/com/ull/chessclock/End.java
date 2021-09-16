@@ -2,9 +2,18 @@ package com.ull.chessclock;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.widget.TextView;
+
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
+import java.util.Objects;
+
 import Modelo.Modelo;
 
 public class End extends SuperActivity {
@@ -15,15 +24,15 @@ public class End extends SuperActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_end);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
-    DisplayMetrics dm = new DisplayMetrics();
-    getWindowManager().getDefaultDisplay().getMetrics(dm);
-    int width = dm.widthPixels;
-    int height = dm.heightPixels;
-    getWindow().setLayout((int)(width*.7),(int)(height*.5));
     end_game = findViewById(R.id.endGame);
     end_game.setText(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
     ReturnData();
     SetSpeechRecognizer(End.this);
+    //Objects.requireNonNull(getSupportActionBar()).hide();
+    //getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    YoYo.with(Techniques.TakingOff).duration(6000).repeat(0).playOn(end_game);
+    Handler handler = new Handler();
+    handler.postDelayed(this::finish, 2500);
   }
 
   public void ReturnData() {
@@ -40,5 +49,4 @@ public class End extends SuperActivity {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
     }
   }
-
 }

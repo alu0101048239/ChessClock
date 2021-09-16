@@ -24,7 +24,6 @@ public class Bluetooth extends SuperActivity {
   private Context context;
   private BluetoothAdapter bluetoothAdapter;
   private ArrayAdapter<String> adapterMainChat;
-  Modelo modelo;
 
   public static final int MESSAGE_STATE_CHANGED = 0;
   public static final int MESSAGE_READ = 1;

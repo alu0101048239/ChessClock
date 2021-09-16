@@ -1,7 +1,5 @@
 package com.ull.chessclock;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,9 +15,7 @@ public class History extends SuperActivity {
 
   TextView title;
   ListView messagesView;
-
   private MessageAdapter messageAdapter;
-
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

@@ -49,9 +49,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".End"
-            android:excludeFromRecents="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/DialogActivity" />
+            android:theme="@style/transparent"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CustomGame"
             android:excludeFromRecents="true"
