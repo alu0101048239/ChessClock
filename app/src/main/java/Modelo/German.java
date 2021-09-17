@@ -17,7 +17,7 @@ public class German extends Language implements Serializable {
 
   private void SetTags() {
     etiquetas = new Hashtable<>();
-    etiquetas.put("ajustes", "EINSTELLUNGEN");
+    etiquetas.put("ajustes", "Einstellungen");
     etiquetas.put("idioma", "Sprache");
     etiquetas.put("juego", "Spielemodus");
     etiquetas.put("velocidad", "Geschwindigkeit");
@@ -38,8 +38,8 @@ public class German extends Language implements Serializable {
     etiquetas.put("aceptar", "Akzeptieren");
     etiquetas.put("cancelar", "Stornieren");
     etiquetas.put("penalización", "Bestrafung");
-    etiquetas.put("emparejados", "gekoppelte geräte");
-    etiquetas.put("disponibles", "verfügbare geräte");
+    etiquetas.put("emparejados", "Gekoppelte geräte");
+    etiquetas.put("disponibles", "Verfügbare geräte");
     etiquetas.put("bluetooth", "bluetooth");
     etiquetas.put("internet", "internet");
     etiquetas.put("historial", "Verlauf");

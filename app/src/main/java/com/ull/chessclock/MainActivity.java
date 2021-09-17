@@ -12,16 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scaledrone.lib.Listener;
 import com.scaledrone.lib.Room;
 import com.scaledrone.lib.RoomListener;
 import com.scaledrone.lib.Scaledrone;
-
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,6 +56,8 @@ public class MainActivity extends SuperActivity implements RoomListener {
   private Scaledrone scaledrone;
   MemberData globalData;
 
+  public String playerName;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +82,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
     t2 = new Timer();
     bluetooth_connected = false;
     game_finished = false;
+    playerName = null;
 
     // Bluetooth
     chatUtils = new ChatUtils(this, handler);
@@ -197,6 +196,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
       reset.setAlpha((float) 1);
       b1.setEnabled(false);
       b2.setEnabled(true);
+      b2.setAlpha(1);
       corona_blancas.setVisibility(View.VISIBLE);
       corona_negras.setVisibility(View.INVISIBLE);
       if (incremento) {
@@ -207,9 +207,14 @@ public class MainActivity extends SuperActivity implements RoomListener {
       modelo.GetFirstPlayer().Pause(t1);
       t2.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
+
       if (thread) {
-        chatUtils.write("press".getBytes());
         if (bluetooth_connected || modelo.GetInternet()) {
+          if (playerName == null) {
+            playerName = "negras";
+            setState(Objects.requireNonNull(getSupportActionBar()).getSubtitle() + " - NEGRAS" );
+          }
+          chatUtils.write("press".getBytes());
           b2.setEnabled(false);  // desactivar blancas
           b2.setAlpha(0.25F);
           pause.setEnabled(false);  // desactivar pause
@@ -224,6 +229,17 @@ public class MainActivity extends SuperActivity implements RoomListener {
         if (modelo.GetInternet()) {
           sendMessage("pressB");
         }
+      } else if (bluetooth_connected) {
+        if (playerName == null) {
+          playerName = "blancas";
+          setState(Objects.requireNonNull(getSupportActionBar()).getSubtitle() + " - BLANCAS" );
+        }
+        if (playerName.equals("blancas")) {
+          b1.setAlpha(0.25F);
+        } else {
+          b2.setAlpha(0.25F);
+          b2.setEnabled(false);
+        }
       }
     }
   }
@@ -237,6 +253,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
       reset.setAlpha((float) 1);
       b2.setEnabled(false);
       b1.setEnabled(true);
+      b1.setAlpha(1);
       corona_negras.setVisibility(View.VISIBLE);
       corona_blancas.setVisibility(View.INVISIBLE);
       if (incremento) {
@@ -247,9 +264,10 @@ public class MainActivity extends SuperActivity implements RoomListener {
       modelo.GetSecondPlayer().Pause(t2);
       t1.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
+
       if (thread) {
-        chatUtils.write("press".getBytes());
         if (bluetooth_connected || modelo.GetInternet()) {
+          chatUtils.write("press".getBytes());
           b1.setEnabled(false);
           b1.setAlpha(0.25F);
           pause.setEnabled(false);
@@ -263,6 +281,13 @@ public class MainActivity extends SuperActivity implements RoomListener {
         }
         if (modelo.GetInternet()) {
           sendMessage("pressW");
+        }
+      } else if (bluetooth_connected) {
+        if (playerName.equals("negras")) {
+          b2.setAlpha(0.25F);
+        } else {
+          b1.setAlpha(0.25F);
+          b1.setEnabled(false);
         }
       }
     }
@@ -428,6 +453,9 @@ public class MainActivity extends SuperActivity implements RoomListener {
           }
         } else {
           setState("");
+        }
+        if (modelo.GetAddress() != null) {
+          b2.setAlpha(0.25F);
         }
       }
     } else if (requestCode == 1) {

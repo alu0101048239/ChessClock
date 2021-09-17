@@ -17,7 +17,7 @@ public class Spanish extends Language implements Serializable {
 
   private void SetTags() {
     etiquetas = new Hashtable<>();
-    etiquetas.put("ajustes", "AJUSTES");
+    etiquetas.put("ajustes", "Ajustes");
     etiquetas.put("idioma", "Idioma");
     etiquetas.put("juego", "Modo de juego");
     etiquetas.put("velocidad", "Velocidad");

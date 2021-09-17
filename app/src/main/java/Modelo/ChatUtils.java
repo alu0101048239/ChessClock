@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ChatUtils {
@@ -273,7 +274,6 @@ public class ChatUtils {
 
             switch (option) {
               case "press":
-                //System.out.println("Antes: " + currentPlayer);
                 if (currentPlayer == 0) {
                   mainActivity.MovePlayerOne(true, false);
                 } else if (currentPlayer == 1) {
@@ -284,7 +284,6 @@ public class ChatUtils {
                 } else if (currentPlayer == 1) {
                   currentPlayer = 0;
                 }
-                //System.out.println("Después: " + currentPlayer);
                 break;
               case "pause":
                 mainActivity.CheckPause(false);
@@ -292,11 +291,13 @@ public class ChatUtils {
 
               case "reset":
                 mainActivity.Reset(false);
+                break;
 
               case "sttgs":
                 if (!mainActivity.game_paused) {
                   mainActivity.CheckPause(false);
                 }
+                break;
             }
 
           });
@@ -316,16 +317,13 @@ public class ChatUtils {
         String option = new String(buffer, StandardCharsets.ISO_8859_1);
         switch (option) {
           case "press":
-            //System.out.println("Antes: " + currentPlayer);
             if (currentPlayer == 0) {
               currentPlayer = 1;
             } else {
               currentPlayer = 0;
             }
-            //System.out.println("Después: " + currentPlayer);
             break;
           case "pause":
-            break;
           case "reset":
             break;
         }
