@@ -120,7 +120,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
   }
 
   public void VoiceManagement(String keeper) {
-    if (keeper.toUpperCase().equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes"))) {
+    if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes").toLowerCase())) {
       Opciones();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
       CheckPause(true);
