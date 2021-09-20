@@ -37,12 +37,16 @@ public class Connectivity extends SuperActivity {
     }
 
     internet.setOnLongClickListener(v -> {
-      tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("historial"));
-      Intent intent = new Intent(this, History.class);
-      intent.putExtra("Modelo", modelo);
-      startActivityForResult(intent, 1);
+      Historial();
       return true;
     });
+  }
+
+  public void Historial() {
+    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("historial"));
+    Intent intent = new Intent(this, History.class);
+    intent.putExtra("Modelo", modelo);
+    startActivityForResult(intent, 1);
   }
 
   public void Bluetooth() {
@@ -91,6 +95,8 @@ public class Connectivity extends SuperActivity {
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("internet"))) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("internet"));
       Internet();
+    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("historial").toLowerCase())) {
+      Historial();
     } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
       tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
       onBackPressed();

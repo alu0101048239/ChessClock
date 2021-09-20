@@ -323,7 +323,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
 
   public void Opciones() {
     if (bluetooth_connected && ((modelo.GetFirstPlayer().GetStarted() == 1 || modelo.GetSecondPlayer().GetStarted() == 1))) {
-      chatUtils.write("sttgs".getBytes());
+      chatUtils.write("pause".getBytes());
     } else if (modelo.GetInternet()) {
       sendMessage("settings");
     } else {
