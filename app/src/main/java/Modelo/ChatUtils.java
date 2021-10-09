@@ -275,9 +275,9 @@ public class ChatUtils {
             switch (option) {
               case "press":
                 if (currentPlayer == 0) {
-                  mainActivity.MovePlayerOne(true, false);
+                  mainActivity.setWhiteTurn(true, false);
                 } else if (currentPlayer == 1) {
-                  mainActivity.MovePlayerTwo(true, false);
+                  mainActivity.setBlackTurn(true, false);
                 }
                 if (currentPlayer == 0) {
                   currentPlayer = 1;
@@ -286,16 +286,16 @@ public class ChatUtils {
                 }
                 break;
               case "pause":
-                mainActivity.CheckPause(false);
+                mainActivity.pauseGame(false);
                 break;
 
               case "reset":
-                mainActivity.Reset(false);
+                mainActivity.resetGame(false);
                 break;
 
               case "sttgs":
-                if (!mainActivity.game_paused) {
-                  mainActivity.CheckPause(false);
+                if (!mainActivity.gamePaused) {
+                  mainActivity.pauseGame(false);
                 }
                 break;
             }

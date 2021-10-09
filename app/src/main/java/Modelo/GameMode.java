@@ -16,45 +16,45 @@ public class GameMode implements Serializable {
     MAX = 300;
   }
 
-  public void SetIncrement(int increment_) {
+  public void setIncrement(int increment_) {
     increment = increment_;
   }
 
-  public int GetIncrement() {
+  public int getIncrement() {
     return increment;
   }
 
-  public void SetTime(int time_) {
+  public void setTime(int time_) {
     if (time_ >= MIN && time_ <= MAX) {
       time = time_;
     }
   }
 
-  public int GetTime() {
+  public int getTime() {
     return time;
   }
 
-  public int GetMin() {
+  public int getMin() {
     return MIN;
   }
 
-  public int GetMax() {
+  public int getMax() {
     return MAX;
   }
 
-  public void SetHours(int hours) {}
+  public void setHours(int hours) {}
 
-  public void SetSeconds(int seconds) {}
+  public void setSeconds(int seconds) {}
 
-  public int GetHours() {
+  public int getHours() {
     return 0;
   }
 
-  public int GetSeconds() {
+  public int getSeconds() {
     return 0;
   }
 
-  public String GetName() {
+  public String getName() {
     return name;
   }
 

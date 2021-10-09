@@ -1,21 +1,41 @@
+/*
+ * Implementación de la clase German, que hereda de la clase Language. Contiene todos los métodos
+ * de la clase padre para acceder a las diferentes etiquetas, voces y comandos de voz disponibles
+ * para el idioma alemán.
+ *
+ * @author David Hernández Suárez
+ */
+
+
 package Modelo;
 
 import java.io.Serializable;
 import java.util.Hashtable;
 
 public class German extends Language implements Serializable {
+
+  /**
+   * Constructor por defecto
+   */
   public German() {
     language = "de_DE";
   }
 
-  public German(String idioma) {
-    super(idioma);
+  /**
+   * Constructor
+   * @param language - Identificador del idioma
+   */
+  public German(String language) {
+    super(language);
     voces = new String[] {"de-de-x-deb-network", "de-de-x-deb-local", "de-de-x-deg-network", "de-de-x-nfh-network", "de-de-x-deg-local", "de-de-x-nfh-local"};
-    SetTags();
-    SetDictado();
+    setTags();
+    setDictado();
   }
 
-  private void SetTags() {
+  /**
+   * Inserta en un hash todas las etiquetas disponibles en alemán
+   */
+  private void setTags() {
     etiquetas = new Hashtable<>();
     etiquetas.put("ajustes", "Einstellungen");
     etiquetas.put("idioma", "Sprache");
@@ -48,7 +68,10 @@ public class German extends Language implements Serializable {
     etiquetas.put("registro", "Sie verlieren das Bewegungsprotokoll");
   }
 
-  private void SetDictado() {
+  /**
+   * Inserta en un hash todos los comandos de voz disponibles en alemán
+   */
+  private void setDictado() {
     dictado = new Hashtable<>();
     dictado.put("subir_velocidad", "schneller");
     dictado.put("bajar_velocidad", "langsamer");

@@ -1,3 +1,11 @@
+/*
+ * Implementación de la clase Modelo, cuyo principal objetivo es almacenar aquellos objetos y
+ * variables que necesitamos en las diferentes actividades y clases de la aplicación. Al acceder
+ * a una nueva actividad, esta recibirá un objeto de esta clase.
+ *
+ * @author David Hernández Suárez
+ */
+
 package Modelo;
 
 import java.io.Serializable;
@@ -6,78 +14,134 @@ import java.util.Hashtable;
 import java.util.Timer;
 
 public class Modelo implements Serializable {
-  Clock firstPlayer;
-  Clock secondPlayer;
-  Voice voz;
-  String address;
-  Boolean internet;
+  Clock blackPlayer;
+  Clock whitePlayer;
+  Voice voice;
+  String bluetoothAddress;
+  Boolean internetConnected;
   ArrayList<Hashtable<String, String>> jugadas;
   String playerName;
 
+  /**
+   * Constructor
+   */
   public Modelo() {
-    firstPlayer = new Clock("1");
-    secondPlayer = new Clock("2");
-    voz = new Voice();
-    address = null;
-    internet = false;
+    blackPlayer = new Clock("1");
+    whitePlayer = new Clock("2");
+    voice = new Voice();
+    bluetoothAddress = null;
+    internetConnected = false;
     jugadas = new ArrayList<>();
     playerName = "";
   }
 
-  public Clock GetFirstPlayer() {
-    return firstPlayer;
+  /**
+   * Devuelve el objeto que representa a las negras
+   * @return Objeto de la clase Clock
+   */
+  public Clock getBlackPlayer() {
+    return blackPlayer;
   }
 
-  public Clock GetSecondPlayer() {
-    return secondPlayer;
+  /**
+   * Devuelve el objeto que representa a las blancas
+   * @return Objeto de la clase Clock
+   */
+  public Clock getWhitePlayer() {
+    return whitePlayer;
   }
 
-  public Voice GetVoz() {
-    return voz;
+  /**
+   * Devuelve el objeto que representa la voz del asistente
+   * @return Objeto de la clase Voice
+   */
+  public Voice getVoice() {
+    return voice;
   }
 
-  public void Resetear(Timer t1, Timer t2) {
-    firstPlayer.Pause(t1);
-    firstPlayer.Reset();
-    secondPlayer.Pause(t2);
-    secondPlayer.Reset();
+  /**
+   * Resetea los dos relojes
+   * @param timer1 - Timer del primer reloj
+   * @param timer2 - Timer del segundo reloj
+   */
+  public void resetClocks(Timer timer1, Timer timer2) {
+    blackPlayer.pause(timer1);
+    blackPlayer.reset();
+    whitePlayer.pause(timer2);
+    whitePlayer.reset();
   }
 
-  public void Pausar(Timer t1, Timer t2) {
-    firstPlayer.Pause(t1);
-    secondPlayer.Pause(t2);
+  /**
+   * Pausa los dos relojes
+   * @param timer1 - Timer del primer reloj
+   * @param timer2 - Timer del segundo reloj
+   */
+  public void pausar(Timer timer1, Timer timer2) {
+    blackPlayer.pause(timer1);
+    whitePlayer.pause(timer2);
   }
 
-  public String BlackTime() {
-    int minutos = firstPlayer.GetMinutos();
-    int segundos = firstPlayer.GetSegundos();
-    return voz.SetTime(minutos, segundos);
+  /**
+   * Devuelve el tiempo de juego de las negras
+   * @return Tiempo de las negras
+   */
+  public String blackTime() {
+    int minutos = blackPlayer.getMinutos();
+    int segundos = blackPlayer.getSegundos();
+    return voice.setTime(minutos, segundos);
   }
 
-  public String WhiteTime() {
-    int minutos = secondPlayer.GetMinutos();
-    int segundos = secondPlayer.GetSegundos();
-    return voz.SetTime(minutos, segundos);
+  /**
+   * Devuelve el tiempo de juego de las blancas
+   * @return Tiempo de las blancas
+   */
+  public String whiteTime() {
+    int minutos = whitePlayer.getMinutos();
+    int segundos = whitePlayer.getSegundos();
+    return voice.setTime(minutos, segundos);
   }
 
-  public String GetAddress() {
-    return address;
+  /**
+   * Devuelve la dirección del dispositivo con el que se va a realizar la conexión por bluetooth
+   * @return Dirección del dispositivo
+   */
+  public String getBluetoothAddress() {
+    return bluetoothAddress;
   }
 
-  public void SetAddress(String ad) {
-    address = ad;
+  /**
+   * Establece la dirección del dispositivo con el que se va a realizar la conexión por bluetooth
+   * @param address - Dirección del dispositivo
+   */
+  public void setBluetoothAddress(String address) {
+    bluetoothAddress = address;
   }
 
-  public void SetInternet(Boolean option) {
-    internet = option;
+  /**
+   * Activa o desactiva el indicador de internet
+   * @param option - Indica si se activa o desactiva el indicador de internet
+   */
+  public void setInternet(Boolean option) {
+    internetConnected = option;
   }
 
-  public Boolean GetInternet() {
-    return internet;
+
+  /**
+   * Indica si el indicador de internet está activado
+   * @return True si el indicador de internet está activado
+   */
+  public Boolean getInternet() {
+    return internetConnected;
   }
 
-  public String Jugada(String keeper) {
+  /**
+   * Gestiona el reconocimiento de voz, concretamente el de las jugadas
+   * @param keeper - Instrucción vocal del usuario, convertida a texto
+   * @return Nombre de la jugada que será reproducido por el asistente
+   */
+  public String moveProcessing(String keeper) {
     keeper = keeper.toLowerCase();
+    Language language = getVoice().getLanguage();
     String[] words = keeper.split("\\s+");
     for (int i = 0; i < words.length; i++) {
       words[i] = words[i].replaceAll("[^\\w]", "");
@@ -88,21 +152,21 @@ public class Modelo implements Serializable {
     }
     String jugada = "";
 
-    if (words[0].contains(GetVoz().GetLanguage().GetDictadoById("torre"))) { // torre
+    if (words[0].contains(language.getDictadoById("torre"))) { // torre
       jugada = "torre ";
 
-    } else if (words[0].equals(GetVoz().GetLanguage().GetDictadoById("rey")) || words[0].equals("reishe") || words[0].equals("reiche")) { // rey
+    } else if (words[0].equals(language.getDictadoById("rey")) || words[0].equals("reishe") || words[0].equals("reiche")) { // rey
       jugada = "rey ";
       if (words[0].equals("reiche")) {
         jugada += "G";
       } else if (words[0].equals("reishe")) {
         jugada += "C";
       }
-    } else if (words[0].equals(GetVoz().GetLanguage().GetDictadoById("reina"))) { // reina
+    } else if (words[0].equals(language.getDictadoById("reina"))) { // reina
       jugada = "reina ";
-    } else if (words[0].equals(GetVoz().GetLanguage().GetDictadoById("peón")) || words[0].contains("eón")) { // peón
+    } else if (words[0].equals(language.getDictadoById("peón")) || words[0].contains("eón")) { // peón
       jugada = "peón ";
-    } else if (words[0].contains(GetVoz().GetLanguage().GetDictadoById("caballo")) || words[0].equals("hp") || words[0].equals("cv")) { // caballo
+    } else if (words[0].contains(language.getDictadoById("caballo")) || words[0].equals("hp") || words[0].equals("cv")) { // caballo
       jugada = "caballo ";
       if (words.length == 1) {
         jugada += "F4";
@@ -132,25 +196,45 @@ public class Modelo implements Serializable {
     return jugada;
   }
 
-  public void InsertMove(String player, String move) {
+  /**
+   * Inserta una jugada en el hash que almacena las jugadas
+   * @param player - Texto que indica el jugador que realizó la jugada
+   * @param move - Texto con el nombre de la jugada realizada
+   */
+  public void insertMove(String player, String move) {
     Hashtable<String, String> aux = new Hashtable<>();
     aux.put(player, move);
     jugadas.add(aux);
   }
 
-  public ArrayList<Hashtable<String, String>> GetMoves() {
+  /**
+   * Devuelve el conjunto de jugadas registradas
+   * @return - Array de jugadas
+   */
+  public ArrayList<Hashtable<String, String>> getMoves() {
     return jugadas;
   }
 
-  public void ResetMoves() {
+  /**
+   * Resetea el conjunto de jugadas
+   */
+  public void resetMoves() {
     jugadas.clear();
   }
 
-  public void SetPlayerName(String name) {
+  /**
+   * Establece el nombre de un jugador
+   * @param name - Nombre del jugador
+   */
+  public void setPlayerName(String name) {
     playerName = name;
   }
 
-  public String GetPlayerName() {
+  /**
+   * Devuelve el nombre del jugador
+   * @return Nombre del jugador
+   */
+  public String getPlayerName() {
     return playerName;
   }
 }

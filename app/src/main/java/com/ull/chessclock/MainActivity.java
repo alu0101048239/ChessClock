@@ -1,6 +1,15 @@
+/*
+ * Implementación de la clase MainActivity, en la que se desarrolla la partida. Es la pantalla
+ * principal de la aplicación, y es donde se realizan las conexiones por bluetooth o internet, en
+ * caso de haberlas activado. Hereda los métodos necesarios de la superclase SuperActivity.
+ *
+ * @author David Hernández Suárez
+ */
+
 package com.ull.chessclock;
 
-import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -26,23 +35,25 @@ import Modelo.ChatUtils;
 import Modelo.MemberData;
 import Modelo.Message;
 import Modelo.GameMode;
+import Modelo.Language;
 
 public class MainActivity extends SuperActivity implements RoomListener {
-  Button b1;
-  Button b2;
-  Button black_time1;
-  Button black_time2;
-  Button white_time1;
-  Button white_time2;
-  ImageButton pause;
-  ImageButton reset;
+  Button blackClock;
+  Button whiteClock;
+  Button blackTime1;
+  Button blackTime2;
+  Button whiteTime1;
+  Button whiteTime2;
+  ImageButton pauseButton;
+  ImageButton resetButton;
+  ImageButton settingsButton;
   static MediaPlayer mp;
-  Timer t1;
-  Timer t2;
-  ImageView corona_blancas;
-  ImageView corona_negras;
-  public Boolean game_paused;
-  Boolean game_finished;
+  Timer blackTimer;
+  Timer whiteTimer;
+  ImageView whiteCrown;
+  ImageView blackCrown;
+  public Boolean gamePaused;
+  Boolean gameFinished;
 
   // Bluetooth
   public static final int MESSAGE_STATE_CHANGED = 0;
@@ -58,30 +69,38 @@ public class MainActivity extends SuperActivity implements RoomListener {
 
   public String playerName;
 
+  ActivityResultLauncher<Intent> settingsResultLauncher;
+  ActivityResultLauncher<Intent> penalizationResultLauncher;
+  ActivityResultLauncher<Intent> endResultLauncher;
 
+
+  /**
+   * Método invocado cada vez que se abre la actividad
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    b1 = findViewById(R.id.negras);
-    b2 = findViewById(R.id.blancas);
-    b2.setEnabled(false);
-    black_time1 = findViewById(R.id.blackTime);
-    black_time2 = findViewById(R.id.blackTime2);
-    white_time1 = findViewById(R.id.whiteTime);
-    white_time2 = findViewById(R.id.whiteTime2);
-    corona_blancas = findViewById(R.id.coronaBlancas);
-    corona_negras = findViewById(R.id.coronaNegras);
-    corona_blancas.setVisibility(View.INVISIBLE);
-    pause = findViewById(R.id.pause);
-    reset = findViewById(R.id.reset);
-    game_paused = false;
-    SetButtonsTexts();
+    blackClock = findViewById(R.id.negras);
+    whiteClock = findViewById(R.id.blancas);
+    whiteClock.setEnabled(false);
+    blackTime1 = findViewById(R.id.blackTime);
+    blackTime2 = findViewById(R.id.blackTime2);
+    whiteTime1 = findViewById(R.id.whiteTime);
+    whiteTime2 = findViewById(R.id.whiteTime2);
+    whiteCrown = findViewById(R.id.coronaBlancas);
+    blackCrown = findViewById(R.id.coronaNegras);
+    whiteCrown.setVisibility(View.INVISIBLE);
+    pauseButton = findViewById(R.id.pause);
+    resetButton = findViewById(R.id.reset);
+    settingsButton = findViewById(R.id.options);
+    gamePaused = false;
+    setButtonsTexts();
     mp = MediaPlayer.create(this, R.raw.button_sound);
-    t1 = new Timer();
-    t2 = new Timer();
+    blackTimer = new Timer();
+    whiteTimer = new Timer();
     bluetooth_connected = false;
-    game_finished = false;
+    gameFinished = false;
     playerName = null;
 
     // Bluetooth
@@ -91,142 +110,256 @@ public class MainActivity extends SuperActivity implements RoomListener {
     // Internet
     scaledrone = null;
     globalData = new MemberData("player", "#FF717E");
-    SetSpeechRecognizer(MainActivity.this);
+    setSpeechRecognizer(MainActivity.this);
 
 
-    if (modelo.GetFirstPlayer().GetStarted() != 1) {
-      pause.setEnabled(false);
-      pause.setAlpha((float) 0.25);
-      reset.setEnabled(false);
-      reset.setAlpha((float) 0.25);
+    if (modelo.getBlackPlayer().getStarted() != 1) {
+      pauseButton.setEnabled(false);
+      pauseButton.setAlpha((float) 0.25);
+      resetButton.setEnabled(false);
+      resetButton.setAlpha((float) 0.25);
     }
 
     // Penalización
-    b1.setOnLongClickListener(v -> {
-      if (b1.isEnabled() && b2.isEnabled()) {
-        Penalizacion(1); // penalización a las negras
+    blackClock.setOnLongClickListener(v -> {
+      if (blackClock.isEnabled() && whiteClock.isEnabled()) {
+        penalization(1); // penalización a las negras
         return true;
       }
       return false;
     });
 
-    b2.setOnLongClickListener(v -> {
-      if (b1.isEnabled() && b2.isEnabled()) {
-        Penalizacion(0); // penalización a las blancas
+    whiteClock.setOnLongClickListener(v -> {
+      if (blackClock.isEnabled() && whiteClock.isEnabled()) {
+        penalization(0); // penalización a las blancas
         return true;
       }
       return false;
     });
+
+    blackTime1.setOnClickListener(v -> speakTime("negras"));
+
+    blackTime2.setOnClickListener(v -> speakTime("negras"));
+
+    whiteTime1.setOnClickListener(v -> speakTime("blancas"));
+
+    whiteTime2.setOnClickListener(v -> speakTime("blancas"));
+
+    pauseButton.setOnClickListener(v -> pauseGame(true));
+
+    resetButton.setOnClickListener(v -> resetGame(true));
+
+    settingsButton.setOnClickListener(v -> settings());
+
+    blackClock.setOnClickListener(v -> setWhiteTurn(true, true));
+
+    whiteClock.setOnClickListener(v -> setBlackTurn(true, true));
+
+    settingsResultLauncher = registerForActivityResult(
+      new ActivityResultContracts.StartActivityForResult(),
+      result -> {
+        if (result.getResultCode() == Activity.RESULT_OK) {
+          Intent data = result.getData();
+          GameMode mode = modelo.getBlackPlayer().getMode();
+          assert data != null;
+          modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+
+          if (!mode.getName().equals(modelo.getBlackPlayer().getMode().getName())) {
+            resetear(true);
+          }
+          setValues();
+          blackClock.setText(modelo.getBlackPlayer().setTime());
+          whiteClock.setText(modelo.getWhitePlayer().setTime());
+          if (modelo.getBluetoothAddress() != null && !bluetooth_connected) {
+            chatUtils.connect(bluetoothAdapter.getRemoteDevice(modelo.getBluetoothAddress()));
+          }
+
+          if (modelo.getInternet()) {
+            setState("Online - Connected");
+            if (scaledrone == null) {
+              scaledrone = new Scaledrone(channelID, globalData);
+              scaledrone.connect(new Listener() {
+                @Override
+                public void onOpen() {
+                  System.out.println("Scaledrone connection open");
+                  // Since the MainActivity itself already implement RoomListener we can pass it as a target
+                  scaledrone.subscribe(roomName, MainActivity.this);
+                }
+
+                @Override
+                public void onOpenFailure(Exception ex) {
+                  ex.printStackTrace();
+                }
+
+                @Override
+                public void onFailure(Exception ex) {
+                  ex.printStackTrace();
+                }
+
+                @Override
+                public void onClosed(String reason) {
+                  System.err.println(reason);
+                }
+              });
+            }
+          } else {
+            setState("");
+          }
+          if (modelo.getBluetoothAddress() != null) {
+            whiteClock.setAlpha(0.25F);
+          }
+        }
+      });
+
+    penalizationResultLauncher = registerForActivityResult(
+      new ActivityResultContracts.StartActivityForResult(),
+      result -> {
+        if (result.getResultCode() == Activity.RESULT_OK) {
+          Intent data = result.getData();
+          assert data != null;
+          modelo = (Modelo) data.getExtras().getSerializable("Modelo");
+          blackClock.setText(modelo.getBlackPlayer().setTime());
+          whiteClock.setText(modelo.getWhitePlayer().setTime());
+        }
+      });
+
+    endResultLauncher = registerForActivityResult(
+      new ActivityResultContracts.StartActivityForResult(),
+      result -> {
+        if (result.getResultCode() == Activity.RESULT_OK) {
+          resetear(true);
+          gameFinished = false;
+        }
+      });
   }
 
-  public void VoiceManagement(String keeper) {
-    if (keeper.equals(modelo.GetVoz().GetLanguage().GetTagById("ajustes").toLowerCase())) {
-      Opciones();
+  /**
+   * Gestiona el reconocedor de voz, aplicando una acción en base al comando de voz recibido
+   * @param keeper - Instrucción vocal del usuario, convertida a texto
+   */
+  public void voiceManagement(String keeper) {
+    Language language = modelo.getVoice().getLanguage();
+
+    if (keeper.equals(language.getTagById("ajustes").toLowerCase())) {
+      settings();
     } else if (keeper.equals("pausa") || keeper.equals("pause")) {
-      CheckPause(true);
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("parar"))) {
-      pause.setEnabled(false);
-      pause.setAlpha((float) 0.25);
-      reset.setEnabled(false);
-      reset.setAlpha((float) 0.25);
-      Reset(true);
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("blancas"))) {
-      SpeakTime("blancas");
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("negras"))) {
-      SpeakTime("negras");
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("mover"))) {
-      if (b2.isEnabled()) {
-        MovePlayerTwo(true, true);
+      pauseGame(true);
+    } else if (keeper.equals(language.getDictadoById("parar"))) {
+      pauseButton.setEnabled(false);
+      pauseButton.setAlpha((float) 0.25);
+      resetButton.setEnabled(false);
+      resetButton.setAlpha((float) 0.25);
+      resetGame(true);
+    } else if (keeper.equals(language.getDictadoById("blancas"))) {
+      speakTime("blancas");
+    } else if (keeper.equals(language.getDictadoById("negras"))) {
+      speakTime("negras");
+    } else if (keeper.equals(language.getDictadoById("mover"))) {
+      if (whiteClock.isEnabled()) {
+        setBlackTurn(true, true);
       } else {
-        MovePlayerOne(true, true);
+        setWhiteTurn(true, true);
       }
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("penalizacion_blancas"))) {
-      Penalizacion(0);
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("penalizacion_negras"))) {
-      Penalizacion(1);
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+    } else if (keeper.equals(language.getDictadoById("penalizacion_blancas"))) {
+      penalization(0);
+    } else if (keeper.equals(language.getDictadoById("penalizacion_negras"))) {
+      penalization(1);
+    } else if (keeper.equals(language.getDictadoById("salir").toLowerCase())) {
       this.finishAffinity();
     } else {
-      if (modelo.GetInternet()) {
-        sendMessage(modelo.Jugada(keeper));
+      if (modelo.getInternet()) {
+        sendMessage(modelo.moveProcessing(keeper));
       } else {
-        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+        tts.speak(language.getDictadoById("repita"));
       }
     }
   }
 
-  public TimerTask CreateTask(String player) {
+  /**
+   * Crea un TimerTask para cambiar los valores de uno de los relojes
+   * @param player - Jugador cuyo reloj será modificado
+   * @return TimerTask creado
+   */
+  public TimerTask createTask(String player) {
     TimerTask tarea;
     if (player.equals("1")) {
       tarea = new TimerTask() {
         @Override
         public void run() {
-          b2.setText(modelo.GetSecondPlayer().Start());
-          GameOver();
+          whiteClock.setText(modelo.getWhitePlayer().start());
+          gameOver();
         }
       };
     } else {
       tarea = new TimerTask() {
         @Override
         public void run() {
-          b1.setText(modelo.GetFirstPlayer().Start());
-          GameOver();
+          blackClock.setText(modelo.getBlackPlayer().start());
+          gameOver();
         }
       };
     }
     return tarea;
   }
 
-  public void GameOver() {
-    if ((modelo.GetFirstPlayer().GetStarted() == 0 || modelo.GetSecondPlayer().GetStarted() == 0) && (!game_finished)) {
-      game_finished = true;
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
+  /**
+   * Accede a la pantalla Juego finalizado
+   */
+  public void gameOver() {
+    if ((modelo.getBlackPlayer().getStarted() == 0 || modelo.getWhitePlayer().getStarted() == 0) && (!gameFinished)) {
+      gameFinished = true;
+      tts.speak(modelo.getVoice().getLanguage().getDictadoById("resetear"));
       Intent intent = new Intent(this, End.class);
       intent.putExtra("Modelo", modelo);
-      startActivityForResult(intent, 1);
+      endResultLauncher.launch(intent);
     }
   }
 
-  /* Juegan blancas */
-  public void MovePlayerOne(Boolean incremento, Boolean thread) {
-    if (!game_paused) {
-      pause.setEnabled(true);
-      pause.setAlpha((float) 1);
-      reset.setEnabled(true);
-      reset.setAlpha((float) 1);
-      b1.setEnabled(false);
-      b2.setEnabled(true);
-      b2.setAlpha(1);
-      corona_blancas.setVisibility(View.VISIBLE);
-      corona_negras.setVisibility(View.INVISIBLE);
+  /**
+   * Detiene el tiempo de las negras y activa el tiempo de las blancas
+   * @param incremento - Si es true, se añade al tiempo los segundos de incremento establecidos
+   * @param thread - Si es true, indica que el método se ha llamado en el hilo principal de
+   * ejecución
+   */
+  public void setWhiteTurn(Boolean incremento, Boolean thread) {
+    if (!gamePaused) {
+      pauseButton.setEnabled(true);
+      pauseButton.setAlpha((float) 1);
+      resetButton.setEnabled(true);
+      resetButton.setAlpha((float) 1);
+      blackClock.setEnabled(false);
+      whiteClock.setEnabled(true);
+      whiteClock.setAlpha(1);
+      whiteCrown.setVisibility(View.VISIBLE);
+      blackCrown.setVisibility(View.INVISIBLE);
       if (incremento) {
-        b1.setText(modelo.GetFirstPlayer().AddIncrement());
+        blackClock.setText(modelo.getBlackPlayer().addIncrement());
       }
-      TimerTask tarea = CreateTask("1");
-      t2 = new Timer();
-      modelo.GetFirstPlayer().Pause(t1);
-      t2.scheduleAtFixedRate(tarea, 0, 10);
+      TimerTask tarea = createTask("1");
+      whiteTimer = new Timer();
+      modelo.getBlackPlayer().pause(blackTimer);
+      whiteTimer.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
 
       if (thread) {
-        if (bluetooth_connected || modelo.GetInternet()) {
+        if (bluetooth_connected || modelo.getInternet()) {
           if (playerName == null) {
             playerName = "negras";
             setState(Objects.requireNonNull(getSupportActionBar()).getSubtitle() + " - NEGRAS" );
           }
           chatUtils.write("press".getBytes());
-          b2.setEnabled(false);  // desactivar blancas
-          b2.setAlpha(0.25F);
-          pause.setEnabled(false);  // desactivar pause
-          pause.setAlpha(0.25F);
-          reset.setEnabled(false);  // desactivar reset
-          reset.setAlpha(0.25F);
-          black_time1.setEnabled(false); // desactivar tiempo negras
-          white_time1.setEnabled(false); // desactivar tiempo blancas
-          black_time1.setAlpha(0.25F);
-          white_time1.setAlpha(0.25F);
+          whiteClock.setEnabled(false);  // desactivar blancas
+          whiteClock.setAlpha(0.25F);
+          pauseButton.setEnabled(false);  // desactivar pause
+          pauseButton.setAlpha(0.25F);
+          resetButton.setEnabled(false);  // desactivar reset
+          resetButton.setAlpha(0.25F);
+          blackTime1.setEnabled(false); // desactivar tiempo negras
+          whiteTime1.setEnabled(false); // desactivar tiempo blancas
+          blackTime1.setAlpha(0.25F);
+          whiteTime1.setAlpha(0.25F);
         }
-        if (modelo.GetInternet()) {
+        if (modelo.getInternet()) {
           sendMessage("pressB");
         }
       } else if (bluetooth_connected) {
@@ -235,321 +368,248 @@ public class MainActivity extends SuperActivity implements RoomListener {
           setState(Objects.requireNonNull(getSupportActionBar()).getSubtitle() + " - BLANCAS" );
         }
         if (playerName.equals("blancas")) {
-          b1.setAlpha(0.25F);
+          blackClock.setAlpha(0.25F);
         } else {
-          b2.setAlpha(0.25F);
-          b2.setEnabled(false);
+          whiteClock.setAlpha(0.25F);
+          whiteClock.setEnabled(false);
         }
       }
     }
   }
 
-  /* Juegan negras */
-  public void MovePlayerTwo(Boolean incremento, Boolean thread) {
-    if (!game_paused) {
-      pause.setEnabled(true);
-      pause.setAlpha((float) 1);
-      reset.setEnabled(true);
-      reset.setAlpha((float) 1);
-      b2.setEnabled(false);
-      b1.setEnabled(true);
-      b1.setAlpha(1);
-      corona_negras.setVisibility(View.VISIBLE);
-      corona_blancas.setVisibility(View.INVISIBLE);
+  /**
+   * Detiene el tiempo de las blancas y activa el tiempo de las negras
+   * @param incremento - Si es true, se añade al tiempo los segundos de incremento establecidos
+   * @param thread - Si es true, indica que el método se ha llamado en el hilo principal de
+   * ejecución
+   */
+  public void setBlackTurn(Boolean incremento, Boolean thread) {
+    if (!gamePaused) {
+      pauseButton.setEnabled(true);
+      pauseButton.setAlpha((float) 1);
+      resetButton.setEnabled(true);
+      resetButton.setAlpha((float) 1);
+      whiteClock.setEnabled(false);
+      blackClock.setEnabled(true);
+      blackClock.setAlpha(1);
+      blackCrown.setVisibility(View.VISIBLE);
+      whiteCrown.setVisibility(View.INVISIBLE);
       if (incremento) {
-        b2.setText(modelo.GetSecondPlayer().AddIncrement());
+        whiteClock.setText(modelo.getWhitePlayer().addIncrement());
       }
-      TimerTask tarea = CreateTask("2");
-      t1 = new Timer();
-      modelo.GetSecondPlayer().Pause(t2);
-      t1.scheduleAtFixedRate(tarea, 0, 10);
+      TimerTask tarea = createTask("2");
+      blackTimer = new Timer();
+      modelo.getWhitePlayer().pause(whiteTimer);
+      blackTimer.scheduleAtFixedRate(tarea, 0, 10);
       mp.start();
 
       if (thread) {
-        if (bluetooth_connected || modelo.GetInternet()) {
+        if (bluetooth_connected || modelo.getInternet()) {
           chatUtils.write("press".getBytes());
-          b1.setEnabled(false);
-          b1.setAlpha(0.25F);
-          pause.setEnabled(false);
-          pause.setAlpha(0.25F);
-          reset.setEnabled(false);
-          reset.setAlpha(0.25F);
-          black_time2.setEnabled(false);
-          white_time2.setEnabled(false);
-          black_time2.setAlpha(0.25F);
-          white_time2.setAlpha(0.25F);
+          blackClock.setEnabled(false);
+          blackClock.setAlpha(0.25F);
+          pauseButton.setEnabled(false);
+          pauseButton.setAlpha(0.25F);
+          resetButton.setEnabled(false);
+          resetButton.setAlpha(0.25F);
+          blackTime2.setEnabled(false);
+          whiteTime2.setEnabled(false);
+          blackTime2.setAlpha(0.25F);
+          whiteTime2.setAlpha(0.25F);
         }
-        if (modelo.GetInternet()) {
+        if (modelo.getInternet()) {
           sendMessage("pressW");
         }
       } else if (bluetooth_connected) {
         if (playerName.equals("negras")) {
-          b2.setAlpha(0.25F);
+          whiteClock.setAlpha(0.25F);
         } else {
-          b1.setAlpha(0.25F);
-          b1.setEnabled(false);
+          blackClock.setAlpha(0.25F);
+          blackClock.setEnabled(false);
         }
       }
     }
   }
 
-  public void PlayerOne(View view) {
-    MovePlayerOne(true, true);
-  }
-
-  public void PlayerTwo(View view) {
-    MovePlayerTwo(true, true);
-  }
-
-  public void SpeakWhiteTime(View view) {
-    SpeakTime("blancas");
-  }
-
-  public void SpeakBlackTime(View view) {
-    SpeakTime("negras");
-  }
-
-  public void SpeakTime(String player) {
+  /**
+   * Reproduce vocalmente el tiempo restante del jugador que se pasa como parámetro
+   * @param player - Indica el jugador cuyo tiempo restante se desea conocer
+   */
+  public void speakTime(String player) {
     if (player.equals("blancas")) {
-      tts.Speak(modelo.WhiteTime());
+      tts.speak(modelo.whiteTime());
     } else {
-      tts.Speak(modelo.BlackTime());
+      tts.speak(modelo.blackTime());
     }
   }
 
-  public void Options(View view) {
-    Opciones();
-  }
-
-  public void Opciones() {
-    if (bluetooth_connected && ((modelo.GetFirstPlayer().GetStarted() == 1 || modelo.GetSecondPlayer().GetStarted() == 1))) {
+  /**
+   * Accede a la pantalla Ajustes
+   */
+  public void settings() {
+    if (bluetooth_connected && ((modelo.getBlackPlayer().getStarted() == 1 || modelo.getWhitePlayer().getStarted() == 1))) {
       chatUtils.write("pause".getBytes());
-    } else if (modelo.GetInternet()) {
+    } else if (modelo.getInternet()) {
       sendMessage("settings");
     } else {
-      if (!game_paused && (modelo.GetFirstPlayer().GetStarted() == 1 || modelo.GetSecondPlayer().GetStarted() == 1)) {
-        CheckPause(true);
+      if (!gamePaused && (modelo.getBlackPlayer().getStarted() == 1 || modelo.getWhitePlayer().getStarted() == 1)) {
+        pauseGame(true);
       }
     }
-    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("ajustes"));
-    Intent intent = new Intent(this, Options.class);
+    tts.speak(modelo.getVoice().getLanguage().getTagById("ajustes"));
+    Intent intent = new Intent(this, Settings.class);
     intent.putExtra("Modelo", modelo);
-    startActivityForResult(intent, 0);
+    settingsResultLauncher.launch(intent);
   }
 
-  public void Pause(View view) {
-    CheckPause(true);
-  }
-
-  public void Reset(View view) {
-    Reset(true);
-  }
-
-  public void Reset(Boolean thread) {
-    if (!game_paused) {
-      CheckPause(true);
+  /**
+   * Muestra un cuadro de diálogo preguntando si queremos resetear los relojes
+   * @param thread - Si es true, indica que el método se ha llamado en el hilo principal de
+   * ejecución
+   */
+  public void resetGame(Boolean thread) {
+    if (!gamePaused) {
+      pauseGame(true);
     }
-    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
+    tts.speak(modelo.getVoice().getLanguage().getTagById("diálogo"));
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle(modelo.GetVoz().GetLanguage().GetTagById("diálogo"));
-    builder.setMessage(modelo.GetVoz().GetLanguage().GetTagById("descripción"));
-    builder.setPositiveButton(modelo.GetVoz().GetLanguage().GetTagById("aceptar"), (dialog, which) -> {
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("resetear"));
-      Resetear(thread);
+    builder.setTitle(modelo.getVoice().getLanguage().getTagById("diálogo"));
+    builder.setMessage(modelo.getVoice().getLanguage().getTagById("descripción"));
+    builder.setPositiveButton(modelo.getVoice().getLanguage().getTagById("aceptar"), (dialog, which) -> {
+      tts.speak(modelo.getVoice().getLanguage().getDictadoById("resetear"));
+      resetear(thread);
     });
-    builder.setNegativeButton(modelo.GetVoz().GetLanguage().GetTagById("cancelar"), (dialog, which) -> tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("cancelar")));
+    builder.setNegativeButton(modelo.getVoice().getLanguage().getTagById("cancelar"), (dialog, which) -> tts.speak(modelo.getVoice().getLanguage().getTagById("cancelar")));
     builder.show();
 
     if (bluetooth_connected && thread) {
       chatUtils.write("reset".getBytes());
     }
 
-    if (modelo.GetInternet() && thread) {
+    if (modelo.getInternet() && thread) {
       sendMessage("reset");
     }
   }
 
-
-  public void Resetear(Boolean thread) {
+  /**
+   * Resetea los relojes
+   * @param thread - Si es true, indica que el método se ha llamado en el hilo principal de
+   * ejecución
+   */
+  public void resetear(Boolean thread) {
     int turn = 0;
-    if (modelo.GetSecondPlayer().GetTurn()) {
+    if (modelo.getWhitePlayer().getTurn()) {
       turn = 1;
     }
-    modelo.Resetear(t1, t2);
-    b1.setText(modelo.GetFirstPlayer().SetTime());
-    b2.setText(modelo.GetSecondPlayer().SetTime());
-    b1.setEnabled(true);
-    b2.setEnabled(false);
-    game_paused = false;
-    pause.setEnabled(false);
-    pause.setAlpha((float) 0.25);
-    reset.setEnabled(false);
-    reset.setAlpha((float) 0.25);
-    corona_negras.setVisibility(View.VISIBLE);
-    corona_blancas.setVisibility(View.INVISIBLE);
-    pause.setImageResource(android.R.drawable.ic_media_pause);
-    if (bluetooth_connected || modelo.GetInternet()) {
+    modelo.resetClocks(blackTimer, whiteTimer);
+    blackClock.setText(modelo.getBlackPlayer().setTime());
+    whiteClock.setText(modelo.getWhitePlayer().setTime());
+    blackClock.setEnabled(true);
+    whiteClock.setEnabled(false);
+    gamePaused = false;
+    pauseButton.setEnabled(false);
+    pauseButton.setAlpha((float) 0.25);
+    resetButton.setEnabled(false);
+    resetButton.setAlpha((float) 0.25);
+    blackCrown.setVisibility(View.VISIBLE);
+    whiteCrown.setVisibility(View.INVISIBLE);
+    pauseButton.setImageResource(android.R.drawable.ic_media_pause);
+    if (bluetooth_connected || modelo.getInternet()) {
       if (!thread) {
-        b1.setEnabled(false);
-        b2.setEnabled(false);
+        blackClock.setEnabled(false);
+        whiteClock.setEnabled(false);
       } else {
         if (turn == 0) {
-          b2.setEnabled(false);
-          b1.setEnabled(true);
+          whiteClock.setEnabled(false);
+          blackClock.setEnabled(true);
         } else {
-          b1.setEnabled(false);
-          b2.setEnabled(true);
+          blackClock.setEnabled(false);
+          whiteClock.setEnabled(true);
         }
       }
     }
   }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == 0) {
-      if (resultCode == Activity.RESULT_OK) {
-        assert data != null;
-        GameMode mode = modelo.GetFirstPlayer().GetMode();
-        modelo = (Modelo) data.getExtras().getSerializable("Modelo");
-
-        if (!mode.GetName().equals(modelo.GetFirstPlayer().GetMode().GetName())) {
-          Resetear(true);
-        }
-        SetValues();
-        b1.setText(modelo.GetFirstPlayer().SetTime());
-        b2.setText(modelo.GetSecondPlayer().SetTime());
-        if (modelo.GetAddress() != null && !bluetooth_connected) {
-          chatUtils.connect(bluetoothAdapter.getRemoteDevice(modelo.GetAddress()));
-        }
-
-        if (modelo.GetInternet()) {
-          setState("Online - Connected");
-          if (scaledrone == null) {
-            scaledrone = new Scaledrone(channelID, globalData);
-            scaledrone.connect(new Listener() {
-              @Override
-              public void onOpen() {
-                System.out.println("Scaledrone connection open");
-                // Since the MainActivity itself already implement RoomListener we can pass it as a target
-                scaledrone.subscribe(roomName, MainActivity.this);
-              }
-
-              @Override
-              public void onOpenFailure(Exception ex) {
-                System.err.println(ex);
-              }
-
-              @Override
-              public void onFailure(Exception ex) {
-                System.err.println(ex);
-              }
-
-              @Override
-              public void onClosed(String reason) {
-                System.err.println(reason);
-              }
-            });
-          }
-        } else {
-          setState("");
-        }
-        if (modelo.GetAddress() != null) {
-          b2.setAlpha(0.25F);
-        }
-      }
-    } else if (requestCode == 1) {
-      if (resultCode == Activity.RESULT_OK) {
-        //modelo.Resetear(t1, t2);
-        //b1.setText(modelo.GetFirstPlayer().SetTime());
-        //b2.setText(modelo.GetSecondPlayer().SetTime());
-        Resetear(true);
-        game_finished = false;
-      }
-    } else if (requestCode == 2) {
-      assert data != null;
-      modelo = (Modelo) data.getExtras().getSerializable("Modelo");
-      System.out.println("tiempo despues: " + modelo.GetFirstPlayer().GetSegundos());
-      b1.setText(modelo.GetFirstPlayer().SetTime());
-      b2.setText(modelo.GetSecondPlayer().SetTime());
-    }
+  public void setValues() {
+    super.setValues();
+    setButtonsTexts();
   }
 
-  public void SetValues() {
-    super.SetValues();
-    SetButtonsTexts();
-  }
-
-  public void CheckPause(Boolean thread) {
+  /**
+   * Pausa o reanuda la partida
+   * @param thread - Si es true, indica que el método se ha llamado en el hilo principal de
+   * ejecución
+   */
+  public void pauseGame(Boolean thread) {
     int pauseIcon = android.R.drawable.ic_media_pause;
     int playIcon = android.R.drawable.ic_media_play;
 
-    if (!bluetooth_connected && !modelo.GetInternet()) { // Partida normal
-      if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
-        game_paused = false;
-        if (modelo.GetFirstPlayer().GetTurn()) {
-          MovePlayerTwo(false, true);
+    if (!bluetooth_connected && !modelo.getInternet()) { // Partida normal
+      if (blackClock.isEnabled() && whiteClock.isEnabled()) { // el juego está pausado
+        gamePaused = false;
+        if (modelo.getBlackPlayer().getTurn()) {
+          setBlackTurn(false, true);
         } else {
-          MovePlayerOne(false, true);
+          setWhiteTurn(false, true);
         }
-        pause.setImageResource(pauseIcon);
+        pauseButton.setImageResource(pauseIcon);
       } else {
-        pause.setImageResource(playIcon);
-        if (b1.isEnabled()) { // están jugando negras
-          modelo.GetFirstPlayer().SetTurn(true);
-          modelo.GetSecondPlayer().SetTurn(false);
+        pauseButton.setImageResource(playIcon);
+        if (blackClock.isEnabled()) { // están jugando negras
+          modelo.getBlackPlayer().setTurn(true);
+          modelo.getWhitePlayer().setTurn(false);
         } else { // están jugando blancas
-          modelo.GetSecondPlayer().SetTurn(true);
-          modelo.GetFirstPlayer().SetTurn(false);
+          modelo.getWhitePlayer().setTurn(true);
+          modelo.getBlackPlayer().setTurn(false);
         }
-        b1.setEnabled(true);
-        b2.setEnabled(true);
-        modelo.Pausar(t1, t2);
-        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
-        game_paused = true;
+        blackClock.setEnabled(true);
+        whiteClock.setEnabled(true);
+        modelo.pausar(blackTimer, whiteTimer);
+        tts.speak(modelo.getVoice().getLanguage().getDictadoById("pausar"));
+        gamePaused = true;
       }
     } else {  // Partida por Bluetooth o por internet
 
-      if (b1.isEnabled() && b2.isEnabled()) { // el juego está pausado
-        game_paused = false;
-        if (modelo.GetFirstPlayer().GetTurn()) {
-          MovePlayerTwo(false, false);
+      if (blackClock.isEnabled() && whiteClock.isEnabled()) { // el juego está pausado
+        gamePaused = false;
+        if (modelo.getBlackPlayer().getTurn()) {
+          setBlackTurn(false, false);
         } else {
-          MovePlayerOne(false, false);
+          setWhiteTurn(false, false);
         }
 
-        pause.setImageResource(pauseIcon);
+        pauseButton.setImageResource(pauseIcon);
 
         if (thread) {
           chatUtils.write("pause".getBytes());
-          if (modelo.GetInternet()) {
+          if (modelo.getInternet()) {
             sendMessage("pause");
           }
         } else {
-          pause.setEnabled(false);
-          pause.setAlpha(0.25F);
+          pauseButton.setEnabled(false);
+          pauseButton.setAlpha(0.25F);
         }
 
       } else {
-        if (b1.isEnabled()) { // están jugando negras
-          modelo.GetFirstPlayer().SetTurn(true);
-          modelo.GetSecondPlayer().SetTurn(false);
+        if (blackClock.isEnabled()) { // están jugando negras
+          modelo.getBlackPlayer().setTurn(true);
+          modelo.getWhitePlayer().setTurn(false);
         } else { // están jugando blancas
-          modelo.GetSecondPlayer().SetTurn(true);
-          modelo.GetFirstPlayer().SetTurn(false);
+          modelo.getWhitePlayer().setTurn(true);
+          modelo.getBlackPlayer().setTurn(false);
         }
 
-        pause.setImageResource(playIcon);
+        pauseButton.setImageResource(playIcon);
 
-        b1.setEnabled(true);
-        b2.setEnabled(true);
-        modelo.Pausar(t1, t2);
-        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("pausar"));
-        game_paused = true;
+        blackClock.setEnabled(true);
+        whiteClock.setEnabled(true);
+        modelo.pausar(blackTimer, whiteTimer);
+        tts.speak(modelo.getVoice().getLanguage().getDictadoById("pausar"));
+        gamePaused = true;
 
         if (thread) {
           chatUtils.write("pause".getBytes());
-          if (modelo.GetInternet()) {
+          if (modelo.getInternet()) {
             sendMessage("pause");
           }
         }
@@ -560,24 +620,27 @@ public class MainActivity extends SuperActivity implements RoomListener {
  @Override
   protected void onPause() {
     super.onPause();
-    modelo.Pausar(t1, t2);
+    modelo.pausar(blackTimer, whiteTimer);
   }
 
-  public void SetButtonsTexts() {
-    black_time1.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_negras"));
-    black_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_negras"));
-    white_time1.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
-    white_time2.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo_blancas"));
-    b1.setText(modelo.GetFirstPlayer().StartTime());
-    b2.setText(modelo.GetSecondPlayer().StartTime());
+  public void setButtonsTexts() {
+    blackTime1.setText(modelo.getVoice().getLanguage().getTagById("tiempo_negras"));
+    blackTime2.setText(modelo.getVoice().getLanguage().getTagById("tiempo_negras"));
+    whiteTime1.setText(modelo.getVoice().getLanguage().getTagById("tiempo_blancas"));
+    whiteTime2.setText(modelo.getVoice().getLanguage().getTagById("tiempo_blancas"));
+    blackClock.setText(modelo.getBlackPlayer().startTime());
+    whiteClock.setText(modelo.getWhitePlayer().startTime());
   }
 
-  public void Penalizacion(int player) {
-    tts.Speak(modelo.GetVoz().GetLanguage().GetTagById("penalización"));
+  /**
+   * Accede a la pantalla Penalización
+   */
+  public void penalization(int player) {
+    tts.speak(modelo.getVoice().getLanguage().getTagById("penalización"));
     Intent intent = new Intent(this, Penalization.class);
     intent.putExtra("Modelo", modelo);
     intent.putExtra("player", player);
-    startActivityForResult(intent, 2);
+    penalizationResultLauncher.launch(intent);
   }
 
   private Handler handler = new Handler(message -> {
@@ -586,7 +649,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
         case ChatUtils.STATE_NONE:
         case ChatUtils.STATE_LISTEN:
           setState("BT - Not Connected");
-          modelo.Pausar(t1, t2);
+          modelo.pausar(blackTimer, whiteTimer);
           break;
         case ChatUtils.STATE_CONNECTING:
           setState("BT - Connecting...");
@@ -629,7 +692,7 @@ public class MainActivity extends SuperActivity implements RoomListener {
   // Connecting to Scaledrone room failed
   @Override
   public void onOpenFailure(Room room, Exception ex) {
-    System.err.println(ex);
+    ex.printStackTrace();
   }
 
   @Override
@@ -642,38 +705,38 @@ public class MainActivity extends SuperActivity implements RoomListener {
       runOnUiThread(() -> {
 
         if (!message.isBelongsToCurrentUser()) { // mensaje recibido
-          if (modelo.GetPlayerName().length() == 0) {
-            modelo.SetPlayerName("Player 1");
+          if (modelo.getPlayerName().length() == 0) {
+            modelo.setPlayerName("Player 1");
           }
           switch (message.getText()) {
             case "pressB":
-              MovePlayerOne(true, false);
+              setWhiteTurn(true, false);
               break;
             case "pressW":
-              MovePlayerTwo(true, false);
+              setBlackTurn(true, false);
               break;
             case "pause":
-              CheckPause(false);
+              pauseGame(false);
               break;
             case "reset":
-              Reset(false);
+              resetGame(false);
               break;
             case "settings":
-              if (!game_paused && (modelo.GetFirstPlayer().GetStarted() == 1 || modelo.GetSecondPlayer().GetStarted() == 1)) {
-                CheckPause(false);
+              if (!gamePaused && (modelo.getBlackPlayer().getStarted() == 1 || modelo.getWhitePlayer().getStarted() == 1)) {
+                pauseGame(false);
               }
               break;
             default:
-              tts.Speak(message.getText());
-              modelo.InsertMove("me", message.getText());
+              tts.speak(message.getText());
+              modelo.insertMove("me", message.getText());
           }
         } else {
-          if (modelo.GetPlayerName().length() == 0) {
-            modelo.SetPlayerName("Player 2");
+          if (modelo.getPlayerName().length() == 0) {
+            modelo.setPlayerName("Player 2");
           }
           if (!message.getText().equals("pressB") && !message.getText().equals("pressW") && !message.getText().equals("pause") &&
             !message.getText().equals("reset") && !message.getText().equals("settings")) {
-            modelo.InsertMove("opponent", message.getText());
+            modelo.insertMove("opponent", message.getText());
           }
         }
       });

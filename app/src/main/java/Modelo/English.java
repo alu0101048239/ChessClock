@@ -1,23 +1,42 @@
+/*
+ * Implementación de la clase English, que hereda de la clase Language. Contiene todos los métodos
+ * de la clase padre para acceder a las diferentes etiquetas, voces y comandos de voz disponibles
+ * para el idioma inglés.
+ *
+ * @author David Hernández Suárez
+ */
+
 package Modelo;
 
 import java.io.Serializable;
 import java.util.Hashtable;
 
 public class English extends Language implements Serializable {
+
+  /**
+   * Constructor por defecto
+   */
   public English() {
     language = "en_GB";
   }
 
-  public English(String idioma) {
-    super(idioma);
+  /**
+   * Constructor
+   * @param language - Identificador del idioma
+   */
+  public English(String language) {
+    super(language);
     voces = new String[] {"en-gb-x-gbd-local", "en-gb-x-gbg-local", "en-gb-x-rjs-network", "en-gb-x-gba-network",
             "en-gb-x-gbb-network", "en-gb-x-gbc-network", "en-gb-x-gbd-network", "en-gb-x-gbc-local", "en-gb-x-gbb-local",
             "en-gb-x-fis-local", "en-gb-x-gbg-network"};
-    SetTags();
-    SetDictado();
+    setTags();
+    setDictado();
   }
 
-  private void SetTags() {
+  /**
+   * Inserta en un hash todas las etiquetas disponibles en inglés
+   */
+  private void setTags() {
     etiquetas = new Hashtable<>();
     etiquetas.put("ajustes", "Settings");
     etiquetas.put("idioma", "Language");
@@ -50,7 +69,10 @@ public class English extends Language implements Serializable {
     etiquetas.put("registro", "You will lose movement log");
   }
 
-  private void SetDictado() {
+  /**
+   * Inserta en un hash todos los comandos de voz disponibles en inglés
+   */
+  private void setDictado() {
     dictado = new Hashtable<>();
     dictado.put("subir_velocidad", "Faster");
     dictado.put("bajar_velocidad", "Slower");

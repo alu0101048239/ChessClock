@@ -1,21 +1,40 @@
+/*
+ * Implementación de la clase Spanish, que hereda de la clase Language. Contiene todos los métodos
+ * de la clase padre para acceder a las diferentes etiquetas, voces y comandos de voz disponibles
+ * para el idioma español.
+ *
+ * @author David Hernández Suárez
+ */
+
 package Modelo;
 
 import java.io.Serializable;
 import java.util.Hashtable;
 
 public class Spanish extends Language implements Serializable {
+
+  /**
+   * Constructor por defecto
+   */
   public Spanish() {
 
   }
 
-  public Spanish(String idioma) {
-    super(idioma);
+  /**
+   * Constructor
+   * @param language - Identificador del idioma
+   */
+  public Spanish(String language) {
+    super(language);
     voces = new String[] {"es-es-x-ana-local", "es-es-x-eed-local", "es-es-x-ana-network", "es-es-x-eed-network"};
-    SetTags();
-    SetDictado();
+    setTags();
+    setDictado();
   }
 
-  private void SetTags() {
+  /**
+   * Inserta en un hash todas las etiquetas disponibles en español
+   */
+  private void setTags() {
     etiquetas = new Hashtable<>();
     etiquetas.put("ajustes", "Ajustes");
     etiquetas.put("idioma", "Idioma");
@@ -48,7 +67,10 @@ public class Spanish extends Language implements Serializable {
     etiquetas.put("registro", "Perderá el registro de movimientos");
   }
 
-  private void SetDictado() {
+  /**
+   * Inserta en un hash todos los comandos de voz disponibles en español
+   */
+  private void setDictado() {
     dictado = new Hashtable<>();
     dictado.put("subir_velocidad", "Más rápido");
     dictado.put("bajar_velocidad", "Más lento");

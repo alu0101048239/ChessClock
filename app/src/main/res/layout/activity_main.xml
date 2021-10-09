@@ -34,7 +34,8 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
+                android:layout_weight="2"
+                tools:ignore="NestedWeights" />
 
             <Button
                 android:id="@+id/whiteTime2"
@@ -44,7 +45,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="44"
                 android:backgroundTint="@color/white"
-                android:onClick="SpeakWhiteTime"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:rotation="180"
@@ -68,7 +68,6 @@
                 android:layout_marginEnd="5dp"
                 android:layout_weight="44"
                 android:backgroundTint="@color/black"
-                android:onClick="SpeakBlackTime"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:rotation="180"
@@ -102,7 +101,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/black"
-                android:onClick="PlayerOne"
                 android:textColor="@color/white"
                 android:textSize="65sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +115,8 @@
                 android:layout_marginStart="86dp"
                 android:layout_marginTop="19dp"
                 android:elevation="3dp"
-                android:src="@drawable/corona">
+                android:src="@drawable/corona"
+                android:contentDescription="@string/turn_crown">
 
             </ImageView>
 
@@ -146,17 +145,18 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                tools:ignore="NestedWeights" />
 
             <ImageButton
                 android:id="@+id/reset"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:onClick="Reset"
                 android:layout_weight="32"
                 android:src="@android:drawable/ic_menu_rotate"
                 tools:layout_editor_absoluteX="164dp"
-                tools:layout_editor_absoluteY="353dp" />
+                tools:layout_editor_absoluteY="353dp"
+                android:contentDescription="@string/reset_icon" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
@@ -167,11 +167,11 @@
                 android:id="@+id/pause"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:onClick="Pause"
                 android:layout_weight="32"
                 android:src="@android:drawable/ic_media_pause"
                 tools:layout_editor_absoluteX="38dp"
-                tools:layout_editor_absoluteY="353dp" />
+                tools:layout_editor_absoluteY="353dp"
+                android:contentDescription="@string/pause_icon" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
@@ -182,11 +182,11 @@
                 android:id="@+id/options"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:onClick="Options"
                 android:layout_weight="32"
                 android:src="@android:drawable/ic_menu_info_details"
                 tools:layout_editor_absoluteX="287dp"
-                tools:layout_editor_absoluteY="360dp" />
+                tools:layout_editor_absoluteY="360dp"
+                android:contentDescription="@string/settings_icon" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
@@ -210,7 +210,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/white"
-                android:onClick="PlayerTwo"
                 android:textColor="@color/black"
                 android:textSize="65sp"
                 app:iconTint="#FFFFFF"
@@ -225,7 +224,8 @@
                 android:layout_marginStart="86dp"
                 android:layout_marginTop="19dp"
                 android:elevation="3dp"
-                android:src="@drawable/corona">
+                android:src="@drawable/corona"
+                android:contentDescription="@string/turn_crown">
 
             </ImageView>
 
@@ -253,7 +253,8 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
+                android:layout_weight="2"
+                tools:ignore="NestedWeights" />
 
             <Button
                 android:id="@+id/whiteTime"
@@ -263,7 +264,6 @@
                 android:layout_marginBottom="5dp"
                 android:layout_weight="44"
                 android:backgroundTint="@color/white"
-                android:onClick="SpeakWhiteTime"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -287,7 +287,6 @@
                 android:layout_marginBottom="5dp"
                 android:layout_weight="44"
                 android:backgroundTint="@color/black"
-                android:onClick="SpeakBlackTime"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"

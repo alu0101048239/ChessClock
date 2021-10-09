@@ -1,3 +1,11 @@
+/*
+ * Implementación de la clase Penalization, cuyo objetivo es aplicar una penalización de tiempo a
+ * un jugador, mediante la ampliación del tiempo de juego de su rival. Hereda los métodos
+ * necesarios de la superclase SuperActivity.
+ *
+ * @author David Hernández Suárez
+ */
+
 package com.ull.chessclock;
 
 import android.app.Activity;
@@ -9,92 +17,100 @@ import android.widget.TextView;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import Modelo.Modelo;
+import Modelo.Language;
 
 public class Penalization extends SuperActivity {
 
-  NumberPicker minutos;
-  NumberPicker segundos;
+  NumberPicker minutes;
+  NumberPicker seconds;
   TextView title;
-  TextView text_minutos;
-  TextView text_segundos;
-  int add_minutes;
-  int add_seconds;
-  int player;
+  TextView minutesTitle;
+  TextView secondsTitle;
+  int minutesAdded;
+  int secondsAdded;
+  int playerID;
 
+  /**
+   * Método invocado cada vez que se abre la actividad
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_penalization);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
-    player = getIntent().getIntExtra("player", -1);
-    SetValues();
+    playerID = getIntent().getIntExtra("player", -1);
+    setValues();
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
     int width = dm.widthPixels;
     int height = dm.heightPixels;
     getWindow().setLayout(width,(int)(height*.9));
-    SetSpeechRecognizer(Penalization.this);
+    setSpeechRecognizer(Penalization.this);
 
-    text_minutos = findViewById(R.id.minutosTexto);
-    text_segundos = findViewById(R.id.segundosTexto);
+    minutesTitle = findViewById(R.id.minutosTexto);
+    secondsTitle = findViewById(R.id.segundosTexto);
     title = findViewById(R.id.title);
-    text_minutos.setText(modelo.GetVoz().GetLanguage().GetDictadoById("minutos"));
-    text_segundos.setText(modelo.GetVoz().GetLanguage().GetDictadoById("segundos"));
-    title.setText(modelo.GetVoz().GetLanguage().GetTagById("penalización"));
+    minutesTitle.setText(modelo.getVoice().getLanguage().getDictadoById("minutos"));
+    secondsTitle.setText(modelo.getVoice().getLanguage().getDictadoById("segundos"));
+    title.setText(modelo.getVoice().getLanguage().getTagById("penalización"));
 
-    minutos = findViewById(R.id.minutos);
-    minutos.setMinValue(0);
-    minutos.setMaxValue(59);
-    minutos.setOnValueChangedListener(((picker, oldVal, newVal) -> {
-      add_minutes = newVal;
-      String speech = newVal + modelo.GetVoz().GetLanguage().GetDictadoById("minutos");
-      tts.Speak(speech);
+    minutes = findViewById(R.id.minutos);
+    minutes.setMinValue(0);
+    minutes.setMaxValue(59);
+    minutes.setOnValueChangedListener(((picker, oldVal, newVal) -> {
+      minutesAdded = newVal;
+      String speech = newVal + modelo.getVoice().getLanguage().getDictadoById("minutos");
+      tts.speak(speech);
     }));
 
-    segundos = findViewById(R.id.segundos);
-    segundos.setMinValue(0);
-    segundos.setMaxValue(59);
-    segundos.setOnValueChangedListener(((picker, oldVal, newVal) -> {
-      add_seconds = newVal;
-      String speech = newVal + modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
-      tts.Speak(speech);
+    seconds = findViewById(R.id.segundos);
+    seconds.setMinValue(0);
+    seconds.setMaxValue(59);
+    seconds.setOnValueChangedListener(((picker, oldVal, newVal) -> {
+      secondsAdded = newVal;
+      String speech = newVal + modelo.getVoice().getLanguage().getDictadoById("segundos");
+      tts.speak(speech);
     }));
-    SetSpeechRecognizer(Penalization.this);
+    setSpeechRecognizer(Penalization.this);
   }
 
-  public void ReturnData() {
-    Intent returnIntent = new Intent();
-    returnIntent.putExtra("Modelo",  modelo);
-    setResult(Activity.RESULT_OK, returnIntent);
-  }
 
+
+  /**
+   * Método invocado cuando se selecciona el botón de retroceder del dispositivo
+   */
   @Override
   public void onBackPressed() {
-    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
-    if (player == 0) { // blancas
-      modelo.GetSecondPlayer().SetPenalization(add_minutes, add_seconds);
-    } else if (player == 1) {
-      modelo.GetFirstPlayer().SetPenalization(add_minutes, add_seconds);
+    tts.speak(modelo.getVoice().getLanguage().getDictadoById("atras"));
+    if (playerID == 0) { // blancas
+      modelo.getWhitePlayer().setPenalization(minutesAdded, secondsAdded);
+    } else if (playerID == 1) {
+      modelo.getBlackPlayer().setPenalization(minutesAdded, secondsAdded);
     }
-    ReturnData();
+    returnData();
     super.onBackPressed();
   }
 
-  public void VoiceManagement(String keeper) {
+  /**
+   * Gestiona el reconocedor de voz, aplicando una acción en base al comando de voz recibido
+   * @param keeper - Instrucción vocal del usuario, convertida a texto
+   */
+  public void voiceManagement(String keeper) {
     String[] words = keeper.split("\\s+");
     for (int i = 0; i < words.length; i++) {
       words[i] = words[i].replaceAll("[^\\w]", "");
     }
+    Language language = modelo.getVoice().getLanguage();
 
     switch(words.length) {
       case 1:
-        if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
-          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
+        if (keeper.equals(language.getDictadoById("atras").toLowerCase())) {
+          tts.speak(language.getDictadoById("atras").toLowerCase());
           onBackPressed();
-        } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+        } else if (keeper.equals(language.getDictadoById("salir").toLowerCase())) {
           this.finishAffinity();
         } else {
-          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+          tts.speak(language.getDictadoById("repita"));
         }
         break;
 
@@ -108,26 +124,35 @@ public class Penalization extends SuperActivity {
           switch (words[1]) {
             case "minuto":
             case "minutos":
-              add_minutes = time;
-              String texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("minutos");
-              tts.Speak(texto);
-              minutos.setValue(time);
+              minutesAdded = time;
+              String texto = time + language.getDictadoById("minutos");
+              tts.speak(texto);
+              minutes.setValue(time);
               break;
             case "segundo":
             case "segundos":
-             add_seconds = time;
-              texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
-              tts.Speak(texto);
-              segundos.setValue(time);
+              secondsAdded = time;
+              texto = time + language.getDictadoById("segundos");
+              tts.speak(texto);
+              seconds.setValue(time);
               break;
           }
         } else {
-          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+          tts.speak(language.getDictadoById("repita"));
         }
         break;
 
       default:
-        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+        tts.speak(language.getDictadoById("repita"));
     }
+  }
+
+  /**
+   * Devuelve el modelo a la actividad predecesora
+   */
+  public void returnData() {
+    Intent returnIntent = new Intent();
+    returnIntent.putExtra("Modelo",  modelo);
+    setResult(Activity.RESULT_OK, returnIntent);
   }
 }

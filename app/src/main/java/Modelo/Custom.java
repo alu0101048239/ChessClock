@@ -9,19 +9,19 @@ public class Custom extends GameMode implements Serializable {
     name = "Personalize";
   }
 
-  public void SetSeconds(int seconds) {
+  public void setSeconds(int seconds) {
     segundos = seconds;
   }
 
-  public int GetSeconds() {
+  public int getSeconds() {
     return segundos;
   }
 
-  public int GetHours() {
+  public int getHours() {
     return horas;
   }
 
-  public void SetHours(int hours) {
+  public void setHours(int hours) {
     horas = hours;
   }
 }

@@ -1,3 +1,11 @@
+/*
+ * Implementación de la clase SuperActivity, en la que se inicializan los principales objetos que
+ * serán utilizados en todas las actividades. Todas las actividades de la aplicación heredan de
+ * esta clase.
+ *
+ * @author David Hernández Suárez
+ */
+
 package com.ull.chessclock;
 
 import android.Manifest;
@@ -30,6 +38,9 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
   private static String TAG = "PermissionDemo";
   private static final int RECORD_REQUEST_CODE = 101;
 
+  /**
+   * Método invocado cada vez que se abre la actividad
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -37,12 +48,19 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
     modelo = new Modelo();
   }
 
+  /**
+   * Método invocado cada vez que se accede a la actividad
+   */
   @Override
   public void onInit(int status) {
-    tts.SetVoice(modelo.GetVoz().GetVoice(),  new Locale(modelo.GetVoz().GetLanguage().GetLanguage()));
+    tts.setVoice(modelo.getVoice().getVoice(),  new Locale(modelo.getVoice().getLanguage().getLanguage()));
   }
 
-  public void SetSpeechRecognizer(Context context) {
+  /**
+   * Inicializa el reconocedor de voz e incluye los métodos necesarios para su gestión
+   * @param context - Contexto de la actividad desde la que se llama al método
+   */
+  public void setSpeechRecognizer(Context context) {
     setupPermissions();
     keeper = "";
     speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
@@ -68,13 +86,17 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
       @Override
       public void onError(int error) {}
 
+      /**
+       * Método invocado cuando finaliza la escucha del comando de voz y se obtiene el resultado
+       * @param results - Resultado de la escucha
+       */
       @Override
       public void onResults(Bundle results) {
         ArrayList<String> matchesFound = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         if (matchesFound != null) {
           keeper = matchesFound.get(0);
           Toast.makeText(context, "Result = " + keeper, Toast.LENGTH_LONG).show();
-          VoiceManagement(keeper);
+          voiceManagement(keeper);
         }
       }
 
@@ -86,6 +108,12 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
     });
   }
 
+  /**
+   * Se invoca cuando se pulsa un botón físico del dispositivo. Si se ha pulsado el botón de
+   * "Subir volumen", el sistema comienza a recoger la voz del usuario
+   * @param event - Evento lanzado al pulsar la tecla
+   * @return Llamada al método dispatchKeyEvent de la superclase
+   */
   @Override
   public boolean dispatchKeyEvent(KeyEvent event) {
     int keyCode = event.getKeyCode();
@@ -97,39 +125,53 @@ public class SuperActivity extends AppCompatActivity implements TextToSpeech.OnI
     return super.dispatchKeyEvent(event);
   }
 
-  public void VoiceManagement(String keeper) {}
+  /**
+   * Gestiona el reconocedor de voz, aplicando una acción en base al comando de voz recibido
+   * @param keeper - Instrucción vocal del usuario, convertida a texto
+   */
+  public void voiceManagement(String keeper) {}
 
-  public void SetValues() {
-    tts.SetVoice(modelo.GetVoz().GetVoice(), modelo.GetVoz().SetVoice(modelo.GetVoz().GetVoice()));
-    tts.SetSpeed(modelo.GetVoz().GetSpeed());
-    tts.SetPitch(modelo.GetVoz().GetPitch());
-    tts.SetLanguage(modelo.GetVoz().GetLanguage().GetLanguage());
-    tts.SetAssistant(modelo.GetVoz().GetAssistant());
+  /**
+   * Establece los nuevos parámetros del asistente de voz, según los datos guardados en el modelo.
+   */
+  public void setValues() {
+    tts.setVoice(modelo.getVoice().getVoice(), modelo.getVoice().setVoice(modelo.getVoice().getVoice()));
+    tts.setSpeed(modelo.getVoice().getSpeed());
+    tts.setPitch(modelo.getVoice().getPitch());
+    tts.setLanguage(modelo.getVoice().getLanguage().getLanguage());
+    tts.setAssistant(modelo.getVoice().getAssistant());
   }
 
+  /**
+   * Método invocado cuando se selecciona el botón de retroceder del dispositivo
+   */
   @Override
   public void onBackPressed() {
-    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
+    tts.speak(modelo.getVoice().getLanguage().getDictadoById("atras"));
     super.onBackPressed();
   }
 
+  /**
+   * Solicita al usuario los permisos necesarios para acceder al micrófono del dispositivo
+   */
   private void setupPermissions() {
-
     int permission = ContextCompat.checkSelfPermission(this,
             Manifest.permission.RECORD_AUDIO);
 
     if (permission != PackageManager.PERMISSION_GRANTED) {
       Log.i(TAG, "Permission to record denied");
-      makeRequest();
+      ActivityCompat.requestPermissions(this,
+              new String[]{Manifest.permission.RECORD_AUDIO},
+              RECORD_REQUEST_CODE);
     }
   }
 
-  protected void makeRequest() {
-    ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.RECORD_AUDIO},
-            RECORD_REQUEST_CODE);
-  }
-
+  /**
+   * Método invocado cuando se han concedido los permisos necesarios a la aplicación
+   * @param requestCode -
+   * @param permissions -
+   * @param grantResults -
+   */
   public void onRequestPermissionsResult(int requestCode,
                                          @NonNull String[] permissions, @NonNull int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);

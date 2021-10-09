@@ -1,3 +1,12 @@
+/*
+ * Implementación de la clase CustomGame, cuyo objetivo es la personalización del tiempo de juego
+ * de la partida. El usuario podrá establecer el número exacto de horas, minutos y segundos que
+ * durará la partida, así como los segundos de incremento que se aplicarán. Hereda los métodos
+ * necesarios de la superclase SuperActivity.
+ *
+ * @author David Hernández Suárez
+ */
+
 package com.ull.chessclock;
 
 import android.app.Activity;
@@ -9,114 +18,118 @@ import android.widget.TextView;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import Modelo.Modelo;
+import Modelo.Language;
 
 public class CustomGame extends SuperActivity {
-  TextView tiempo;
-  TextView tv_horas;
-  TextView tv_minutos;
-  TextView tv_segundos;
-  TextView incremento;
-  NumberPicker horas;
-  NumberPicker minutos;
-  NumberPicker segundos;
-  NumberPicker increments;
+  TextView title;
+  TextView hoursTitle;
+  TextView minutesTitle;
+  TextView secondsTitle;
+  TextView incrementTitle;
+  NumberPicker hours;
+  NumberPicker minutes;
+  NumberPicker seconds;
+  NumberPicker increment;
 
+  /**
+   * Método invocado cada vez que se abre la actividad
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_custom);
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
-    SetValues();
+    setValues();
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
     int width = dm.widthPixels;
     int height = dm.heightPixels;
     getWindow().setLayout(width,(int)(height*.9));
-    tv_horas = findViewById(R.id.horas);
-    tv_minutos = findViewById(R.id.minutos);
-    tv_segundos = findViewById(R.id.segundos);
-    tv_horas.setText(modelo.GetVoz().GetLanguage().GetDictadoById("horas"));
-    tv_minutos.setText(modelo.GetVoz().GetLanguage().GetDictadoById("minutos"));
-    tv_segundos.setText(modelo.GetVoz().GetLanguage().GetDictadoById("segundos"));
-    tiempo = findViewById(R.id.time);
-    incremento = findViewById(R.id.increment);
+    hoursTitle = findViewById(R.id.horas);
+    minutesTitle = findViewById(R.id.minutos);
+    secondsTitle = findViewById(R.id.segundos);
+    hoursTitle.setText(modelo.getVoice().getLanguage().getDictadoById("horas"));
+    minutesTitle.setText(modelo.getVoice().getLanguage().getDictadoById("minutos"));
+    secondsTitle.setText(modelo.getVoice().getLanguage().getDictadoById("segundos"));
+    title = findViewById(R.id.time);
+    incrementTitle = findViewById(R.id.increment);
 
-    horas = findViewById(R.id.hoursTime);
-    increments = findViewById(R.id.increments);
-    tiempo.setText(modelo.GetVoz().GetLanguage().GetTagById("tiempo"));
-    incremento.setText(modelo.GetVoz().GetLanguage().GetTagById("incremento"));
-    horas.setMinValue(0);
-    horas.setMaxValue(23);
-    horas.setOnValueChangedListener((picker, oldVal, newVal) -> {
-      modelo.GetFirstPlayer().GetMode().SetHours(newVal);
-      modelo.GetSecondPlayer().GetMode().SetHours(newVal);
-      modelo.GetFirstPlayer().Reset();
-      modelo.GetSecondPlayer().Reset();
-      String speech = newVal + modelo.GetVoz().GetLanguage().GetDictadoById("horas");
-      tts.Speak(speech);
+    hours = findViewById(R.id.hoursTime);
+    increment = findViewById(R.id.increments);
+    title.setText(modelo.getVoice().getLanguage().getTagById("tiempo"));
+    incrementTitle.setText(modelo.getVoice().getLanguage().getTagById("incremento"));
+    hours.setMinValue(0);
+    hours.setMaxValue(23);
+    hours.setOnValueChangedListener((picker, oldVal, newVal) -> {
+      modelo.getBlackPlayer().getMode().setHours(newVal);
+      modelo.getWhitePlayer().getMode().setHours(newVal);
+      modelo.getBlackPlayer().reset();
+      modelo.getWhitePlayer().reset();
+      String speech = newVal + modelo.getVoice().getLanguage().getDictadoById("horas");
+      tts.speak(speech);
     });
 
-    minutos = findViewById(R.id.minutesTime);
-    minutos.setMinValue(0);
-    minutos.setMaxValue(59);
-    minutos.setOnValueChangedListener((picker, oldVal, newVal) -> {
-      modelo.GetFirstPlayer().GetMode().SetTime(newVal);
-      modelo.GetSecondPlayer().GetMode().SetTime(newVal);
-      modelo.GetFirstPlayer().Reset();
-      modelo.GetSecondPlayer().Reset();
-      String speech = newVal + modelo.GetVoz().GetLanguage().GetDictadoById("minutos");
-      tts.Speak(speech);
+    minutes = findViewById(R.id.minutesTime);
+    minutes.setMinValue(0);
+    minutes.setMaxValue(59);
+    minutes.setOnValueChangedListener((picker, oldVal, newVal) -> {
+      modelo.getBlackPlayer().getMode().setTime(newVal);
+      modelo.getWhitePlayer().getMode().setTime(newVal);
+      modelo.getBlackPlayer().reset();
+      modelo.getWhitePlayer().reset();
+      String speech = newVal + modelo.getVoice().getLanguage().getDictadoById("minutos");
+      tts.speak(speech);
     });
 
-    segundos = findViewById(R.id.secondsTime);
-    segundos.setMinValue(0);
-    segundos.setMaxValue(59);
-    segundos.setOnValueChangedListener((picker, oldVal, newVal) -> {
-      modelo.GetFirstPlayer().GetMode().SetSeconds(newVal);
-      modelo.GetSecondPlayer().GetMode().SetSeconds(newVal);
-      modelo.GetFirstPlayer().Reset();
-      modelo.GetSecondPlayer().Reset();
-      String speech = newVal + modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
-      tts.Speak(speech);
+    seconds = findViewById(R.id.secondsTime);
+    seconds.setMinValue(0);
+    seconds.setMaxValue(59);
+    seconds.setOnValueChangedListener((picker, oldVal, newVal) -> {
+      modelo.getBlackPlayer().getMode().setSeconds(newVal);
+      modelo.getWhitePlayer().getMode().setSeconds(newVal);
+      modelo.getBlackPlayer().reset();
+      modelo.getWhitePlayer().reset();
+      String speech = newVal + modelo.getVoice().getLanguage().getDictadoById("segundos");
+      tts.speak(speech);
     });
 
 
-    increments.setMinValue(0);
-    increments.setMaxValue(59);
-    increments.setOnValueChangedListener((picker, oldVal, newVal) -> {
-      modelo.GetFirstPlayer().GetMode().SetIncrement(newVal);
-      modelo.GetSecondPlayer().GetMode().SetIncrement(newVal);
-      modelo.GetFirstPlayer().Reset();
-      modelo.GetSecondPlayer().Reset();
-      String speech = modelo.GetVoz().GetLanguage().GetTagById("incremento") + newVal +
-              modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
-      tts.Speak(speech);
+    increment.setMinValue(0);
+    increment.setMaxValue(59);
+    increment.setOnValueChangedListener((picker, oldVal, newVal) -> {
+      modelo.getBlackPlayer().getMode().setIncrement(newVal);
+      modelo.getWhitePlayer().getMode().setIncrement(newVal);
+      modelo.getBlackPlayer().reset();
+      modelo.getWhitePlayer().reset();
+      String speech = modelo.getVoice().getLanguage().getTagById("incremento") + newVal +
+              modelo.getVoice().getLanguage().getDictadoById("segundos");
+      tts.speak(speech);
     });
-    ReturnData();
-    SetSpeechRecognizer(CustomGame.this);
+    returnData();
+    setSpeechRecognizer(CustomGame.this);
   }
 
-  public void ReturnData() {
-    Intent returnIntent = new Intent();
-    returnIntent.putExtra("Modelo",  modelo);
-    setResult(Activity.RESULT_OK, returnIntent);
-  }
 
-  public void VoiceManagement(String keeper) {
+  /**
+   * Gestiona el reconocedor de voz, aplicando una acción en base al comando de voz recibido
+   * @param keeper - Instrucción vocal del usuario, convertida a texto
+   */
+  public void voiceManagement(String keeper) {
     String[] words = keeper.split("\\s+");
     for (int i = 0; i < words.length; i++) {
       words[i] = words[i].replaceAll("[^\\w]", "");
     }
+    Language language = modelo.getVoice().getLanguage();
 
     switch(words.length) {
       case 1:
-        if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
-          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase());
+        if (keeper.equals(language.getDictadoById("atras").toLowerCase())) {
+          tts.speak(language.getDictadoById("atras").toLowerCase());
           onBackPressed();
-        } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+        } else if (keeper.equals(language.getDictadoById("salir").toLowerCase())) {
           this.finishAffinity();
         } else {
-          tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+          tts.speak(language.getDictadoById("repita"));
         }
         break;
 
@@ -130,37 +143,37 @@ public class CustomGame extends SuperActivity {
           switch(words[1]) {
             case "minuto":
             case "minutos":
-              modelo.GetFirstPlayer().GetMode().SetTime(time);
-              modelo.GetSecondPlayer().GetMode().SetTime(time);
-              modelo.GetFirstPlayer().Reset();
-              modelo.GetSecondPlayer().Reset();
-              String texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("minutos");
-              tts.Speak(texto);
-              minutos.setValue(time);
+              modelo.getBlackPlayer().getMode().setTime(time);
+              modelo.getWhitePlayer().getMode().setTime(time);
+              modelo.getBlackPlayer().reset();
+              modelo.getWhitePlayer().reset();
+              String texto = time + language.getDictadoById("minutos");
+              tts.speak(texto);
+              minutes.setValue(time);
               break;
             case "hora":
             case "horas":
               if (time > 23) {
-                tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+                tts.speak(language.getDictadoById("repita"));
               } else {
-                modelo.GetFirstPlayer().GetMode().SetHours(time);
-                modelo.GetSecondPlayer().GetMode().SetHours(time);
-                modelo.GetFirstPlayer().Reset();
-                modelo.GetSecondPlayer().Reset();
-                texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("horas");
-                tts.Speak(texto);
-                horas.setValue(time);
+                modelo.getBlackPlayer().getMode().setHours(time);
+                modelo.getWhitePlayer().getMode().setHours(time);
+                modelo.getBlackPlayer().reset();
+                modelo.getWhitePlayer().reset();
+                texto = time + language.getDictadoById("horas");
+                tts.speak(texto);
+                hours.setValue(time);
               }
               break;
             case "segundo":
             case "segundos":
-              modelo.GetFirstPlayer().GetMode().SetSeconds(time);
-              modelo.GetSecondPlayer().GetMode().SetSeconds(time);
-              modelo.GetFirstPlayer().Reset();
-              modelo.GetSecondPlayer().Reset();
-              texto = time + modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
-              tts.Speak(texto);
-              segundos.setValue(time);
+              modelo.getBlackPlayer().getMode().setSeconds(time);
+              modelo.getWhitePlayer().getMode().setSeconds(time);
+              modelo.getBlackPlayer().reset();
+              modelo.getWhitePlayer().reset();
+              texto = time + language.getDictadoById("segundos");
+              tts.speak(texto);
+              seconds.setValue(time);
               break;
           }
         } else {  // incremento
@@ -170,22 +183,31 @@ public class CustomGame extends SuperActivity {
 
           if (m.find()) {
             int incremento = Integer.parseInt(words[1]);
-            modelo.GetFirstPlayer().GetMode().SetIncrement(incremento);
-            modelo.GetSecondPlayer().GetMode().SetIncrement(incremento);
-            modelo.GetFirstPlayer().Reset();
-            modelo.GetSecondPlayer().Reset();
-            String speech = modelo.GetVoz().GetLanguage().GetTagById("incremento") + incremento +
-                    modelo.GetVoz().GetLanguage().GetDictadoById("segundos");
-            tts.Speak(speech);
-            increments.setValue(incremento);
+            modelo.getBlackPlayer().getMode().setIncrement(incremento);
+            modelo.getWhitePlayer().getMode().setIncrement(incremento);
+            modelo.getBlackPlayer().reset();
+            modelo.getWhitePlayer().reset();
+            String speech = language.getTagById("incremento") + incremento +
+                    language.getDictadoById("segundos");
+            tts.speak(speech);
+            increment.setValue(incremento);
           } else {
-            tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+            tts.speak(language.getDictadoById("repita"));
           }
         }
         break;
 
       default:
-        tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+        tts.speak(language.getDictadoById("repita"));
     }
+  }
+
+  /**
+   * Devuelve el modelo a la actividad predecesora
+   */
+  public void returnData() {
+    Intent returnIntent = new Intent();
+    returnIntent.putExtra("Modelo",  modelo);
+    setResult(Activity.RESULT_OK, returnIntent);
   }
 }

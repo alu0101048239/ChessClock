@@ -41,7 +41,6 @@
             android:id="@+id/cambiarVoz"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:onClick="ChangeVoice"
             android:textColor="@color/black"
             android:textSize="40sp"
             android:layout_weight="15"
@@ -77,7 +76,8 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="0.1" />
+                android:layout_weight="0.1"
+                tools:ignore="NestedWeights" />
 
             <TextView
                 android:id="@+id/velocidad"
@@ -99,7 +99,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#a4c639"
-                android:onClick="increaseSpeed"
                 android:text="@string/plus"
                 android:textSize="40sp" />
 
@@ -114,7 +113,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#cd4b33"
-                android:onClick="decreaseSpeed"
                 android:text="@string/minus"
                 android:textSize="40sp" />
 
@@ -153,7 +151,8 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="0.1" />
+                android:layout_weight="0.1"
+                tools:ignore="NestedWeights" />
 
 
             <Button
@@ -162,7 +161,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#ffa07a"
-                android:onClick="Aguda"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
 
@@ -178,7 +176,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#87cefa"
-                android:onClick="Grave"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
 
@@ -198,7 +195,7 @@
             android:id="@+id/asistente"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:onClick="Assistant"
+            android:onClick="assistant"
             android:textSize="24sp"
             android:layout_weight="10"
             android:background="#faebd7"

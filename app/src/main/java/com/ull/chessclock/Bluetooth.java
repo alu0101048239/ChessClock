@@ -1,3 +1,11 @@
+/*
+ * Implementación de la clase Bluetooth, cuyo objetivo es visualizar los dispositivos disponibles
+ * para realizar una conexión por bluetooth, y gestionar esta conexión. Hereda los métodos
+ * necesarios de la superclase SuperActivity.
+ *
+ * @author David Hernández Suárez
+ */
+
 package com.ull.chessclock;
 
 import android.app.Activity;
@@ -19,11 +27,11 @@ import android.widget.Toast;
 import java.util.Objects;
 import java.util.Set;
 import Modelo.Modelo;
+import Modelo.Language;
 
 public class Bluetooth extends SuperActivity {
   private Context context;
   private BluetoothAdapter bluetoothAdapter;
-  private ArrayAdapter<String> adapterMainChat;
 
   public static final int MESSAGE_STATE_CHANGED = 0;
   public static final int MESSAGE_READ = 1;
@@ -39,26 +47,30 @@ public class Bluetooth extends SuperActivity {
   private TextView paired;
   private TextView available;
 
+  /**
+   * Método invocado cada vez que se abre la actividad
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bluetooth);
     context = this;
     init();
-    initBluetooth();
     modelo = (Modelo)getIntent().getSerializableExtra("Modelo");
-    SetValues();
+    setValues();
 
     paired = findViewById(R.id.paired);
-    paired.setText(modelo.GetVoz().GetLanguage().GetTagById("emparejados"));
+    paired.setText(modelo.getVoice().getLanguage().getTagById("emparejados"));
     available = findViewById(R.id.available);
-    available.setText(modelo.GetVoz().GetLanguage().GetTagById("disponibles"));
+    available.setText(modelo.getVoice().getLanguage().getTagById("disponibles"));
     Objects.requireNonNull(getSupportActionBar()).setTitle("Bluetooth");
-    SetSpeechRecognizer(Bluetooth.this);
+    setSpeechRecognizer(Bluetooth.this);
   }
 
+  /**
+   * Inicializa los diferentes objetos de la actividad
+   */
   private void init() {
-    adapterMainChat = new ArrayAdapter<>(context, R.layout.message_layout);
     listPairedDevices = findViewById(R.id.list_paired_devices);
     listAvailableDevices = findViewById(R.id.list_available_devices);
     progressScanDevices = findViewById(R.id.progress_scan_devices);
@@ -72,8 +84,9 @@ public class Bluetooth extends SuperActivity {
     listAvailableDevices.setOnItemClickListener((adapterView, view, i, l) -> {
       String info = ((TextView) view).getText().toString();
       String address = info.substring(info.length() - 17);
-      tts.Speak(info.substring(0, info.length() - 17));
-
+      modelo.setBluetoothAddress(address);
+      tts.speak(info.substring(0, info.length() - 17));
+      returnData();
     });
 
     bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -92,27 +105,19 @@ public class Bluetooth extends SuperActivity {
 
     listPairedDevices.setOnItemClickListener((adapterView, view, i, l) -> {
       bluetoothAdapter.cancelDiscovery();
-
       String info = ((TextView) view).getText().toString();
       String address = info.substring(info.length() - 17);
-      modelo.SetAddress(address);
-      tts.Speak(info.substring(0, info.length() - 17));
-
-      System.out.println("Lista: ");
-      for (int j = 0; j < listPairedDevices.getCount(); j++) {
-        String x = (String) listPairedDevices.getItemAtPosition(j);
-        System.out.println(j + ": " + x.substring(0, x.length() - 17));
-      }
-      ReturnData();
+      modelo.setBluetoothAddress(address);
+      tts.speak(info.substring(0, info.length() - 17));
+      returnData();
     });
-  }
 
-  private void initBluetooth() {
     bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     if (bluetoothAdapter == null) {
       Toast.makeText(context, "No bluetooth found", Toast.LENGTH_SHORT).show();
     }
   }
+
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,23 +138,25 @@ public class Bluetooth extends SuperActivity {
     }
   }
 
+  /**
+   * Método invocado cada vez que se retorna a la actividad desde otra posterior
+   * @param requestCode - Código para diferenciar de qué actividad se procede
+   * @param resultCode - Entero que evalúa si se ha accedido correctamente a la actividad
+   * @param data - Datos que se obtienen desde la actividad de origen
+   */
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     modelo = (Modelo) data.getExtras().getSerializable("Modelo");
-    ReturnData();
+    returnData();
   }
 
-  public void ReturnData() {
-    Intent returnIntent = new Intent();
-    returnIntent.putExtra("Modelo",  modelo);
-    setResult(Activity.RESULT_OK, returnIntent);
-  }
 
+  /**
+   * Permite que el dispositivo sea visible durante 5 minutos para otros dispositivos
+   */
   private void enableBluetooth() {
-
-    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("visibilidad"));
-
+    tts.speak(modelo.getVoice().getLanguage().getDictadoById("visibilidad"));
     if (!bluetoothAdapter.isEnabled()) {
       bluetoothAdapter.enable();
     }
@@ -164,16 +171,12 @@ public class Bluetooth extends SuperActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    /*if (chatUtils != null) {
-      chatUtils.stop();
-    }*/
-
     if (bluetoothDeviceListener != null) {
       unregisterReceiver(bluetoothDeviceListener);
     }
   }
 
-  private BroadcastReceiver bluetoothDeviceListener = new BroadcastReceiver() {
+  private final BroadcastReceiver bluetoothDeviceListener = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
       String action = intent.getAction();
@@ -195,10 +198,12 @@ public class Bluetooth extends SuperActivity {
     }
   };
 
+  /**
+   * Realiza una búsqueda de los dispositivos cercanos disponibles para realizar una conexión
+   * por bluetooth
+   */
   private void scanDevices() {
-
-    tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("buscar"));
-
+    tts.speak(modelo.getVoice().getLanguage().getDictadoById("buscar"));
     progressScanDevices.setVisibility(View.VISIBLE);
     adapterAvailableDevices.clear();
     Toast.makeText(context, "Scan started", Toast.LENGTH_SHORT).show();
@@ -209,12 +214,18 @@ public class Bluetooth extends SuperActivity {
     bluetoothAdapter.startDiscovery();
   }
 
-  public void VoiceManagement(String keeper) {
-    if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("emparejados"))) {
-      StringBuilder text = new StringBuilder(modelo.GetVoz().GetLanguage().GetTagById("emparejados") + ":");
+  /**
+   * Gestiona el reconocedor de voz, aplicando una acción en base al comando de voz recibido
+   * @param keeper - Instrucción vocal del usuario, convertida a texto
+   */
+  public void voiceManagement(String keeper) {
+    Language language = modelo.getVoice().getLanguage();
+
+    if (keeper.equals(language.getDictadoById("emparejados"))) {
+      StringBuilder text = new StringBuilder(language.getTagById("emparejados") + ":");
 
       if (listPairedDevices.getCount() == 0) {
-        text.append(modelo.GetVoz().GetLanguage().GetDictadoById("ninguno"));
+        text.append(language.getDictadoById("ninguno"));
       }
 
       for (int j = 0; j < listPairedDevices.getCount(); j++) {
@@ -222,12 +233,12 @@ public class Bluetooth extends SuperActivity {
         text.append(x.substring(0, x.length() - 17));
         text.append(":");
       }
-      tts.Speak(text.toString());
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("disponibles"))) {
-      StringBuilder text = new StringBuilder(modelo.GetVoz().GetLanguage().GetTagById("disponibles") + ":");
+      tts.speak(text.toString());
+    } else if (keeper.equals(language.getDictadoById("disponibles"))) {
+      StringBuilder text = new StringBuilder(language.getTagById("disponibles") + ":");
 
       if (listAvailableDevices.getCount() == 0) {
-        text.append(modelo.GetVoz().GetLanguage().GetDictadoById("ninguno"));
+        text.append(language.getDictadoById("ninguno"));
       }
 
       for (int j = 0; j < listAvailableDevices.getCount(); j++) {
@@ -235,14 +246,23 @@ public class Bluetooth extends SuperActivity {
         text.append(x.substring(0, x.length() - 17));
         text.append(":");
       }
-      tts.Speak(text.toString());
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("atras").toLowerCase())) {
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("atras"));
+      tts.speak(text.toString());
+    } else if (keeper.equals(language.getDictadoById("atras").toLowerCase())) {
+      tts.speak(language.getDictadoById("atras"));
       onBackPressed();
-    } else if (keeper.equals(modelo.GetVoz().GetLanguage().GetDictadoById("salir").toLowerCase())) {
+    } else if (keeper.equals(language.getDictadoById("salir").toLowerCase())) {
       this.finishAffinity();
     } else {
-      tts.Speak(modelo.GetVoz().GetLanguage().GetDictadoById("repita"));
+      tts.speak(language.getDictadoById("repita"));
     }
+  }
+
+  /**
+   * Devuelve el modelo a la actividad predecesora
+   */
+  public void returnData() {
+    Intent returnIntent = new Intent();
+    returnIntent.putExtra("Modelo",  modelo);
+    setResult(Activity.RESULT_OK, returnIntent);
   }
 }

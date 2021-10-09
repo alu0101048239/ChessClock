@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ccc0af"
-    tools:context=".Options">
+    tools:context=".Settings">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,7 +43,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:backgroundTint="#faebd7"
-            android:onClick="VoiceSettings"
             android:textColor="@color/black"
             android:textSize="30sp"
             android:layout_weight="15"
@@ -86,7 +85,8 @@
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/languageSpinner"
-                app:layout_constraintVertical_bias="0.036" />
+                app:layout_constraintVertical_bias="0.036"
+                tools:ignore="NestedWeights" />
 
             <Spinner
                 android:id="@+id/languageSpinner"
@@ -136,7 +136,8 @@
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gameSpinner"
-                app:layout_constraintVertical_bias="0.101" />
+                app:layout_constraintVertical_bias="0.101"
+                tools:ignore="NestedWeights" />
 
             <Spinner
                 android:id="@+id/gameSpinner"
@@ -167,7 +168,6 @@
             android:backgroundTint="#faebd7"
             android:textColor="@color/black"
             android:textSize="30sp"
-            android:onClick="Connectivity"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
